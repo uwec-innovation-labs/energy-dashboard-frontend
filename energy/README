@@ -1,0 +1,2 @@
+Downloaded .xlsx file, converted to .csv, deleted first two lines so first line was "Timestamp, Value (BTU)"
+(these values then become the column names)
