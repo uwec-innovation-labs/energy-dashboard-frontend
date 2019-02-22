@@ -80,4 +80,4 @@ typings/
 .dynamodb/
 
 # Build directory
-build/
+*build/
