@@ -1,6 +1,9 @@
 language: node_js
 node_js:
   - "10"
+cache:
+  directories:
+    - ./frontend/node_modules
 script:
   - cd frontend
   - npm install
