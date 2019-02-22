@@ -1,12 +1,14 @@
 import React, { Component } from 'react'
-import logo from './media/logo.svg'
 import './styles/App.css'
+import Home from './components/Home'
+import AppNav from './components/AppNav'
 
 class App extends Component {
   render() {
     return (
       <div className="App">
-        {this.props.children}
+        <AppNav />
+        <Home />
       </div>
     )
   }
