@@ -5,9 +5,9 @@ import logo from './media/cwllogo.png'
 class Dashboard extends Component {
     render() {
         return (
-          <div className="App">
-            <header className="App-header">
-            <img src={logo} className="App-logo" alt="logo" />
+          <div className="Dashboard" id="dashboard">
+            <header className="Dashboard-header">
+            <img src={logo} className="Dashboard-logo" alt="logo" />
               <p>
                 UW Eau Claire Energy Dashboard
               </p>
