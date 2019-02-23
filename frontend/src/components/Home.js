@@ -6,8 +6,7 @@ class Home extends Component {
   render() {
     return (
       <div>
-        <div className="testGraph"></div>
-        <TestGraph></TestGraph>
+        <TestGraph><div className="graphContainer"></div></TestGraph>
       </div>
 
     )
