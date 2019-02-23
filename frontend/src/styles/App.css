@@ -1,0 +1,13 @@
+.graphBars {
+  font: 14px sans-serif;
+  background-color: green;
+  text-align: right;
+  padding: 10px;
+  margin: 1px;
+  color: white;
+}
+
+.graphContainer {
+  width: 100px;
+  margin: 0;
+}
