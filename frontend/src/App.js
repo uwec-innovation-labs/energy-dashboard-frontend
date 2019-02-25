@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import './styles/App.css'
 import Home from './components/Home'
 import AppNav from './components/AppNav'
+import FooterBar from './components/FooterBar'
 
 class App extends Component {
   render() {
@@ -9,6 +10,10 @@ class App extends Component {
       <div className="App">
         <AppNav />
         <Home />
+        <center>
+          <FooterBar />
+        </center>
+
       </div>
     )
   }

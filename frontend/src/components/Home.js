@@ -6,7 +6,20 @@ class Home extends Component {
   render() {
     return (
       <div>
-        <TestGraph><div className="graphContainer"></div></TestGraph>
+        <center>
+          <img
+             src={require("../media/cwllogo.png")}
+             className="img-responsive"
+             id="cwlLogo"
+             alt="The clearwater labs logo"
+           />
+          <h1> Energy Dashboard </h1>
+          <h4> A Powerful Dashboard for UWEC Energy Usage Visualization </h4>
+
+        </center>
+        <div className="graph"></div>
+        <TestGraph></TestGraph>
+
       </div>
 
     )
