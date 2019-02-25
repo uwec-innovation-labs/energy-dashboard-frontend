@@ -6,7 +6,14 @@ class Home extends Component {
   render() {
     return (
       <div>
-        <TestGraph><div className="graphContainer"></div></TestGraph>
+        <center>
+          <h1> Energy Dashboard </h1>
+          <h4> A Powerful Dashboard for UWEC Energy Usage Visualization </h4>
+
+        </center>
+        <div className="graph"></div>
+        <TestGraph></TestGraph>
+
       </div>
 
     )

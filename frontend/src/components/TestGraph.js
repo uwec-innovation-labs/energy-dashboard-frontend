@@ -47,7 +47,7 @@ class TestGraph extends Component {
         var maxWidth = 1000;
         var minWidth = 200;
 
-        d3.select('body').append('div')
+        d3.select("div.graph").append('div')
           .attr("class", "graphContainer")
           .selectAll('div')
           .data(data)

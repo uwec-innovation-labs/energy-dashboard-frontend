@@ -7,7 +7,67 @@
   color: white;
 }
 
+.navbar {
+  margin-bottom: 5px;
+}
+
 .graphContainer {
   width: 100px;
-  margin: 0;
+  margin: 20px 0 20px 0;
+}
+
+.nav-link {
+  text-align: right;
+  border-bottom: 1px solid rgba(0,0,0,0);
+}
+
+.nav-link:hover {
+  color: green !important;
+  border-bottom: 1px solid grey;
+}
+
+.img-responsive {
+  margin: 50px auto;
+  width: 30%;
+  min-width: 300px;
+  max-width: 600px;
+}
+
+.footerbar {
+  border-top: 1px solid grey;
+  display: table;
+  height: 50px;
+  width: 50%;
+  text-align: center;
+  font-size: 12px;
+  margin-bottom: 30px;
+  margin-top: 30px;
+}
+
+.footerbar-left {
+  padding-top: 30px;
+  text-align: left;
+  display: table-cell;
+}
+
+.footerbar-center {
+  text-align: center;
+  display: table-cell;
+}
+
+.footerbar-right {
+    text-align: right;
+    display: table-cell;
+}
+
+.footerbar a {
+  color: grey;
+  margin-left: 10px;
+}
+
+.footerbar a:hover {
+    color: green;
+    border-bottom: 1px solid black;
+    text-decoration: none;
+    transition: color .3s;
 }
