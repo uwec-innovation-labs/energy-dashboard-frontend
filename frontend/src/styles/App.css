@@ -1,6 +1,13 @@
+:root {
+  --primary-color: green;
+  --secondary-color: white;
+  --tertiary-color: grey;
+  --graph-primary-color: red;
+}
+
 .graphBars {
   font: 14px sans-serif;
-  background-color: green;
+  background-color: var(--primary-color);
   text-align: right;
   padding: 10px;
   margin: 1px;
@@ -22,8 +29,8 @@
 }
 
 .nav-link:hover {
-  color: green !important;
-  border-bottom: 1px solid grey;
+  color: var(--primary-color) !important;
+  border-bottom: 1px solid var(--tertiary-color);
 }
 
 .img-responsive {
@@ -66,8 +73,17 @@
 }
 
 .footerbar a:hover {
-    color: green;
+    color: var(--primary-color);
     border-bottom: 1px solid black;
     text-decoration: none;
     transition: color .3s;
+}
+
+.scatterPlotContainer {
+  width: 600px;
+  height: 600px;
+}
+
+.plotPoint {
+  background-color: var(--graph-primary-color);
 }
