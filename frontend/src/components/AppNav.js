@@ -28,6 +28,9 @@ class AppNav extends React.Component {
                 <NavLink href="/explore">Explore</NavLink>
               </NavItem>
               <NavItem>
+                <NavLink href="/export">Export</NavLink>
+              </NavItem>
+              <NavItem>
                 <NavLink href="/about">About</NavLink>
               </NavItem>
               <NavItem>
