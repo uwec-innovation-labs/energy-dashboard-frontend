@@ -33,7 +33,7 @@ class ScatterPlot extends Component {
         });
 
         //Temporary Min and Max Dates (Can connect to some sort of date selection)
-        var mindate = new Date(2016,10,1), maxdate = new Date(2017,3,1);
+        var mindate = new Date(2016,7,31), maxdate = new Date(2017,3,28);
         // This is the Date Scale
         var x = d3.scaleTime()
           .domain([mindate, maxdate])
