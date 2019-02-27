@@ -6,9 +6,7 @@ class PrivacyPolicy extends Component {
     return (
       <div>
       <center> <h1> PRIVACY NOTICE </h1>  </center>
-        <p>
-          This privacy notice discloses the privacy practices for Clearwater Labs. This privacy notice applies solely to information collected by this website. It will notify you of the following:
-          </p>
+        <p> This privacy notice discloses the privacy practices for Clearwater Labs. This privacy notice applies solely to information collected by this website. It will notify you of the following: </p>
           <ol>
             <li>
               What personally identifiable information is collected from you through the website, how it is used and with whom it may be shared.
@@ -41,7 +39,7 @@ class PrivacyPolicy extends Component {
             <p>We use "cookies" on this site. A cookie is a piece of data stored on a site visitor's hard drive to help us improve your access to our site and identify repeat visitors to our site. For instance, when we use a cookie to identify you, you would not have to log in a password more than once, thereby saving time while on our site. Cookies can also enable us to track and target the interests of our users to enhance the experience on our site. Usage of a cookie is in no way linked to any personally identifiable information on our site.</p>
             <h4>Links</h4>
             <p>This website contains links to other sites. Please be aware that we are not responsible for the content or privacy practices of such other sites. We encourage our users to be aware when they leave our site and to read the privacy statements of any other site that collects personally identifiable information.</p>
-            <h5><b>If you feel that we are not abiding by this privacy policy, you should contact me immediately via email.</b></h5>
+            <h5><b>If you feel that we are not abiding by this privacy policy, you should contact Clearwater Labs immediately.</b></h5>
       </div>
     )
   }
