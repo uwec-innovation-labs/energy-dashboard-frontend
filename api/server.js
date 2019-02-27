@@ -4,8 +4,14 @@ var { buildSchema } = require('graphql')
 const bodyParser = require('body-parser')
 const morgan = require('morgan')
 const cors = require('cors')
+const readData = require("./readData.js")
 
-const app = express()
+const app = express();
+
+var data;
+readData.readData().then(function(result) {
+  data = result;
+});
 
 var schema = buildSchema(`
     type Query { 
@@ -19,10 +25,8 @@ var schema = buildSchema(`
 `)
 
 var getSolar = () => {
-  return [
-    { timestamp: 'hello', value: 130 },
-    { timestamp: 'there', value: 160 }
-  ]
+  console.log(data);
+  return data;
 }
 
 var global = { solar: getSolar }
