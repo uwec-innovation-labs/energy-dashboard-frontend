@@ -7,6 +7,13 @@
   color: white;
 }
 
+.container  {
+  padding-top: 50px;
+  text-align: center;
+  margin: 0 auto;
+  width: 100%;
+
+}
 .navbar {
   margin-bottom: 5px;
 }
