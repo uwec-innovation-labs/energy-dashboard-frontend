@@ -4,6 +4,7 @@ const converter=csv({
     trim:true,
 });
 const csvFilePath = './tiny.csv';
+const buildingPath = './buildings.csv';
 
 async function readData() {
     let data = await csv({
@@ -18,6 +19,17 @@ async function readData() {
     return data;
 }
 
+async function readBuildings() {
+    let data = await csv({
+        colParser:{
+            "name":"string",
+        },
+        checkType:true
+    }).fromFile(buildingPath);
+    return data;
+}
+
 module.exports = {
-    "readData": readData
+    "readData": readData,
+    "readBuildings": readBuildings
 }

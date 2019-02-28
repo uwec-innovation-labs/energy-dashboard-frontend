@@ -12,24 +12,39 @@ var data;
 readData.readData().then(function(result) {
   data = result;
 });
+var buildings;
+readData.readBuildings().then(function(result) {
+  buildings = result;
+})
 
 var schema = buildSchema(`
     type Query { 
-        solar: [Solar]
+        solar: [Solar],
+        buildings: [Building]
     }
 
     type Solar {
         timestamp: String,
         value: Int
     }
+
+    type Building {
+      name: String
+    }
 `)
 
 var getSolar = () => {
-  console.log(data);
   return data;
 }
 
-var global = { solar: getSolar }
+var getBuildings = () => {
+  return buildings;
+}
+
+var global = {
+  solar: getSolar,
+  buildings: getBuildings
+}
 
 app.use(
   '/graphql',
