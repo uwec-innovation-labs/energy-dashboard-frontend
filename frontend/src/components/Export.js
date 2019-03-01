@@ -4,6 +4,8 @@ import FooterBar from './FooterBar'
 import AppNav from './AppNav'
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { Icon } from 'react-icons-kit'
+import {exportIcon} from 'react-icons-kit/entypo/exportIcon'
 import {
   Container,
   Button,
@@ -18,18 +20,17 @@ import {
 class Export extends Component {
   render() {
     return (
-      <div>
+      <div class="export">
         <AppNav />
-          <div className="container">
+          <Form>
               <h2>
                 Energy Dashboard Data Export
               </h2>
               <p>
-                Data will export in a .CSV format that can be opened in Excel.
+                Please specify the building you would like to export data from and
+                a date range. Data will export in a .CSV format that can be opened in Excel.
               </p>
-            <Form>
-              <Row>
-                <Label htmlFor="frmNameA">Building</Label>
+                <Label htmlFor="building">Building</Label>
                   <Col md={3}>
                     <FormGroup>
                       <Input
@@ -41,10 +42,27 @@ class Export extends Component {
                           <option value="McIntyre Library">McIntyre Library</option>
                       </Input>
                     </FormGroup>
+                    <FormGroup>
+                      <Label htmlFor="startDate"> Start Date </Label>
+                        <Input
+                          type="date"
+                          name="startDate"
+                          placeholder="01/01/2019"
+                        />
+                    </FormGroup>
+                    <FormGroup>
+                      <Label htmlFor="endDate"> End Date </Label>
+                        <Input
+                          type="date"
+                          name="endDate"
+                          placeholder="01/01/2019"
+                        />
+                    </FormGroup>
+
+
                   </Col>
-                </Row>
               </Form>
-            </div>
+
             <center>
               <FooterBar />
             </center>
