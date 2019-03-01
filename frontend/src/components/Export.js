@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import '../styles/App.css'
 import FooterBar from './FooterBar'
 import AppNav from './AppNav'
-import "react-datepicker/dist/react-datepicker.css";
+import { CSVLink, CSVDownload } from "react-csv";
 import {
   Form,
   Col,
@@ -11,6 +11,13 @@ import {
   Input,
   Button
 } from "reactstrap";
+
+const csvData = [
+  ["firstname", "lastname", "email"],
+  ["Ahmed", "Tomi", "ah@smthing.co.com"],
+  ["Raed", "Labes", "rl@smthing.co.com"],
+  ["Yezzi", "Min l3b", "ymin@cocococo.com"]
+];
 
 class Export extends Component {
   render() {
@@ -54,13 +61,13 @@ class Export extends Component {
                           placeholder="01/01/2019"
                         />
                     </FormGroup>
-                    <FormGroup>
-                      <Label for="exampleFile">File Destination</Label>
-                       <Input type="file" name="file" id="exampleFile" />
-                    </FormGroup>
+
                     <Button outline block color="primary" type="submit">
-                      Download
+                      <CSVLink data={csvData}>
+                        Download
+                      </CSVLink>
                     </Button>
+
                   </Col>
               </Form>
         </div>
