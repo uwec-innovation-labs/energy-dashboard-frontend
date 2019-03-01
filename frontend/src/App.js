@@ -2,8 +2,6 @@ import React, { Component } from 'react'
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import './styles/App.css'
 import Home from './components/Home'
-import AppNav from './components/AppNav'
-import FooterBar from './components/FooterBar'
 import Export from './components/Export'
 
 

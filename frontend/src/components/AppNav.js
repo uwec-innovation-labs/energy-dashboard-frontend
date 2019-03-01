@@ -25,7 +25,7 @@ class AppNav extends React.Component {
           <Collapse isOpen={this.state.isOpen} navbar>
             <Nav className="ml-auto" navbar>
               <NavItem>
-                <NavLink href="/explore">Explore</NavLink>
+                <NavLink href="/">Explore</NavLink>
               </NavItem>
               <NavItem>
                 <NavLink href="/export">Export</NavLink>

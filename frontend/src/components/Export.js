@@ -2,15 +2,9 @@ import React, { Component } from 'react'
 import '../styles/App.css'
 import FooterBar from './FooterBar'
 import AppNav from './AppNav'
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { Icon } from 'react-icons-kit'
-import {exportIcon} from 'react-icons-kit/entypo/exportIcon'
 import {
-  Container,
-  Button,
   Form,
-  Row,
   Col,
   FormGroup,
   Label,
@@ -58,8 +52,6 @@ class Export extends Component {
                           placeholder="01/01/2019"
                         />
                     </FormGroup>
-
-
                   </Col>
               </Form>
 
