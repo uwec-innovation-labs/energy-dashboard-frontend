@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import '../styles/App.css'
-import TestGraph from './TestGraph'
+import ScatterPlot from './ScatterPlot'
 
 class Home extends Component {
   render() {
@@ -9,10 +9,8 @@ class Home extends Component {
         <center>
           <h1> Energy Dashboard </h1>
           <h4> A Powerful Dashboard for UWEC Energy Usage Visualization </h4>
+          <ScatterPlot/>
         </center>
-        <div className="graph">
-          <TestGraph />
-        </div>
       </div>
     )
   }
