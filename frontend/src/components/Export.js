@@ -20,14 +20,14 @@ const csvData = [
 class Export extends Component {
   render() {
     return (
-      <div class="export">
+      <div className="export">
         <h2>Energy Dashboard Data Export</h2>
         <p>
           Please specify the building you would like to export data from and a
           date range. Data will export in a .CSV format that can be opened in
           Excel.
         </p>
-        <Form action="javascript:void(0);">
+        <Form action="">
           <Col md={4} xs={10}>
             <FormGroup>
               <Label className="formLabel" htmlFor="building">
@@ -60,7 +60,7 @@ class Export extends Component {
               <Input type="date" name="endDate" placeholder="01/01/2019" />
             </FormGroup>
             <Button outline block color="primary" type="submit">
-              <CSVLink data={csvData} target="_blank">
+              <CSVLink filename="mock_data.csv" data={csvData} target="_blank">
                 Download
               </CSVLink>
             </Button>
