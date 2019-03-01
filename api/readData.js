@@ -5,17 +5,53 @@ const converter=csv({
 });
 const csvFilePath = './tiny.csv';
 const buildingPath = './buildings.csv';
+const fullDataPath = './DSC_Solar.csv';
 
 async function readData() {
     let data = await csv({
         colParser:{
             "timestamp":function(item, head, resultRow, row, colIdx) {
-                return new Date(item);
+                var fullDate = new Date(item);
+                return {
+                    "year": fullDate.getFullYear(),
+                    "month": fullDate.getMonth(),
+                    "day": fullDate.getDate(),
+                    "hour": fullDate.getHours(),
+                    "minute": fullDate.getMinutes(),
+                    "second": fullDate.getSeconds(),
+                    "date": fullDate.toDateString(),
+                    "time": fullDate.toLocaleTimeString(),
+                    "dateTime": fullDate.toISOString()
+                };
             },
             "value":"number",
         },
         checkType:true
     }).fromFile(csvFilePath);
+    return data;
+}
+
+async function readFullData() {
+    let data = await csv({
+        colParser:{
+            "timestamp":function(item, head, resultRow, row, colIdx) {
+                var fullDate = new Date(item);
+                return {
+                    "year": fullDate.getFullYear(),
+                    "month": fullDate.getMonth(),
+                    "day": fullDate.getDate(),
+                    "hour": fullDate.getHours(),
+                    "minute": fullDate.getMinutes(),
+                    "second": fullDate.getSeconds(),
+                    "date": fullDate.toDateString(),
+                    "time": fullDate.toLocaleTimeString(),
+                    "dateTime": fullDate.toISOString()
+                };
+            },
+            "value":"number",
+        },
+        checkType:true
+    }).fromFile(fullDataPath);
     return data;
 }
 
@@ -31,5 +67,6 @@ async function readBuildings() {
 
 module.exports = {
     "readData": readData,
-    "readBuildings": readBuildings
+    "readBuildings": readBuildings,
+    "readFullData" : readFullData
 }
