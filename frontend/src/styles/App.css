@@ -7,6 +7,28 @@
   color: white;
 }
 
+.export {
+  margin: 0 auto;
+  text-align: center;
+}
+
+.container  {
+  padding-top: 50px;
+  text-align: center;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.col-md-4, .col-xs-10 {
+  margin: 0 auto;
+}
+
+p {
+  margin: 0 auto;
+  max-width: 600px;
+  padding: 10px;
+}
+
 .navbar {
   margin-bottom: 5px;
 }
@@ -16,6 +38,9 @@
   margin: 20px 0 20px 0;
 }
 
+Form {
+  text-align: left;
+}
 .nav-link {
   text-align: right;
   border-bottom: 1px solid rgba(0,0,0,0);
@@ -34,8 +59,13 @@
 }
 
 .footerbar {
+  position: absolute;
+  left:0;
+  bottom:0;
+  right:0;
   border-top: 1px solid grey;
   display: table;
+  margin: 0 auto;
   height: 50px;
   width: 50%;
   text-align: center;
