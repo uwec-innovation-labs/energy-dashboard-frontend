@@ -27,7 +27,7 @@ class Export extends Component {
           date range. Data will export in a .CSV format that can be opened in
           Excel.
         </p>
-        <Form>
+        <Form action="javascript:void(0);">
           <Col md={4} xs={10}>
             <FormGroup>
               <Label className="formLabel" htmlFor="building">
