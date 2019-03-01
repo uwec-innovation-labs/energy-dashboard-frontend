@@ -12,7 +12,6 @@ const app = express();
 var data;
 readData.readData().then(function(result) {
   data = result;
-  console.log(data);
 });
 var fullData;
 readData.readFullData().then(function(result) {
@@ -25,7 +24,7 @@ readData.readBuildings().then(function(result) {
 
 var schema = buildSchema(`
     type Query { 
-        solar: [Solar],
+        solar(sort: String): [Solar],
         buildings: [Building],
         fullData: [Solar]
     }
@@ -52,7 +51,33 @@ var schema = buildSchema(`
     }
 `)
 
-var getSolar = () => {
+function sortSolarHigh(a, b) {
+  if (a.value > b.value) {
+    return -1;
+  } else if (b.value > a.value) {
+    return 1;
+  }
+  return 0;
+}
+
+function sortSolarLow(a, b) {
+  if (a.value > b.value) {
+    return 1;
+  } else if (b.value > a.value) {
+    return -1;
+  }
+  return 0;
+}
+
+var getSolar = (parent, args, context, info) => {
+  if (parent != null && parent.sort != null) {
+    //chronological is the default, since that's how the csv file is generated
+    if (parent.sort == "high") {
+      return data.sort(sortSolarHigh);     
+    } else if (parent.sort == "low") {
+      return data.sort(sortSolarLow);   
+    }
+  }
   return data;
 }
 
