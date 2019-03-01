@@ -7,18 +7,17 @@ import FooterBar from './FooterBar'
 class Home extends Component {
   render() {
     return (
-
       <div>
       <AppNav />
         <center>
           <h1> Energy Dashboard </h1>
-          <h4> A Powerful Dashboard for UWEC Energy Usage Visualization </h4>
+            <h4> A Powerful Dashboard for UWEC Energy Usage Visualization </h4>
         </center>
         <div className="graph">
-        <TestGraph></TestGraph>
+          <TestGraph></TestGraph>
         </div>
         <div>
-        <FooterBar />
+          <FooterBar />
         </div>
       </div>
     )

@@ -19,16 +19,16 @@
   width: 100%;
 }
 
-.col-md-3 {
+.col-md-4, .col-xs-10 {
   margin: 0 auto;
 }
 
 p {
   margin: 0 auto;
   max-width: 600px;
-  padding-top: 10px;
-  padding-bottom: 20px;
+  padding: 10px;
 }
+
 .navbar {
   margin-bottom: 5px;
 }
@@ -38,6 +38,9 @@ p {
   margin: 20px 0 20px 0;
 }
 
+Form {
+  text-align: left;
+}
 .nav-link {
   text-align: right;
   border-bottom: 1px solid rgba(0,0,0,0);

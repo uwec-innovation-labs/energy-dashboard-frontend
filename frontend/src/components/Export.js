@@ -8,7 +8,8 @@ import {
   Col,
   FormGroup,
   Label,
-  Input
+  Input,
+  Button
 } from "reactstrap";
 
 class Export extends Component {
@@ -16,7 +17,7 @@ class Export extends Component {
     return (
       <div class="export">
         <AppNav />
-          <Form>
+
               <h2>
                 Energy Dashboard Data Export
               </h2>
@@ -24,9 +25,10 @@ class Export extends Component {
                 Please specify the building you would like to export data from and
                 a date range. Data will export in a .CSV format that can be opened in Excel.
               </p>
-                <Label htmlFor="building">Building</Label>
-                  <Col md={3}>
+              <Form>
+                  <Col md={4} xs={10}>
                     <FormGroup>
+                    <Label className="formLabel" htmlFor="building">Building</Label>
                       <Input
                         type="select"
                         name="building"
@@ -37,7 +39,7 @@ class Export extends Component {
                       </Input>
                     </FormGroup>
                     <FormGroup>
-                      <Label htmlFor="startDate"> Start Date </Label>
+                      <Label className="formLabel" htmlFor="startDate"> Start Date </Label>
                         <Input
                           type="date"
                           name="startDate"
@@ -45,19 +47,22 @@ class Export extends Component {
                         />
                     </FormGroup>
                     <FormGroup>
-                      <Label htmlFor="endDate"> End Date </Label>
+                      <Label className="formLabel" htmlFor="endDate"> End Date </Label>
                         <Input
                           type="date"
                           name="endDate"
                           placeholder="01/01/2019"
                         />
                     </FormGroup>
+                    <FormGroup>
+                      <Label for="exampleFile">File Destination</Label>
+                       <Input type="file" name="file" id="exampleFile" />
+                    </FormGroup>
+                    <Button outline block color="primary" type="submit">
+                      Download
+                    </Button>
                   </Col>
               </Form>
-
-            <center>
-              <FooterBar />
-            </center>
         </div>
     )
   }
