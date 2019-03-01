@@ -21,7 +21,7 @@ readData.readFullData().then(function(result) {
 var buildings;
 readData.readBuildings().then(function(result) {
   buildings = result;
-})
+});
 
 var schema = buildSchema(`
     type Query { 
@@ -78,5 +78,10 @@ app.use(
     graphiql: true
   })
 )
+
+app.post('/download', function(req, res){
+  var file = "./tiny.csv";
+  res.download(file);
+});
 
 app.listen(4000, () => console.log('GraphQL is running on port 4000'))
