@@ -31,7 +31,6 @@ class Export extends Component {
     return (
       <div class="export">
         <AppNav />
-
               <h2>
                 Energy Dashboard Data Export
               </h2>
@@ -69,7 +68,7 @@ class Export extends Component {
                         />
                     </FormGroup>
                     <Button outline block color="primary" type="submit">
-                      <CSVLink data={csvData}>
+                      <CSVLink data={csvData} target="_blank">
                         Download
                       </CSVLink>
                     </Button>
