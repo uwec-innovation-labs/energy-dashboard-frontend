@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import '../styles/App.css'
 import FooterBar from './FooterBar'
 import AppNav from './AppNav'
-import { CSVLink, CSVDownload } from "react-csv";
+import { CSVLink } from "react-csv";
 import {
   Form,
   Col,
@@ -13,10 +13,17 @@ import {
 } from "reactstrap";
 
 const csvData = [
-  ["firstname", "lastname", "email"],
-  ["Ahmed", "Tomi", "ah@smthing.co.com"],
-  ["Raed", "Labes", "rl@smthing.co.com"],
-  ["Yezzi", "Min l3b", "ymin@cocococo.com"]
+  ["Timestamp", "Value (BTU)"],
+  ["31-Aug-16 1:00:00 PM CDT", "512849984.00 BTU"],
+  ["31-Aug-16 1:15:04 PM CDT", "512849984.00 BTU"],
+  ["31-Aug-16 1:30:04 PM CDT", "512849984.00 BTU"],
+  ["31-Aug-16 1:45:04 PM CDT", "512849984.00 BTU"],
+  ["31-Aug-16 2:00:04 PM CDT", "512889984.00 BTU"],
+  ["31-Aug-16 2:15:04 PM CDT", "512889984.00 BTU"],
+  ["31-Aug-16 2:30:04 PM CDT", "512889984.00 BTU"],
+  ["31-Aug-16 2:45:04 PM CDT", "512900000.00 BTU"],
+  ["31-Aug-16 3:00:04 PM CDT", "512960000.00 BTU"],
+  ["31-Aug-16 3:15:04 PM CDT", "512990016.00 BTU"]
 ];
 
 class Export extends Component {
@@ -61,15 +68,18 @@ class Export extends Component {
                           placeholder="01/01/2019"
                         />
                     </FormGroup>
-
                     <Button outline block color="primary" type="submit">
                       <CSVLink data={csvData}>
                         Download
                       </CSVLink>
                     </Button>
-
                   </Col>
               </Form>
+              <div>
+                <center>
+                  <FooterBar />
+                </center>
+              </div>
         </div>
     )
   }
