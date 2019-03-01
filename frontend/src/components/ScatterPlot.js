@@ -7,7 +7,7 @@ import '../styles/App.css'
 class ScatterPlot extends Component {
   componentDidMount() {
     var data = [];
-    var unitFound = "";
+    //var unitFound = "";
     Papa.parse(csv, {
       header: true,
       download: true,
@@ -26,7 +26,7 @@ class ScatterPlot extends Component {
           // Sets our value
           element.value = valueSplit[0]; // Returns just the value [X Value]
           // Sets our unit (Currently not doing anything with this Unit)
-          unitFound = valueSplit[1];
+          //unitFound = valueSplit[1];
 
           // This pushes our data in the format of a JSON object
           data.push({x: timeParser(date), y: element.value});
