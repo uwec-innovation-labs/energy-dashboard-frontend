@@ -48,6 +48,11 @@ p {
 Form {
   text-align: left;
 }
+
+.btn {
+  width: 100%;
+}
+
 .nav-link {
   text-align: right;
   border-bottom: 1px solid rgba(0,0,0,0);

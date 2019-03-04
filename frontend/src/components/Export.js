@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import '../styles/App.css'
 import { CSVLink } from 'react-csv'
-import { Form, Col, FormGroup, Label, Input, Button } from 'reactstrap'
+import { Form, Col, FormGroup, Label, Input } from 'reactstrap'
 
 const csvData = [
   ['Timestamp', 'Value (BTU)'],
@@ -59,10 +59,8 @@ class Export extends Component {
               </Label>
               <Input type="date" name="endDate" placeholder="01/01/2019" />
             </FormGroup>
-            <CSVLink filename="mock_data.csv" data={csvData} target="_blank">
-              <Button outline block color="primary" type="submit">
-                Download
-              </Button>
+            <CSVLink className="btn btn-outline-primary" filename="mock_data.csv" data={csvData}>
+            Download
             </CSVLink>
           </Col>
         </Form>
