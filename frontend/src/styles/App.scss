@@ -31,6 +31,12 @@ p {
   padding: 10px;
 }
 
+ol {
+  margin: 0 auto;
+  max-width: 550px;
+  padding: 10px;
+}
+
 .navbar {
   margin-bottom: 5px;
 }
@@ -43,11 +49,6 @@ p {
 Form {
   text-align: left;
 }
-
-.btn {
-  width: 100%;
-}
-
 .nav-link {
   text-align: right;
   border-bottom: 1px solid rgba(0,0,0,0);
@@ -66,7 +67,6 @@ Form {
 }
 
 .footerbar {
-  position: absolute;
   left:0;
   bottom:0;
   right:0;
