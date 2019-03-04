@@ -1,7 +1,7 @@
 import React, {
   Component
 } from 'react';
-import '../styles/App.css';
+import '../styles/App.scss'
 
 import csv from '../media/tiny.csv';
 import * as d3 from 'd3';

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import '../styles/App.css'
+import '../styles/App.scss'
 import ScatterPlot from './ScatterPlot'
 
 class Home extends Component {

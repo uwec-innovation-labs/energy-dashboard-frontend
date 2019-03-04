@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import * as d3 from 'd3'
 import csv from '../media/big.csv'
 import Papa from 'papaparse'
-import '../styles/App.css'
+import '../styles/App.scss'
 
 class ScatterPlot extends Component {
   componentDidMount() {
@@ -71,10 +71,10 @@ class ScatterPlot extends Component {
 
         //Appends circles for each data point binded
         points.enter().append("circle")
+          .attr("class", "plotPoint")
           .attr("cx", function(d){ return x(d.x) })
           .attr("cy", function(d){ return y(d.y) })
           .attr("r", 1)
-          .attr("fill", "var(--graph-primary-color)");
 
         // Setting the x-axis
         svg.append("g")
