@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
-import './styles/App.css'
+import './styles/App.scss'
 import Home from './components/Home'
 import Export from './components/Export'
 import Layout from './components/Layout'

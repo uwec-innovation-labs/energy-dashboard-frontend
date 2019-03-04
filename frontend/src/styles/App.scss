@@ -1,13 +1,8 @@
-:root {
-  --primary-color: green;
-  --secondary-color: white;
-  --tertiary-color: grey;
-  --graph-primary-color: red;
-}
+@import './components/colors.scss';
 
 .graphBars {
   font: 14px sans-serif;
-  background-color: var(--primary-color);
+  background-color: $primary-color;
   text-align: right;
   padding: 10px;
   margin: 1px;
@@ -54,8 +49,8 @@ Form {
 }
 
 .nav-link:hover {
-  color: var(--primary-color) !important;
-  border-bottom: 1px solid var(--tertiary-color);
+  color: $primary-color !important;
+  border-bottom: 1px solid $tertiary-color;
 }
 
 .img-responsive {
@@ -103,7 +98,7 @@ Form {
 }
 
 .footerbar a:hover {
-    color: var(--primary-color);
+    color: $primary-color;
     border-bottom: 1px solid black;
     text-decoration: none;
     transition: color .3s;
@@ -115,5 +110,5 @@ Form {
 }
 
 .plotPoint {
-  background-color: var(--graph-primary-color);
+  fill: $graph-color;
 }
