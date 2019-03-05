@@ -113,6 +113,11 @@ Form {
   width: 40%;
 }
 
+#scatterCard {
+  padding: 20px;
+  width: 100%;
+}
+
 .plotPoint {
   fill: $graph-color;
 }
