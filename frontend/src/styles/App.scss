@@ -109,9 +109,13 @@ Form {
     transition: color .3s;
 }
 
-.scatterPlotContainer {
-  width: 600px;
-  height: 600px;
+#scatterContainer {
+  width: 40%;
+}
+
+#scatterCard {
+  padding: 20px;
+  width: 100%;
 }
 
 .plotPoint {
