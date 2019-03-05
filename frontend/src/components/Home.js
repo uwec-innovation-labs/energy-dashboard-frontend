@@ -9,7 +9,9 @@ class Home extends Component {
         <center>
           <h1> Energy Dashboard </h1>
           <h4> A Powerful Dashboard for UWEC Energy Usage Visualization </h4>
-          <ScatterPlot/>
+          <div id="scatterContainer">
+            <ScatterPlot/>
+          </div>
         </center>
       </div>
     )

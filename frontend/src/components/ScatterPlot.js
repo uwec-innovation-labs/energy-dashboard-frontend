@@ -58,10 +58,12 @@ class ScatterPlot extends Component {
         // Appends our SVG Canvas and sets it to a variable for easy usage
         var svg = d3.select("div.scatterPlotContainer")
           .append("svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
+            .attr("width", '100%')
+            .attr("height", '100%')
+            .attr("preserveAspectRatio", "xMinYMin meet")
+            .attr("viewBox", "0 0 600 400")
             .append("g")
-              .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
         // Binds all of the data we parsed
         var points = svg

@@ -1,8 +1,28 @@
-@import './components/colors.scss';
+:root {
+  --primary-color: green;
+  --secondary-color: white;
+  --tertiary-color: grey;
+  --graph-primary-color: red;
+}
+
+:root {
+  height: 100%;
+}
+
+body {
+  height: 100%;
+}
+
+footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 20px;
+}
 
 .graphBars {
   font: 14px sans-serif;
-  background-color: $primary-color;
+  background-color: var(--primary-color);
   text-align: right;
   padding: 10px;
   margin: 1px;
@@ -31,12 +51,6 @@ p {
   padding: 10px;
 }
 
-ol {
-  margin: 0 auto;
-  max-width: 550px;
-  padding: 10px;
-}
-
 .navbar {
   margin-bottom: 5px;
 }
@@ -49,14 +63,19 @@ ol {
 Form {
   text-align: left;
 }
+
+.btn {
+  width: 100%;
+}
+
 .nav-link {
   text-align: right;
   border-bottom: 1px solid rgba(0,0,0,0);
 }
 
 .nav-link:hover {
-  color: $primary-color !important;
-  border-bottom: 1px solid $tertiary-color;
+  color: var(--primary-color) !important;
+  border-bottom: 1px solid var(--tertiary-color);
 }
 
 .img-responsive {
@@ -66,53 +85,18 @@ Form {
   max-width: 600px;
 }
 
-.footerbar {
-  left:0;
-  bottom:0;
-  right:0;
-  border-top: 1px solid grey;
-  display: table;
-  margin: 0 auto;
-  height: 50px;
-  width: 50%;
-  text-align: center;
-  font-size: 12px;
-  margin-bottom: 30px;
-  margin-top: 30px;
-}
-
-.footerbar-left {
-  padding-top: 30px;
-  text-align: left;
-  display: table-cell;
-}
-
-.footerbar-center {
-  text-align: center;
-  display: table-cell;
-}
-
-.footerbar-right {
-    text-align: right;
-    display: table-cell;
-}
-
-.footerbar a {
-  color: grey;
-  margin-left: 10px;
-}
-
 .footerbar a:hover {
-    color: $primary-color;
+    color: var(--primary-color);
     border-bottom: 1px solid black;
     text-decoration: none;
     transition: color .3s;
 }
 
-#scatterContainer {
-  width: 40%;
+.scatterPlotContainer {
+  width: 600px;
+  height: 600px;
 }
 
 .plotPoint {
-  fill: $graph-color;
+  background-color: var(--graph-primary-color);
 }
