@@ -4,10 +4,12 @@ const bodyParser = require('body-parser')
 const morgan = require('morgan')
 const cors = require('cors')
 const energyRoutes = require('./routes/energyRoutes.js')
+const sqlserver = require("./sqltest.js")
 
 //get data types (Query, Solar, Building, Date)
 var schema = require("./schema.js").energySchema;
 const app = express();
+sqlserver.testConnect();
 
 var global = {
   solar: energyRoutes.getSolar,
