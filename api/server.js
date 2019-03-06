@@ -24,7 +24,7 @@ readData.readBuildings().then(function(result) {
 
 var schema = buildSchema(`
     type Query { 
-        solar(sort: String): [Solar],
+        solar(sort: String, only:Int): [Solar],
         buildings: [Building],
         fullData: [Solar]
     }
@@ -70,15 +70,21 @@ function sortSolarLow(a, b) {
 }
 
 var getSolar = (parent, args, context, info) => {
-  if (parent != null && parent.sort != null) {
-    //chronological is the default, since that's how the csv file is generated
-    if (parent.sort == "high") {
-      return data.sort(sortSolarHigh);     
-    } else if (parent.sort == "low") {
-      return data.sort(sortSolarLow);   
+  var newData = data;
+  if (parent != null) {
+    if (parent.sort != null) {
+      //chronological is the default, since that's how the csv file is generated
+      if (parent.sort == "high") {
+        newData = newData.sort(sortSolarHigh);     
+      } else if (parent.sort == "low") {
+        newData = newData.sort(sortSolarLow);   
+      }
+    }
+    if (parent.only != null && Number.isInteger(parent.only)) {
+      newData = newData.slice(0, parent.only);
     }
   }
-  return data;
+  return newData;
 }
 
 var getBuildings = () => {
@@ -104,7 +110,7 @@ app.use(
   })
 )
 
-app.post('/download', function(req, res){
+app.get('/download', function(req, res){
   var file = "./tiny.csv";
   res.download(file);
 });
