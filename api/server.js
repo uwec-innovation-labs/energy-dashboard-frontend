@@ -1,16 +1,18 @@
 const express = require('express')
 const graphqlHTTP = require('express-graphql')
-var { buildSchema } = require('graphql')
 const bodyParser = require('body-parser')
 const morgan = require('morgan')
 const cors = require('cors')
-const readData = require("./readData.js")
-var GraphQLDate = require('graphql-date')
+const readData = require("./CSV/readData.js")
 
+//get data types (Query, Solar, Building, Date)
+var schema = require("./schema.js").energySchema;
 const app = express();
 
+//load in data
 var data;
 readData.readData().then(function(result) {
+  console.log("here " + result);
   data = result;
 });
 var fullData;
@@ -21,35 +23,6 @@ var buildings;
 readData.readBuildings().then(function(result) {
   buildings = result;
 });
-
-var schema = buildSchema(`
-    type Query { 
-        solar(sort: String, only:Int): [Solar],
-        buildings: [Building],
-        fullData: [Solar]
-    }
-
-    type Solar {
-        timestamp: Date
-        value: Int
-    }
-
-    type Building {
-      name: String
-    }
-
-    type Date {
-      year: Int,
-      month: Int,
-      day: Int,
-      hour: Int,
-      minute: Int,
-      second: Int,
-      date: String,
-      time: String,
-      dateTime: String
-    }
-`)
 
 function sortSolarHigh(a, b) {
   if (a.value > b.value) {

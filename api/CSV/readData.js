@@ -1,11 +1,13 @@
+//gets data from CVS files
+
 const csv=require('csvtojson');
 const converter=csv({
     noheader:true,
     trim:true,
 });
-const csvFilePath = './tiny.csv';
-const buildingPath = './buildings.csv';
-const fullDataPath = './DSC_Solar.csv';
+const csvFilePath = './CSV/tiny.csv';
+const buildingPath = './CSV/buildings.csv';
+const fullDataPath = './CSV/DSC_Solar.csv';
 
 async function readData() {
     let data = await csv({
