@@ -5,6 +5,20 @@ import Papa from 'papaparse'
 import '../styles/App.scss'
 
 class ScatterPlot extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      mindate: '',
+      maxdate: ''
+    }
+
+    this.handleChange = this.handleChange.bind(this);
+  }
+
+  handleChange(event) {
+    console.log("Event: " + event);
+  }
+
   componentDidMount() {
     var data = [];
     //var unitFound = "";
@@ -33,14 +47,15 @@ class ScatterPlot extends Component {
         });
 
         // Setting up Sizing Variables
-        var margin = {top: 30, right: 30, bottom: 100, left: 180 };
+        var margin = {top: 80, right: 30, bottom: 100, left: 150 };
         var width = 600 - margin.left - margin.right;
         var height = 400 - margin.top - margin.bottom;
 
         //Temporary Min and Max Dates (Can connect to some sort of date selection)
         // WE CURRENTLY NEED TO MANUALLY SET THIS IF WE CHANGE DATA
         // We will probably want buttons for this so users can choose a range of data
-        var mindate = new Date(2016,7,31), maxdate = new Date(2017,3,28);
+        var mindate = new Date(2016,7,31);
+        var maxdate = new Date(2017,3,28);
         // This is the Date Scale
         var x = d3.scaleTime()
           .domain([mindate, maxdate])
@@ -113,11 +128,20 @@ class ScatterPlot extends Component {
 
         // Label for the Y-Axis
         svg.append("text")
-        .attr("x", 0 - (margin.bottom / 2.0))
-        .attr("y", 0 - margin.bottom)
-        .style("text-anchor", "end")
-        .text("British Thermal Unit (BTU)")
-        .attr("transform", "rotate(-90)");
+          .attr("x", 0 - height / 2.0)
+          .attr("y", 0 - margin.bottom)
+          .style("text-anchor", "middle")
+          .text("British Thermal Unit (BTU)")
+          .attr("transform", "rotate(-90)");
+
+        // Title for the graph
+        svg.append("text")
+        .attr("x", 0 - margin.left + (width + margin.left + margin.right) / 2.0)
+        .attr("y", 0 - margin.top / 2.0)
+        .attr("font-size", 36)
+        .attr("text-decoration", "underline")
+        .style("text-anchor", "middle")
+        .text("Time vs. Total Yield");
       }
     });
   }
