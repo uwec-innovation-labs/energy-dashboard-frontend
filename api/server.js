@@ -3,18 +3,14 @@ const graphqlHTTP = require('express-graphql')
 const bodyParser = require('body-parser')
 const morgan = require('morgan')
 const cors = require('cors')
-const energyRoutes = require('./routes/energyRoutes.js')
-const sqlserver = require("./sqltest.js")
+const sqlData = require('./sqlData.js');
 
 //get data types (Query, Solar, Building, Date)
-var schema = require("./schema.js").energySchema;
+var schema = require("./sqlSchema.js").energySchema;
 const app = express();
-sqlserver.testConnect();
 
 var global = {
-  solar: energyRoutes.getSolar,
-  buildings: energyRoutes.getBuildings,
-  fullData: energyRoutes.getFullData
+  solar: sqlData.getSolar,
 }
 
 app.use(
@@ -27,7 +23,7 @@ app.use(
 )
 
 app.get('/download', function(req, res){
-  var file = "./tiny.csv";
+  var file = "./CSV/tiny.csv";
   res.download(file);
 });
 

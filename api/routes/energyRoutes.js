@@ -1,7 +1,7 @@
 const readData = require("./../CSV/readData.js")
 const sort = require("./sort.js")
 
-//load in data
+//load in data from csv files
 var data;
 readData.readData().then(function(result) {
   data = result;
