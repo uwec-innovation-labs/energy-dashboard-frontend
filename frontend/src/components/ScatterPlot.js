@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import * as d3 from 'd3'
-import csv from '../media/big.csv'
+import csv from '../media/solar_power.csv'
+import crossfilter from 'crossfilter'
 import Papa from 'papaparse'
 import '../styles/App.scss'
 
@@ -21,6 +22,7 @@ class ScatterPlot extends Component {
 
   componentDidMount() {
     var data = [];
+    var dataFilteredByYear = [];
     //var unitFound = "";
     Papa.parse(csv, {
       header: true,
@@ -29,22 +31,65 @@ class ScatterPlot extends Component {
       complete: function(results) {
         results.data.forEach(function(element) {
           // Splits the date up
-          var date = element.name.split(" ");
-          // Gets rid of the CDT from the back of the date as it breaks our parser
-          date = date[0] + " " + date[1] + " " + date[2];
+          if (element.TIMESTAMP == null) {
+            console.log("BAD");
+          }
+          var dates = element.TIMESTAMP.split(" ");
           // Setups up the expected date format (This is assuming it follows this specific format)
-          var timeParser = d3.timeParse("%d-%b-%y %I:%M:%S %p");
+          var timeParser = d3.timeParse("%y-%m-%d %H:%M:%S");
+  
+          var date = dates[0] + dates[1];
 
           // This seperates the value from the units (This assumes there is a unit given)
-          var valueSplit = element.value.split(" ");
+      //    var valueSplit = element.VALUE;
           // Sets our value
-          element.value = valueSplit[0]; // Returns just the value [X Value]
+        //  element.VALUE = valueSplit[0]; // Returns just the value [X Value]
           // Sets our unit (Currently not doing anything with this Unit)
           //unitFound = valueSplit[1];
-
           // This pushes our data in the format of a JSON object
-          data.push({x: timeParser(date), y: element.value});
+          data.push({TIMESTAMP: timeParser(date), VALUE: element.VALUE});
         });
+        console.log(data);
+      /* ---- DATA FILTERING ---- */
+        var filteredData = crossfilter(data);
+        /*
+        // Total Yield by Weekday
+        var dayOfWeekDimension = filteredData.dimension(d => {
+          console.log()
+          return d.TIMESTAMP.toString().split(" ")[0];
+        });
+        var t = dayOfWeekDimension.group().reduceSum(function(d) { return d.y; });
+        var aggregatedWeek = t.top(7);
+        console.log("Value: " + aggregatedWeek[0].value + " Key: " + aggregatedWeek[0].key);
+        console.log("Value: " + aggregatedWeek[1].value + " Key: " + aggregatedWeek[1].key);
+        console.log("Value: " + aggregatedWeek[2].value + " Key: " + aggregatedWeek[2].key);
+        console.log("Value: " + aggregatedWeek[3].value + " Key: " + aggregatedWeek[3].key);
+        console.log("Value: " + aggregatedWeek[4].value + " Key: " + aggregatedWeek[4].key);
+        console.log("Value: " + aggregatedWeek[5].value + " Key: " + aggregatedWeek[5].key);
+        console.log("Value: " + aggregatedWeek[6].value + " Key: " + aggregatedWeek[6].key);
+
+        // Total Yield of Data
+        var totalYield = filteredData.groupAll().reduceSum(function(d) { return d.VALUE; }).value();
+        console.log("Total Yield: " + totalYield);
+        */
+        // Yearly Yield Filter
+        var e = filteredData.dimension(function(d) {
+          //console.log(d.TIMESTAMP + " " + d.VALUE);
+          return d.TIMESTAMP.toString().split("-")[0];
+        })
+        var f = e.group().reduceSum(function(d) { return d.VALUE })
+        var yearlyYield = f.top(10);
+        var i = 0;
+
+
+        while(yearlyYield[i] != null) {
+          var newDate = new Date(yearlyYield[i].key, 0, 0);
+          //console.log(newDate);
+          dataFilteredByYear.push({year: newDate, total_yield: yearlyYield[i].value });
+          i++;
+        }
+        //console.log(dataFilteredByYear);
+      /* ---- DATA FILTERING END ---- */
 
         // Setting up Sizing Variables
         var margin = {top: 80, right: 30, bottom: 100, left: 150 };
@@ -54,8 +99,8 @@ class ScatterPlot extends Component {
         //Temporary Min and Max Dates (Can connect to some sort of date selection)
         // WE CURRENTLY NEED TO MANUALLY SET THIS IF WE CHANGE DATA
         // We will probably want buttons for this so users can choose a range of data
-        var mindate = new Date(2016,7,31);
-        var maxdate = new Date(2017,3,28);
+        var mindate = new Date(2015,0,0);
+        var maxdate = new Date(2018,0,0);
         // This is the Date Scale
         var x = d3.scaleTime()
           .domain([mindate, maxdate])
@@ -64,8 +109,8 @@ class ScatterPlot extends Component {
 
         // This is the Values Scale
         var y = d3.scaleLinear()
-          .domain([d3.min(data, function(d){ return d.y; }),
-              d3.max(data, function(d){ return d.y; })])
+          .domain([d3.min(dataFilteredByYear, function(d){ return d.total_yield; }),
+              d3.max(dataFilteredByYear, function(d){ return d.total_yield; })])
           // Pixel Range in Y Direction
           .range([height, 0]);
 
@@ -84,14 +129,15 @@ class ScatterPlot extends Component {
         var points = svg
           .selectAll("circles")
             .attr("class", "plotPoint")
-            .data(data);
+            .data(dataFilteredByYear);
 
         //Appends circles for each data point binded
         points.enter().append("circle")
           .attr("class", "plotPoint")
-          .attr("cx", function(d){ return x(d.x) })
-          .attr("cy", function(d){ return y(d.y) })
-          .attr("r", 1)
+          .attr("cx", function(d){ return x(d.year) })
+          .attr("cy", function(d){ return y(d.total_yield) })
+          .transition(5000)
+            .attr("r", 10);
 
         // Setting the x-axis
         svg.append("g")
@@ -99,9 +145,9 @@ class ScatterPlot extends Component {
           .attr("transform", "translate(0," + height + ")")
           .call(d3.axisBottom(x)
             // This is the Format of the Text
-            .tickFormat(d3.timeFormat("%Y-%m-%d"))
+            .tickFormat(d3.timeFormat("%Y")) //%Y-%m-%d
             // How many ticks to (We can play with this range)
-            .ticks(d3.timeMonth.every(1))
+            .ticks(d3.timeYear.every(1))
           )
           .selectAll("text")
             .style("text-anchor", "end")
