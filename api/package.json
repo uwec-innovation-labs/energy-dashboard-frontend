@@ -16,7 +16,9 @@
     "express": "^4.16.4",
     "express-graphql": "^0.7.1",
     "graphql": "^14.1.1",
-    "morgan": "^1.9.1"
+    "morgan": "^1.9.1",
+    "mssql": "^5.0.2",
+    "nodemon": "^1.18.10"
   },
   "prettier": {
     "tabWidth": 2,

@@ -6,23 +6,11 @@ var energySchema = buildSchema(`
     }
 
     type Solar {
-        timestamp: Date
+        timestamp: String
         value: Int
     }
-
-    type Date {
-        year: Int,
-        month: Int,
-        day: Int,
-        hour: Int,
-        minute: Int,
-        second: Int,
-        date: String,
-        time: String,
-        dateTime: String
-      }
 `)
 
 module.exports = {
-    "energySchema": energySchema
+  energySchema: energySchema
 }
