@@ -2,7 +2,7 @@ var { buildSchema } = require('graphql')
 
 var energySchema = buildSchema(`
     type Query { 
-        solar(sort: String, only:Int): [Solar]
+        solar(sort: String, only:Int, start:String, end:String): [Solar]
     }
 
     type Solar {

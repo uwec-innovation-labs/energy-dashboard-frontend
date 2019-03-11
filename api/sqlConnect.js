@@ -1,7 +1,7 @@
 const sql = require('mssql')
 require("dotenv").config()
 
-async function getSQLData(newQuery) {
+async function getSQLData(query, args) {
   try {
     console.log("Opening database connection...")
     sql.close();
@@ -9,9 +9,13 @@ async function getSQLData(newQuery) {
       .connect(
         'mssql://' + process.env.SQL_USER + ':' + process.env.SQL_PASS + '@' + process.env.SQL_SERVER + '/rdbmsdash'
       )
-      .then(status => {
-        //console.log(status)
-        let sqlData2 = sql.query(newQuery)
+      .then(pool => {
+        var request = pool.request();
+        //Loads in input parameters, if any
+        args.forEach(function(p) {
+          request = request.input(p.name, p.value);
+        });
+        let sqlData2 = request.query(query)
         .then(result => {
           console.log("Data received");
           return result.recordset;
