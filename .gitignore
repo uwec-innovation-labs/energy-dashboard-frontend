@@ -81,5 +81,3 @@ typings/
 
 # Build directory
 *build/
-
-*.csv
