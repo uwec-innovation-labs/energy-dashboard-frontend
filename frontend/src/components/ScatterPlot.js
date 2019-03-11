@@ -23,84 +23,50 @@ class ScatterPlot extends Component {
   componentDidMount() {
     var data = [];
     var dataFilteredByYear = [];
-    //var unitFound = "";
+
     Papa.parse(csv, {
       header: true,
       download: true,
       dynamicTyping: true,
       complete: function(results) {
         results.data.forEach(function(element) {
-          // Splits the date up
-          if (element.TIMESTAMP == null) {
-            console.log("BAD");
-          }
           var dates = element.TIMESTAMP.split(" ");
           // Setups up the expected date format (This is assuming it follows this specific format)
-          var timeParser = d3.timeParse("%y-%m-%d %H:%M:%S");
-  
-          var date = dates[0] + dates[1];
+          var timeParser = d3.timeParse("%Y-%m-%d %H:%M:%S");
 
-          // This seperates the value from the units (This assumes there is a unit given)
-      //    var valueSplit = element.VALUE;
-          // Sets our value
-        //  element.VALUE = valueSplit[0]; // Returns just the value [X Value]
-          // Sets our unit (Currently not doing anything with this Unit)
-          //unitFound = valueSplit[1];
-          // This pushes our data in the format of a JSON object
+          // Splits off unnessary data
+          var date = dates[0] + " " + dates[1];
+
           data.push({TIMESTAMP: timeParser(date), VALUE: element.VALUE});
         });
-        console.log(data);
-      /* ---- DATA FILTERING ---- */
+
+      /* -------- DATA FILTERING -------- */
+        // This is the data to be Filtered
         var filteredData = crossfilter(data);
-        /*
-        // Total Yield by Weekday
-        var dayOfWeekDimension = filteredData.dimension(d => {
-          console.log()
-          return d.TIMESTAMP.toString().split(" ")[0];
+
+        // Adding a dimension for the filter for "Year"
+        var yearlyDimension = filteredData.dimension(function(d) {
+          return d.TIMESTAMP.toString().split(" ")[3];
         });
-        var t = dayOfWeekDimension.group().reduceSum(function(d) { return d.y; });
-        var aggregatedWeek = t.top(7);
-        console.log("Value: " + aggregatedWeek[0].value + " Key: " + aggregatedWeek[0].key);
-        console.log("Value: " + aggregatedWeek[1].value + " Key: " + aggregatedWeek[1].key);
-        console.log("Value: " + aggregatedWeek[2].value + " Key: " + aggregatedWeek[2].key);
-        console.log("Value: " + aggregatedWeek[3].value + " Key: " + aggregatedWeek[3].key);
-        console.log("Value: " + aggregatedWeek[4].value + " Key: " + aggregatedWeek[4].key);
-        console.log("Value: " + aggregatedWeek[5].value + " Key: " + aggregatedWeek[5].key);
-        console.log("Value: " + aggregatedWeek[6].value + " Key: " + aggregatedWeek[6].key);
 
-        // Total Yield of Data
-        var totalYield = filteredData.groupAll().reduceSum(function(d) { return d.VALUE; }).value();
-        console.log("Total Yield: " + totalYield);
-        */
-        // Yearly Yield Filter
-        var e = filteredData.dimension(function(d) {
-          //console.log(d.TIMESTAMP + " " + d.VALUE);
-          return d.TIMESTAMP.toString().split("-")[0];
-        })
-        var f = e.group().reduceSum(function(d) { return d.VALUE })
-        var yearlyYield = f.top(10);
-        var i = 0;
+        // Groups the data by the filter then sums up the yields for each year
+        var yearlyYield = yearlyDimension.group().reduceSum(function(d) { return d.VALUE }).top(Infinity);
 
-
-        while(yearlyYield[i] != null) {
-          var newDate = new Date(yearlyYield[i].key, 0, 0);
-          //console.log(newDate);
-          dataFilteredByYear.push({year: newDate, total_yield: yearlyYield[i].value });
-          i++;
+        // Pushes the data found into a JSON object
+        for (let i = 0; i < yearlyYield.length; i++) {
+          dataFilteredByYear.push({year: new Date(yearlyYield[i].key, 0, 1), total_yield: yearlyYield[i].value });
         }
-        //console.log(dataFilteredByYear);
-      /* ---- DATA FILTERING END ---- */
+      /* -------- DATA FILTERING END -------- */
 
         // Setting up Sizing Variables
         var margin = {top: 80, right: 30, bottom: 100, left: 150 };
         var width = 600 - margin.left - margin.right;
         var height = 400 - margin.top - margin.bottom;
 
-        //Temporary Min and Max Dates (Can connect to some sort of date selection)
-        // WE CURRENTLY NEED TO MANUALLY SET THIS IF WE CHANGE DATA
-        // We will probably want buttons for this so users can choose a range of data
-        var mindate = new Date(2015,0,0);
-        var maxdate = new Date(2018,0,0);
+        // We have to manually set the dates right now
+        var mindate = new Date(2014,0,0);
+        var maxdate = new Date(2019,0,0);
+
         // This is the Date Scale
         var x = d3.scaleTime()
           .domain([mindate, maxdate])
@@ -113,7 +79,6 @@ class ScatterPlot extends Component {
               d3.max(dataFilteredByYear, function(d){ return d.total_yield; })])
           // Pixel Range in Y Direction
           .range([height, 0]);
-
 
         // Appends our SVG Canvas and sets it to a variable for easy usage
         var svg = d3.select("div.scatterPlotContainer")
@@ -134,10 +99,14 @@ class ScatterPlot extends Component {
         //Appends circles for each data point binded
         points.enter().append("circle")
           .attr("class", "plotPoint")
+          .attr("cy", height + 10)
           .attr("cx", function(d){ return x(d.year) })
-          .attr("cy", function(d){ return y(d.total_yield) })
-          .transition(5000)
-            .attr("r", 10);
+          .attr("opacity", 0)
+          .transition()
+            .duration(1500)
+            .attr("opacity", 1)
+            .attr("r", 10)
+            .attr("cy", function(d){ return y(d.total_yield) });
 
         // Setting the x-axis
         svg.append("g")
