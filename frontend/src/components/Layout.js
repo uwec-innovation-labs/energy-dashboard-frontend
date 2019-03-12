@@ -8,6 +8,7 @@ export default class Layout extends Component {
       <div>
         <AppNav />
         {this.props.children}
+        <FooterBar />
       </div>
     )
   }
