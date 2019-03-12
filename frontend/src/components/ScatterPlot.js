@@ -30,7 +30,6 @@ class ScatterPlot extends Component {
       dynamicTyping: true,
       complete: function(results) {
         results.data.forEach(function(element) {
-          console.log(element);
           var dates = element.TIMESTAMP.split(" ");
           // Setups up the expected date format (This is assuming it follows this specific format)
           var timeParser = d3.timeParse("%Y-%m-%d %H:%M:%S");
