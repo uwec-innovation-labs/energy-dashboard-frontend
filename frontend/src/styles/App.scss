@@ -161,6 +161,7 @@ Form {
 .scatterPlotContainer {
   float: center;
   display: inline-block;
+  overflow: auto;
   margin: 0 auto;
   width: 95%;
   height: 95%;
