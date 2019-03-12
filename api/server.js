@@ -1,31 +1,17 @@
 const express = require('express')
 const graphqlHTTP = require('express-graphql')
-var { buildSchema } = require('graphql')
 const bodyParser = require('body-parser')
 const morgan = require('morgan')
 const cors = require('cors')
+const sqlData = require('./sqlData.js')
 
+//get data types (Query, Solar, Building, Date)
+var schema = require('./sqlSchema.js').energySchema
 const app = express()
 
-var schema = buildSchema(`
-    type Query { 
-        solar: [Solar]
-    }
-
-    type Solar {
-        timestamp: String,
-        value: Int
-    }
-`)
-
-var getSolar = () => {
-  return [
-    { timestamp: 'hello', value: 130 },
-    { timestamp: 'there', value: 160 }
-  ]
+var global = {
+  solar: sqlData.getSolar
 }
-
-var global = { solar: getSolar }
 
 app.use(
   '/graphql',
@@ -35,5 +21,10 @@ app.use(
     graphiql: true
   })
 )
+
+app.get('/download', function(req, res) {
+  var file = './CSV/tiny.csv'
+  res.download(file)
+})
 
 app.listen(4000, () => console.log('GraphQL is running on port 4000'))
