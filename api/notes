@@ -1,0 +1,30 @@
+//HISTORY_CONFIG
+  //id, id_, historyname, source, sourcehandle, timezone, interval_, systemtags, valuefacets, table_name, db_timezone
+
+  //id, timestamp, trendflags, status, value, trendflags_tag, status_tag
+//var testTable = "SCHNEIDER_HALL_LIBSOLPOWER";
+//var testTable = "dbo.SCHNEIDER_HALL_LIBSOLKWH_NEW_TOTAL";
+  //won't work!
+//var testTable = "SCHNEIDER_HALL_LIBSOLDAILY_KWH";
+//var testTable = "SCHNEIDER_HALL_LIBSOLPOWER_KW";
+  //250+ but they all seem to be -1
+//var testTable = "SCHNEIDER_HALL_LIBSOLDAILYYIELD";
+  //2 negative values
+//var testTable = "SCHNEIDER_HALL_LIBSOLTOTALYIELD";
+//var testTable = "WRDAVIES_NC1_ENERGYRATE";
+//var testTable = "ED_BLDG_2ND_FL_JENE_CONDENSATEMETER_CONDYESTERDAY";
+//var testTable = "CHANCELLORS_CHANCELLORS_CONDMTR_CONDYESTERDAY";
+  //1 negative value
+//var testTable = "CREST_CWC_CONDENSATE_CONDYESTERDAY";
+//var testTable = "WRDAVIES_NC1_CONDENSATE_CONDYESTERDAY";
+  //1 negative value
+//var testTable = "UWEC_GOVERNORS_CONDYESTERDAY";
+  //1 negative value
+//var testTable = "UWEC_HORAN_CONDYESTERDAY";
+  //2 negative values
+//var testTable = "HIBBARD_CONDENSATE_CONDYESTERDAY";
+//var testTable = "HILLTOP_LL_MISC_CONDYESTERDAY";
+  //1 negative value
+//var testTable = "UWEC_HSS_CONDMTR_CONDYESTERDAY";
+//var testTable = "MCPHEE_NATATORIUM_CONDENSATE_CONDYESTERDAY"
+//var testTable = "UWEC_TOWERSSOUTH3RD_HWCONV_CONDYESTERDAY";
