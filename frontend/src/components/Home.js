@@ -1,21 +1,26 @@
 import React, { Component } from 'react'
 import '../styles/App.scss'
 import ScatterPlot from './ScatterPlot'
-import { Card } from 'reactstrap'
 
 class Home extends Component {
   render() {
     return (
-      <div>
-        <center>
-          <h1> Energy Dashboard </h1>
-          <h4> A Powerful Dashboard for UWEC Energy Usage Visualization </h4>
-          <div id="scatterContainer">
-            <Card id="scatterCard">
-              <ScatterPlot/>
-            </Card>
+      <div class="centered">
+        <div class="cards">
+          <div class="card">
+              <h4> Q1 </h4>
           </div>
-        </center>
+          <div class="card">
+              <h4> Q2 </h4>
+                <ScatterPlot graphName="graph1"/>
+          </div>
+          <div class="card">
+            <h4> Q3 </h4>
+          </div>
+          <div class="card">
+            <h4> Q4 </h4>
+          </div>
+        </div>
       </div>
     )
   }
