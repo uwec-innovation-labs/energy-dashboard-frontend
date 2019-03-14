@@ -6,19 +6,30 @@ class Home extends Component {
   render() {
     return (
       <div class="centered">
-        <div class="cards">
-          <div class="card">
-              <h4> Q1 </h4>
+      <div class="graphRow">
+      <div class='card' id="graphCard">
+        <ScatterPlot graphName="graph1"/>
+      </div>
+      <div class='card' id="graphControlsCard">
+        Something goes here
+      </div>
+      </div>
+        <div class="cards" id="statCards">
+          <div class="card" id="statCard">
+              <h5> Daily </h5>
+              <h4> --% </h4>
           </div>
-          <div class="card">
-              <h4> Q2 </h4>
-                <ScatterPlot graphName="graph1"/>
+          <div class="card" id="statCard">
+              <h5> Weekly </h5>
+              <h4> --% </h4>
           </div>
-          <div class="card">
-            <h4> Q3 </h4>
+          <div class="card" id="statCard">
+              <h5> Monthly </h5>
+              <h4> --% </h4>
           </div>
-          <div class="card">
-            <h4> Q4 </h4>
+          <div class="card" id="statCard">
+              <h5> Yearly </h5>
+              <h4> --% </h4>
           </div>
         </div>
       </div>

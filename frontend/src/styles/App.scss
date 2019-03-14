@@ -126,22 +126,94 @@ Form {
   fill: $graph-color;
 }
 
-.cards {
+.graphRow {
   width: 90vw;
-  margin: 10vh auto 0;
+  margin-left: auto;
+  margin-right: auto;
   margin-top: 0;
   display: flex;
   flex-flow: row wrap;
-  justify-content: center;
+  justify-content: space-between;
+}
+
+.cards {
+  width: 90vw;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 0;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
 }
 
 .card {
-  height: 30vw;
-  width: 40vw;
-  margin: 0.5em;
+  height: 10vw;
+  width: 20vw;
+  margin-top: 5vh;
   border: 3px solid #e7e7e7;
   border-radius: 4px;
   padding: 0.5em;
+}
+
+#statCard {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+}
+
+
+#graphCard {
+  width: 50vw;
+  height: 50vh;
+}
+
+#graphControlsCard {
+  width: 35vw;
+  height: 50vh;
+}
+
+@media screen and (max-width: 700px) {
+  .graphRow {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+@media screen and (max-width: 700px) {
+  #graphCard {
+    width: 90vw;
+    height: 40vh;
+  }
+}
+
+@media screen and (max-width: 700px) {
+  #graphControlsCard {
+    width: 90vw;
+    height: 40vh;
+  }
+}
+
+@media screen and (max-width: 700px) {
+  #statCard {
+    width: 40vw;
+    height: 25vw;
+  }
+}
+
+@media screen and (max-width: 800px) {
+  #statCards {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}
+
+.scatterPlotContainer {
+  display: inline-block;
+  position: relative;
+  overflow: auto;
+  width: 100%;
+  margin: 0 auto;
 }
 
 .card:hover {

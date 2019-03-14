@@ -58,9 +58,9 @@ class ScatterPlot extends Component {
         }
       /* -------- DATA FILTERING END -------- */
 
-        // Setting up Sizing Variables
-        var margin = {top: 80, right: 30, bottom: 100, left: 150 };
-        var width = 600 - margin.left - margin.right;
+      // Setting up Sizing Variables
+        var margin = {top: 80, right: 30, bottom: 50, left: 150 };
+        var width = 1000 - margin.left - margin.right;
         var height = 400 - margin.top - margin.bottom;
 
         // We have to manually set the dates right now
@@ -82,13 +82,13 @@ class ScatterPlot extends Component {
 
         // Appends our SVG Canvas and sets it to a variable for easy usage
         var svg = d3.select("div.scatterPlotContainer")
-          .append("svg")
-            .attr("width", '100%')
-            .attr("height", '100%')
-            .attr("preserveAspectRatio", "xMinYMin meet")
-            .attr("viewBox", "0 0 600 400")
-            .append("g")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        .append("svg")
+        .attr("width", '100%')
+        .attr("height", '100%')
+        .attr("preserveAspectRatio", "xMinYMin meet")
+        .attr("viewBox", "0 0 1000 400")
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
         // Binds all of the data we parsed
         var points = svg
