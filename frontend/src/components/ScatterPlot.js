@@ -9,9 +9,11 @@ class ScatterPlot extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      mindate: '',
-      maxdate: ''
+      mindate: new Date(2014,0,0),
+      maxdate: new Date(2019,0,0)
     }
+
+
 
     this.handleChange = this.handleChange.bind(this);
   }
@@ -23,6 +25,8 @@ class ScatterPlot extends Component {
   componentDidMount() {
     var data = [];
     var dataFilteredByYear = [];
+    var mindate = this.state.mindate;
+    var maxdate = this.state.maxdate;
 
     Papa.parse(csv, {
       header: true,
@@ -59,13 +63,9 @@ class ScatterPlot extends Component {
       /* -------- DATA FILTERING END -------- */
 
         // Setting up Sizing Variables
-        var margin = {top: 80, right: 30, bottom: 100, left: 150 };
+        var margin = {top: 80, right: 30, bottom: 30, left: 150 };
         var width = 600 - margin.left - margin.right;
         var height = 400 - margin.top - margin.bottom;
-
-        // We have to manually set the dates right now
-        var mindate = new Date(2014,0,0);
-        var maxdate = new Date(2019,0,0);
 
         // This is the Date Scale
         var x = d3.scaleTime()
@@ -119,10 +119,10 @@ class ScatterPlot extends Component {
             .ticks(d3.timeYear.every(1))
           )
           .selectAll("text")
-            .style("text-anchor", "end")
-            .attr("dx", "-12.8")
-            .attr("dy", "2.4")
-            .attr("transform", "rotate(-65)");
+            .style("text-anchor", "middle")
+            .attr("dx", "0")
+            .attr("dy", "5");
+            //.attr("transform", "rotate(-65)");
 
         // Setting up the y-axis
         svg.append("g")
@@ -134,17 +134,19 @@ class ScatterPlot extends Component {
           .selectAll("text")
             .style("text-anchor", "end");
 
+        /* Getting Rid of this for now
         // Label for the X-axis
         svg.append("text")
           .attr("x", width / 2.0)
           .attr("y", height + margin.bottom)
           .style("text-anchor", "middle")
           .text("Date")
+        */
 
         // Label for the Y-Axis
         svg.append("text")
           .attr("x", 0 - height / 2.0)
-          .attr("y", 0 - margin.bottom)
+          .attr("y", 0 - margin.bottom - 50)
           .style("text-anchor", "middle")
           .text("British Thermal Unit (BTU)")
           .attr("transform", "rotate(-90)");
