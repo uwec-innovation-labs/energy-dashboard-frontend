@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import '../styles/App.scss'
+import '../styles/App.css'
 import logo from '../media/cwllogo.png'
 
 class Dashboard extends Component {

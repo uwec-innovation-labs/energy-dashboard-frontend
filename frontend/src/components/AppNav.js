@@ -1,6 +1,5 @@
 import React from 'react'
-import { Collapse, Navbar, NavbarToggler, NavbarBrand, Nav, NavLink, NavItem } from 'reactstrap'
-import '../styles/App.scss';
+import { Collapse, Navbar, NavbarToggler, NavbarBrand, Nav } from 'reactstrap'
 
 class AppNav extends React.Component {
   constructor(props) {
@@ -23,20 +22,7 @@ class AppNav extends React.Component {
           <NavbarBrand href="/">Energy Dashboard</NavbarBrand>
           <NavbarToggler onClick={this.toggle} />
           <Collapse isOpen={this.state.isOpen} navbar>
-            <Nav className="ml-auto" navbar>
-              <NavItem>
-                <NavLink href="/">Explore</NavLink>
-              </NavItem>
-              <NavItem>
-                <NavLink href="/export">Export</NavLink>
-              </NavItem>
-              <NavItem>
-                <NavLink href="/about">About</NavLink>
-              </NavItem>
-              <NavItem>
-                <NavLink href="/github">GitHub</NavLink>
-              </NavItem>
-            </Nav>
+            <Nav className="ml-auto" navbar />
           </Collapse>
         </Navbar>
       </div>

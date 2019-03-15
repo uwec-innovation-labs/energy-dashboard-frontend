@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import '../styles/App.scss'
+import '../styles/App.css'
 
 class Widget extends Component {
     render() {

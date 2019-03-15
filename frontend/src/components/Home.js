@@ -1,27 +1,14 @@
 import React, { Component } from 'react'
-import '../styles/App.scss'
-import ScatterPlot from './ScatterPlot'
+import '../styles/App.css'
+import TestGraph from './TestGraph'
 
 class Home extends Component {
   render() {
     return (
-      <div class="centered">
-        <div class="cards">
-          <div class="card">
-              <h4> Q1 </h4>
-          </div>
-          <div class="card">
-              <h4> Q2 </h4>
-                <ScatterPlot graphName="graph1"/>
-          </div>
-          <div class="card">
-            <h4> Q3 </h4>
-          </div>
-          <div class="card">
-            <h4> Q4 </h4>
-          </div>
-        </div>
+      <div>
+        <TestGraph><div className="graphContainer"></div></TestGraph>
       </div>
+
     )
   }
 }
