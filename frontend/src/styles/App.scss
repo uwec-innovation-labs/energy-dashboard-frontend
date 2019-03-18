@@ -8,10 +8,28 @@
   margin: 1px;
   color: white;
 }
-
+.plotPoint {
+  fill: $graph-color;
+  stroke: white;
+  stroke-width: 3px;
+}
+.line {
+  fill: none;
+  stroke-width: 3px;
+  stroke: $line-color;
+}
 .export {
   margin: 0 auto;
   text-align: center;
+}
+
+.spinner {
+  padding: 50px;
+  margin-top: 20%;
+}
+// For the spinner
+.text-success {
+    color: $line-color !important;
 }
 
 .btn {
@@ -122,9 +140,7 @@ Form {
   width: 100%;
 }
 
-.plotPoint {
-  fill: $graph-color;
-}
+
 
 .cards {
   width: 90vw;
