@@ -35,11 +35,11 @@ class Home extends Component {
         {statCards.map((statCard, i) => (
         <div class="card" id="statCard" key={i}>
           <div class="card-content">
-            <h5> {statCards.interval} </h5>
-            <h4> {statCards.label} </h4>
+            <h5> {statCard.interval} </h5>
+            <h4> {statCard.label} </h4>
           </div>
         </div>
-      )}
+      ))}
     </div>
     );
   }
@@ -59,7 +59,6 @@ class Home extends Component {
           {this.renderStats(this.state.stats)}
         </div>
       </div>
-
     )
   }
 }
