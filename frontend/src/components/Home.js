@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component, Fragment } from 'react'
 import '../styles/App.scss'
 import ScatterPlot from './ScatterPlot'
 
@@ -6,6 +6,7 @@ class Home extends Component {
 
   constructor(props){
     super(props);
+    this.renderStats = this.renderStats.bind(this);
     this.state = {
       stats: [
           {
@@ -28,44 +29,37 @@ class Home extends Component {
       };
     }
 
+  renderStats(statCards) {
+    return (
+      <div>
+        {statCards.map((statCard, i) => (
+        <div class="card" id="statCard" key={i}>
+          <div class="card-content">
+            <h5> {statCards.interval} </h5>
+            <h4> {statCards.label} </h4>
+          </div>
+        </div>
+      )}
+    </div>
+    );
+  }
+
   render() {
     return (
       <div class="centered">
-      <div class="graphRow">
-      <div class='card' id="graphCard">
-        <ScatterPlot graphName="graph1"/>
-      </div>
-      <div class='card' id="graphControlsCard">
-        Something goes here
-      </div>
-      </div>
-        <div class="cards" id="statCards">
-          <div class="card" id="statCard">
-            <div class="card-content">
-              <h5> Daily </h5>
-              <h4> --% </h4>
-            </div>
+        <div class="graphRow">
+          <div class='card' id="graphCard">
+            <ScatterPlot graphName="graph1"/>
           </div>
-          <div class="card" id="statCard">
-            <div class="card-content">
-              <h5> Weekly </h5>
-              <h4> --% </h4>
-            </div>
-          </div>
-          <div class="card" id="statCard">
-            <div class="card-content">
-              <h5> Monthly </h5>
-              <h4> --% </h4>
-            </div>
-          </div>
-          <div class="card" id="statCard">
-            <div class="card-content">
-              <h5> Yearly </h5>
-              <h4> --% </h4>
-            </div>
+          <div class='card' id="graphControlsCard">
+            Something goes here
           </div>
         </div>
+        <div class="cards" id="statCards">
+          {this.renderStats(this.state.stats)}
+        </div>
       </div>
+
     )
   }
 }
