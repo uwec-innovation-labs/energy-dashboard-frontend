@@ -155,12 +155,19 @@ Form {
   padding: 0.5em;
 }
 
+.card-content {
+  text-align: center;
+  position: absolute;
+  top: 50%;
+  margin-top: -2em;
+
+}
+
 #statCard {
   align-items: center;
   display: flex;
   flex-direction: column;
 }
-
 
 #graphCard {
   width: 50vw;

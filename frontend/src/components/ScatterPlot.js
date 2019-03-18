@@ -71,21 +71,23 @@ class ScatterPlot extends Component {
         var x = d3.scaleTime()
           .domain([mindate, maxdate])
           // Pixel Range in X Direction
-          .range([0, width]);
+          .range([0, width])
+          .nice();
 
         // This is the Values Scale
         var y = d3.scaleLinear()
           .domain([d3.min(dataFilteredByYear, function(d){ return d.total_yield; }),
               d3.max(dataFilteredByYear, function(d){ return d.total_yield; })])
           // Pixel Range in Y Direction
-          .range([height, 0]);
+          .range([height, 0])
+          .nice();
 
         // Appends our SVG Canvas and sets it to a variable for easy usage
         var svg = d3.select("div.scatterPlotContainer")
         .append("svg")
         .attr("width", '100%')
         .attr("height", '100%')
-        .attr("preserveAspectRatio", "xMinYMin meet")
+
         .attr("viewBox", "0 0 1000 400")
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");

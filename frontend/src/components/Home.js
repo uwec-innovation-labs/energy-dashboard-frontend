@@ -16,20 +16,28 @@ class Home extends Component {
       </div>
         <div class="cards" id="statCards">
           <div class="card" id="statCard">
+            <div class="card-content">
               <h5> Daily </h5>
               <h4> --% </h4>
+            </div>
           </div>
           <div class="card" id="statCard">
+            <div class="card-content">
               <h5> Weekly </h5>
               <h4> --% </h4>
+            </div>
           </div>
           <div class="card" id="statCard">
+            <div class="card-content">
               <h5> Monthly </h5>
               <h4> --% </h4>
+            </div>
           </div>
           <div class="card" id="statCard">
+            <div class="card-content">
               <h5> Yearly </h5>
               <h4> --% </h4>
+            </div>
           </div>
         </div>
       </div>
