@@ -3,6 +3,31 @@ import '../styles/App.scss'
 import ScatterPlot from './ScatterPlot'
 
 class Home extends Component {
+
+  constructor(props){
+    super(props);
+    this.state = {
+      stats: [
+          {
+            interval: "Daily",
+            label: "--%"
+          },
+          {
+            interval: "Weekly",
+            label: "--%"
+          },
+          {
+            interval: "Monthly",
+            label: "--%"
+          },
+          {
+            interval: "Yearly",
+            label: "--%"
+          }
+        ]
+      };
+    }
+
   render() {
     return (
       <div class="centered">
