@@ -117,7 +117,7 @@ class ScatterPlot extends Component {
       var valueline = d3.line()
         .x(function(d) { return x(d.year); })
         .y(function(d) { return y(d.total_yield); })
-        .curve(d3.curveNatural);
+        .curve(d3.curveLinear);
 
         // Appends our SVG Canvas and sets it to a variable for easy usage
           var svg = d3.select("div.scatterPlotContainer")
@@ -278,6 +278,9 @@ class ScatterPlot extends Component {
     )
   }
 }
+
+
+
 /* Button Navigation
 <div>
   <ButtonGroup>
