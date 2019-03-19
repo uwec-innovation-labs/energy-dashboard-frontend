@@ -59,8 +59,12 @@ class Export extends Component {
               </Label>
               <Input type="date" name="endDate" placeholder="01/01/2019" />
             </FormGroup>
-            <CSVLink className="btn btn-outline-primary" filename="mock_data.csv" data={csvData}>
-            Download
+            <CSVLink
+              className="btn btn-outline-primary"
+              filename="mock_data.csv"
+              data={csvData}
+            >
+              Download
             </CSVLink>
           </Col>
         </Form>

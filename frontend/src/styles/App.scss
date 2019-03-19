@@ -18,7 +18,7 @@
   width: 100%;
 }
 
-.container  {
+.container {
   padding-top: 50px;
   text-align: center;
   margin: 0 auto;
@@ -33,14 +33,16 @@
 
 .spinner {
   padding: 50px;
-  position: relative;
-}
-// For the spinner
-.text-success {
-    color: $line-color !important;
+  margin: auto 0;
 }
 
-.col-md-4, .col-xs-10 {
+// For the spinner
+.text-success {
+  color: $line-color !important;
+}
+
+.col-md-4,
+.col-xs-10 {
   margin: 0 auto;
 }
 
@@ -65,12 +67,12 @@ ol {
   margin: 20px 0 20px 0;
 }
 
-Form {
+form {
   text-align: left;
 }
 .nav-link {
   text-align: right;
-  border-bottom: 1px solid rgba(0,0,0,0);
+  border-bottom: 1px solid rgba(0, 0, 0, 0);
 }
 
 .nav-link:hover {
@@ -86,9 +88,9 @@ Form {
 }
 
 .footerbar {
-  left:0;
-  bottom:0;
-  right:0;
+  left: 0;
+  bottom: 0;
+  right: 0;
   border-top: 1px solid grey;
   display: table;
   margin: 0 auto;
@@ -112,8 +114,8 @@ Form {
 }
 
 .footerbar-right {
-    text-align: right;
-    display: table-cell;
+  text-align: right;
+  display: table-cell;
 }
 
 .footerbar a {
@@ -122,10 +124,10 @@ Form {
 }
 
 .footerbar a:hover {
-    color: $primary-color;
-    border-bottom: 1px solid black;
-    text-decoration: none;
-    transition: color .3s;
+  color: $primary-color;
+  border-bottom: 1px solid black;
+  text-decoration: none;
+  transition: color 0.3s;
 }
 
 #scatterContainer {
@@ -139,6 +141,8 @@ Form {
 
 .plotPoint {
   fill: $graph-color;
+  stroke: white;
+  stroke-width: 3px;
 }
 
 .graphRow {
@@ -184,7 +188,6 @@ Form {
   top: 50%;
   margin-top: -2em;
 }
-
 
 #statCard {
   align-items: center;
@@ -251,7 +254,6 @@ Form {
 }
 
 .card:hover {
-  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
   transform: translateY(-4px);
-
 }
