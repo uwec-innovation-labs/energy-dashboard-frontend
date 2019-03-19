@@ -25,6 +25,21 @@
   width: 100%;
 }
 
+.line {
+  fill: none;
+  stroke-width: 3px;
+  stroke: $line-color;
+}
+
+.spinner {
+  padding: 50px;
+  position: relative;
+}
+// For the spinner
+.text-success {
+    color: $line-color !important;
+}
+
 .col-md-4, .col-xs-10 {
   margin: 0 auto;
 }
@@ -234,5 +249,5 @@ Form {
 .card:hover {
   box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
   transform: translateY(-4px);
-  
+
 }
