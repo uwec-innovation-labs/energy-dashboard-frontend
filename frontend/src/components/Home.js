@@ -31,7 +31,7 @@ class Home extends Component {
 
   renderStats(statCards) {
     return (
-      <div>
+      <div id="stats-container">
         {statCards.map((statCard, i) => (
         <div class="card" id="statCard" key={i}>
           <div class="card-content">

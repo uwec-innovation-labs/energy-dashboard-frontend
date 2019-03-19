@@ -146,6 +146,13 @@ Form {
   justify-content: space-between;
 }
 
+#stats-container {
+  width: 100%;
+  display: inherit;
+  flex-flow: row wrap;
+  justify-content: space-between;
+}
+
 .card {
   height: 10vw;
   width: 20vw;
@@ -161,6 +168,7 @@ Form {
   top: 50%;
   margin-top: -2em;
 }
+
 
 #statCard {
   align-items: center;
