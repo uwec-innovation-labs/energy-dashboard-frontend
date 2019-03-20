@@ -19,6 +19,14 @@ async function getHistoryConfig(parent, args , context, info) {
 
 async function master(parent, args, context, info) {
   var building = context.fieldName;
+  if (parent.percentChange != null) {
+    parent.only = 2
+    parent.average = parent.percentChange;
+    parent.sort = "timestamp high";
+    parent.start = null;
+    parent.end = null;
+    parent.baseIndex = null;
+  } 
   if (parent.average != null) {
     return average(parent, building);
   } else {
@@ -38,9 +46,9 @@ async function average(parent, building) {
     avgQuery = "SELECT DATEPART(year, TIMESTAMP) as year, ";
     if (parent.average != "year") {
       avgQuery += "DATEPART(month, TIMESTAMP) as month, ";
-    }
-    if (parent.average != "month") {
-      avgQuery += "DATEPART(dayofyear, TIMESTAMP) as day, DATEPART(day, TIMESTAMP) as date, "
+      if (parent.average != "month") {
+        avgQuery += "DATEPART(dayofyear, TIMESTAMP) as day, DATEPART(day, TIMESTAMP) as date, "
+      }
     }
     avgQuery += "AVG(VALUE) as value FROM ";
 
@@ -49,9 +57,9 @@ async function average(parent, building) {
     avgQuery += " GROUP BY DATEPART(year, TIMESTAMP)";
     if (parent.average != "year") {
       avgQuery += ", DATEPART(month, TIMESTAMP)";
-    }
-    if (parent.average != "month") {
-      avgQuery += ", DATEPART(dayofyear, TIMESTAMP), DATEPART(day, TIMESTAMP)"
+      if (parent.average != "month") {
+        avgQuery += ", DATEPART(dayofyear, TIMESTAMP), DATEPART(day, TIMESTAMP)"
+      }
     }
   }
 
@@ -89,16 +97,23 @@ async function average(parent, building) {
 
   console.log(avgQuery);
   let returnData = await sqlserver.getSQLData(avgQuery, parameters);
-  returnData.forEach(function(data) {
-    data.timestamp = {
-      year: data.year,
-      month: data.month,
-      day: data.day,
-      date: data.date,
-      week: data.week
-    }
-  });
-  return returnData;
+  if (parent.percentChange != null) {
+    var currentValue = returnData[0].value;
+    var pastValue = returnData[1].value;
+    var changeValue = (currentValue / pastValue * 100) - 100;
+    return [{value: changeValue}];
+  } else {
+    returnData.forEach(function(data) {
+      data.timestamp = {
+        year: data.year,
+        month: data.month,
+        day: data.day,
+        date: data.date,
+        week: data.week
+      }
+    });
+    return returnData;
+  }
 }
 
 async function getTables(parent, args, context, info) {
