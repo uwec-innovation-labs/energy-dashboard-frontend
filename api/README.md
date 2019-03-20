@@ -46,3 +46,23 @@ QUERY PARAMETERS
    our database is constantly getting new tables, or in other words, new building/datatype combinations.
    currently, not all buildings have all dataTypes, and it's pretty arbitrary which have which.
    as of March 13 2019, the current building/dataType pairings can be found in 'current_tables.ods'
+
+HISTORY QUERY
+  the 'history_config' table on the sql database is the only one that does not contain energy usage data--rather, it lists data about the other tables.
+  a query getting all of the records/fields from the history_config table would look like this:  
+    
+    query {
+      history {
+        ID
+        ID_
+        HISTORYNAME
+        SOURCE
+        SOURCEHANDLE
+        TIMEZONE
+        INTERVAL_
+        SYSTEMTAGS
+        VALUEFACETS
+        TABLE_NAME
+        DB_TIMEZONE
+      }
+    }

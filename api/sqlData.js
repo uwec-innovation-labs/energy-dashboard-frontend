@@ -1,14 +1,14 @@
-const sort = require("./routes/sort.js")
 const sqlserver = require("./sqlConnect.js")
 const sql = require('mssql')
 
 var whereClauses;
 var parameters;
 
-async function test(parent, args , context, info) {
-  var newQuery = 'SELECT * FROM ' + testTable + ' WHERE VALUE < 0';
+async function test() {
+  var newQuery = 'SELECT TOP 10 * FROM dbo.UWEC_HSS_CONDMTR_CONDYESTERDAY';
   let returnData = await sqlserver.getSQLData(newQuery, []);
-  console.log(returnData);
+  return returnData;
+
 }
 
 async function getHistoryConfig(parent, args , context, info) {

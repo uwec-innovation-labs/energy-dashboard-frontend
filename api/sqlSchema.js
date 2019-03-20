@@ -33,6 +33,7 @@ var energySchema = buildSchema(`
         Thomas(dataType:String!, average:String, sort:String, only:Int, start:String, end:String): [timeValue]
         Zorn(dataType:String!, average:String, sort:String, only:Int, start:String, end:String): [timeValue]
         tables:[String]
+        history:[History]
         test:String
     }
 
@@ -51,6 +52,20 @@ var energySchema = buildSchema(`
         date: String,
         time: String,
         dateTime: String
+      }
+
+      type History {
+          ID: String,
+          ID_: String,
+          HISTORYNAME: String,
+          SOURCE: String,
+          SOURCEHANDLE: String,
+          TIMEZONE: String,
+          INTERVAL_: String,
+          SYSTEMTAGS: String,
+          VALUEFACETS: String,
+          TABLE_NAME: String,
+          DB_TIMEZONE: String
       }
 `)
 
