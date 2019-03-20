@@ -8,25 +8,7 @@ import { Spinner } from 'reactstrap'
 
 
 const axios = require("axios")
-axios({
-  url: 'http://localhost:4000/graphql',
-  method: 'post',
-  data: {
-    query: `
-    query {
-      Davies(dataType: "energy", only: 5, sort: "timestamp high") {
-        timestamp {
-          year
-          dateTime
-        }
-        value
-      }
-    }
-      `
-  }
-}).then((result) => {
-  console.log(result.data)
-});
+
 
 
 class ScatterPlot extends Component {
@@ -54,68 +36,31 @@ class ScatterPlot extends Component {
 
   componentDidMount() {
     this.setState({ mounted: true })
-    Papa.parse(csv, {
-      header: true,
-      download: true,
-      dynamicTyping: true,
-      complete: this.updateGraph
-    })
+    axios({
+      url: 'http://localhost:4000/graphql',
+      method: 'post',
+      data: {
+        query: `
+        query {
+          Davies(dataType: "energy", only: 5, sort: "timestamp high") {
+            timestamp {
+              dateTime
+            }
+            value
+          }
+        }
+          `
+      }
+    }).then((result) => {
+      this.updateGraph(result.data)
+    });
   }
 
+  
+
   updateGraph(results) {
-    var data = []
-    var dataFilteredByYear = []
-    results.data.forEach(function(element) {
-      var dates = element.TIMESTAMP.split(' ')
-      // Setups up the expected date format (This is assuming it follows this specific format)
-      var timeParser = d3.timeParse('%Y-%m-%d %H:%M:%S')
 
-      // Splits off unnessary data
-      var date = dates[0] + ' ' + dates[1]
-
-      data.push({ TIMESTAMP: timeParser(date), VALUE: element.VALUE })
-    })
-
-    /* -------- DATA FILTERING -------- */
-    // This is the data to be Filtered
-    var filteredData = crossfilter(data)
-
-    // Adding a dimension for the filter for "Year"
-    var yearlyDimension = filteredData.dimension(function(d) {
-      return d.TIMESTAMP.toString().split(' ')[3]
-    })
-
-    //var orderByYearDimension = filteredData.dimension(function(d) { return d.TIMESTAMP.toString().split(" ")[3]; });
-
-    // Groups the data by the filter then sums up the yields for each year
-    var yearlyYield = yearlyDimension
-      .group()
-      .reduceSum(function(d) {
-        return d.VALUE
-      })
-      .top(Infinity)
-
-    var temp, tempz
-    for (let i = 0; i < yearlyYield.length - 1; i++) {
-      temp = i
-      for (let j = i + 1; j < yearlyYield.length; j++) {
-        if (yearlyYield[j].key < yearlyYield[temp].key) {
-          temp = j
-        }
-      }
-      tempz = yearlyYield[temp]
-      yearlyYield[temp] = yearlyYield[i]
-      yearlyYield[i] = tempz
-    }
-
-    // Pushes the data found into a JSON object
-    for (let i = 0; i < yearlyYield.length; i++) {
-      dataFilteredByYear.push({
-        year: new Date(yearlyYield[i].key, 0, 1),
-        total_yield: yearlyYield[i].value
-      })
-    }
-    /* -------- DATA FILTERING END -------- */
+    results = results.data.Davies
 
     // Setting up Sizing Variables
     var margin = { top: 80, right: 30, bottom: 50, left: 150 }
@@ -123,8 +68,8 @@ class ScatterPlot extends Component {
     var height = 400 - margin.top - margin.bottom
 
     // We have to manually set the dates right now
-    var mindate = new Date(2014, 0, 0)
-    var maxdate = new Date(2019, 0, 0)
+    var mindate = new Date(2019, 20, 3)
+    var maxdate = new Date(2019, 21, 3)
 
     // This is a number used so the min and max aren't exactly data points
     // It gives the graph some breathing room. Its found in the y Scale
@@ -141,24 +86,27 @@ class ScatterPlot extends Component {
     var y = d3
       .scaleLinear()
       .domain([
-        d3.min(dataFilteredByYear, function(d) {
-          return d.total_yield - d.total_yield * percentGap
+        d3.min(results, function(d) {
+          return d.value - d.value * percentGap
         }),
-        d3.max(dataFilteredByYear, function(d) {
-          return d.total_yield + d.total_yield * percentGap
+        d3.max(results, function(d) {
+          return d.value + d.value * percentGap
         })
       ])
       // Pixel Range in Y Direction
       .range([height, 0])
 
+
+    console.log(results)
+
     // define the line
     var valueline = d3
       .line()
       .x(function(d) {
-        return x(d.year)
+        return x(d.timestamp.dateTime)
       })
       .y(function(d) {
-        return y(d.total_yield)
+        return y(d.value)
       })
       .curve(d3.curveLinear)
 
@@ -176,7 +124,7 @@ class ScatterPlot extends Component {
     // Add the valueline path.
     svg
       .append('path')
-      .data([dataFilteredByYear])
+      .data([results])
       .attr('class', 'line')
       .attr('d', valueline)
       .attr('opacity', 0)
@@ -189,7 +137,7 @@ class ScatterPlot extends Component {
     var points = svg
       .selectAll('circles')
       .attr('class', 'plotPoint')
-      .data(dataFilteredByYear)
+      .data(results)
 
     //Appends circles for each data point binded
     points
@@ -197,10 +145,10 @@ class ScatterPlot extends Component {
       .append('circle')
       .attr('class', 'plotPoint')
       .attr('cy', function(d) {
-        return y(d.total_yield)
+        return y(d.value)
       })
       .attr('cx', function(d) {
-        return x(d.year)
+        return x(d.timestamp.dateTime)
       })
       .attr('opacity', 0)
       .on('mouseover', function(d, i) {
@@ -216,7 +164,7 @@ class ScatterPlot extends Component {
           .attr('y', 0)
           .attr('font-size', 20)
           .style('text-anchor', 'end')
-          .text('[ ' + d.year + ' , ' + d.total_yield + ' ]')
+          .text('[ ' + d.timestamp.dateTime + ' , ' + d.value + ' ]')
       })
       .on('mouseout', function(d, i) {
         d3.select(this)
