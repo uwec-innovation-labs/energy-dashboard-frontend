@@ -40,6 +40,7 @@ QUERY PARAMETERS
       Davies(dataType:"energy",start:"01-01-2018",end:"01-01-2019") {...
     baseIndex: restricts records to those at or after the base index. can be used with 'only' to get 'pages' of data
       Davies(dataType:"energy", baseIndex:100, only:50) will retrieve records #100-#149
+    endIndex: counterpart of 'baseIndex'
     average: data can be averaged by day, week, month, or year. you probably want to use a sort parameter with this one since it won't be sorted by default
       be careful if you use it with start/end, since it'll only average the values that fall in that range for the month
       Davies(dataType:"energy",average:"month") {...
