@@ -21,13 +21,6 @@ axios({
         }
         value
       }
-      Library(dataType: "energy", only: 5, sort: "timestamp high") {
-        timestamp {
-          year
-          dateTime
-        }
-        value
-      }
     }
       `
   }
