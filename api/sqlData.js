@@ -1,5 +1,6 @@
 const sqlserver = require("./sqlConnect.js")
 const sql = require('mssql')
+var fs = require('fs');
 
 var whereClauses;
 var parameters;
@@ -20,12 +21,44 @@ async function getHistoryConfig(parent, args , context, info) {
 async function master(parent, args, context, info) {
   var building = context.fieldName;
   if (parent.percentChange != null) {
-    parent.only = 2
-    parent.average = parent.percentChange;
-    parent.sort = "timestamp high";
-    parent.start = null;
-    parent.end = null;
-    parent.baseIndex = null;
+    var grab = 96;
+    if (parent.percentChange == "week") {
+      grab *= 7;
+    } else if (parent.percentChange == "month") {
+      grab *= 30;
+    } else if (parent.percentChange == "year") {
+      grab *= 365
+    }
+
+    presentParent = {
+      only: grab,
+      sort: "timestamp high",
+      average: null,
+      dataType: parent.dataType
+    }
+    pastParent = {
+      baseIndex: (grab * 2),
+      only: grab,
+      sort: "timestamp low",
+      average: null,
+      dataType: parent.dataType
+    }
+    var presentData = await select(presentParent, building);
+    var pastData = await select(pastParent, building);
+
+    var presentAvg = 0;
+    presentData.forEach(function(data) {
+      presentAvg += data.value;
+    });
+    presentAvg /= grab;
+
+    var pastAvg = 0;
+    pastData.forEach(function(data) {
+      pastAvg += data.value;
+    });
+    pastAvg /= grab;
+  
+    return [{value: (presentAvg / pastAvg * 100 - 100)}];
   } 
   if (parent.average != null) {
     return average(parent, building);
@@ -112,6 +145,21 @@ async function average(parent, building) {
         week: data.week
       }
     });
+
+    /*var shortData = [];
+  returnData.forEach(function(data) {
+    var newData = {
+      timestamp: data.timestamp.day,
+      value: data.value
+    };
+    shortData.push(newData);
+  });
+  var jsonData = JSON.stringify(shortData);
+    fs.writeFile("test.json", jsonData, function(err) {
+        if (err) {
+            console.log(err);
+        }
+    });*/
     return returnData;
   }
 }
@@ -129,6 +177,7 @@ async function getTables(parent, args, context, info) {
 async function select(parent, building) {
   var solarQuery = 'SELECT TIMESTAMP AS timestamp, VALUE as value FROM ';
   solarQuery = queryBuilder(solarQuery, parent, building);  
+  console.log(solarQuery);
   let returnData = await sqlserver.getSQLData(solarQuery, parameters);
   returnData.forEach(function(data) {
     var fullDate = new Date(data.timestamp);
@@ -144,6 +193,7 @@ async function select(parent, building) {
         "dateTime": fullDate.toISOString()
     };
   });
+
   return returnData;
 }
 
@@ -331,6 +381,14 @@ function queryBuilder(query, parent, building) {
     parameters.push({
       name:'baseIndex',
       value: parent.baseIndex
+    });
+  }
+
+  if (parent.endIndex != null) {
+    whereClauses.push("id <= @endIndex");
+    parameters.push({
+      name:'endIndex',
+      value: parent.endIndex
     });
   }
 
