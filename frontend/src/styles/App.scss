@@ -1,0 +1,259 @@
+@import './components/colors.scss';
+
+.graphBars {
+  font: 14px sans-serif;
+  background-color: $primary-color;
+  text-align: right;
+  padding: 10px;
+  margin: 1px;
+  color: white;
+}
+
+.export {
+  margin: 0 auto;
+  text-align: center;
+}
+
+.btn {
+  width: 100%;
+}
+
+.container {
+  padding-top: 50px;
+  text-align: center;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.line {
+  fill: none;
+  stroke-width: 3px;
+  stroke: $line-color;
+}
+
+.spinner {
+  padding: 50px;
+  margin: auto 0;
+}
+
+// For the spinner
+.text-success {
+  color: $line-color !important;
+}
+
+.col-md-4,
+.col-xs-10 {
+  margin: 0 auto;
+}
+
+p {
+  margin: 0 auto;
+  max-width: 600px;
+  padding: 10px;
+}
+
+ol {
+  margin: 0 auto;
+  max-width: 550px;
+  padding: 10px;
+}
+
+.navbar {
+  margin-bottom: 5px;
+}
+
+.graphContainer {
+  width: 100px;
+  margin: 20px 0 20px 0;
+}
+
+form {
+  text-align: left;
+}
+.nav-link {
+  text-align: right;
+  border-bottom: 1px solid rgba(0, 0, 0, 0);
+}
+
+.nav-link:hover {
+  color: $primary-color !important;
+  border-bottom: 1px solid $tertiary-color;
+}
+
+.img-responsive {
+  margin: 50px auto;
+  width: 30%;
+  min-width: 300px;
+  max-width: 600px;
+}
+
+.footerbar {
+  left: 0;
+  bottom: 0;
+  right: 0;
+  border-top: 1px solid grey;
+  display: table;
+  margin: 0 auto;
+  height: 50px;
+  width: 50%;
+  text-align: center;
+  font-size: 12px;
+  margin-bottom: 30px;
+  margin-top: 30px;
+}
+
+.footerbar-left {
+  padding-top: 30px;
+  text-align: left;
+  display: table-cell;
+}
+
+.footerbar-center {
+  text-align: center;
+  display: table-cell;
+}
+
+.footerbar-right {
+  text-align: right;
+  display: table-cell;
+}
+
+.footerbar a {
+  color: grey;
+  margin-left: 10px;
+}
+
+.footerbar a:hover {
+  color: $primary-color;
+  border-bottom: 1px solid black;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+#scatterContainer {
+  width: 40%;
+}
+
+#scatterCard {
+  padding: 20px;
+  width: 100%;
+}
+
+.plotPoint {
+  fill: $graph-color;
+  stroke: white;
+  stroke-width: 3px;
+}
+
+.graphRow {
+  width: 90vw;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 0;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+}
+
+.cards {
+  width: 90vw;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 0;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+}
+
+#stats-container {
+  width: 100%;
+  display: inherit;
+  flex-flow: row wrap;
+  justify-content: space-between;
+}
+
+.card {
+  height: 10vw;
+  width: 20vw;
+  margin-top: 5vh;
+  border: 3px solid #e7e7e7;
+  border-radius: 4px;
+  padding: 0.5em;
+  transition: all 0.3s ease-in-out;
+}
+
+.card-content {
+  text-align: center;
+  position: absolute;
+  top: 50%;
+  margin-top: -2em;
+}
+
+#statCard {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+}
+
+#graphCard {
+  width: 50vw;
+  height: 50vh;
+}
+
+#graphControlsCard {
+  width: 35vw;
+  height: 50vh;
+}
+
+@media screen and (max-width: 768px) {
+  .graphRow {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  #graphCard {
+    width: 90vw;
+    height: 40vh;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  #graphControlsCard {
+    width: 90vw;
+    height: 40vh;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  #statCard {
+    width: 40vw;
+    height: 25vw;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  #statCards {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}
+
+.scatterPlotContainer {
+  display: inline-block;
+  position: relative;
+  overflow: auto;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.card:hover {
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  transform: translateY(-4px);
+}
