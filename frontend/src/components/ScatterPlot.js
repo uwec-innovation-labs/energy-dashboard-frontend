@@ -6,6 +6,29 @@ import Papa from 'papaparse'
 import '../styles/App.scss'
 import { Spinner } from 'reactstrap'
 
+
+const axios = require("axios")
+axios({
+  url: 'http://localhost:4000/graphql',
+  method: 'post',
+  data: {
+    query: `
+    query {
+      Davies(dataType: "energy", only: 5, sort: "timestamp high") {
+        timestamp {
+          year
+          dateTime
+        }
+        value
+      }
+    }
+      `
+  }
+}).then((result) => {
+  console.log(result.data)
+});
+
+
 class ScatterPlot extends Component {
   constructor(props) {
     super(props)
