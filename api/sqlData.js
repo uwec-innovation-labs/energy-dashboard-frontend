@@ -5,7 +5,7 @@ var whereClauses;
 var parameters;
 
 async function test() {
-  var newQuery = 'SELECT TOP 10 * FROM dbo.UWEC_HSS_CONDMTR_CONDYESTERDAY';
+  var newQuery = 'SELECT TOP 10 VALUE, ((DATEPART(dayofyear, TIMESTAMP)) / 7) as week, DATEPART(year, TIMESTAMP) as year FROM dbo.SCHNEIDER_HALL_DAVIESKW_TOT_VALUE';
   let returnData = await sqlserver.getSQLData(newQuery, []);
   return returnData;
 
@@ -27,20 +27,33 @@ async function master(parent, args, context, info) {
 }
 
 async function average(parent, building) {
-  var averageBy = "DATEPART(year, TIMESTAMP)";
-  if (parent.average == "month") {
-    averageBy += ", DATEPART(month, TIMESTAMP)";
-  }
-  var avgQuery = "SELECT DATEPART(year, TIMESTAMP) as year, ";
-  if (parent.average == "month") {
-    avgQuery += "DATEPART(month, TIMESTAMP) as month, ";
-  }
-  avgQuery += "AVG(VALUE) as value FROM ";
-
+  var avgQuery;
   var avgSort = parent.sort;
   parent.sort = null;
-  avgQuery = queryBuilder(avgQuery, parent, building);
-  avgQuery += " GROUP BY " + averageBy;
+  if (parent.average == "week") {
+    avgQuery = "SELECT AVG(VALUE) as value, ((DATEPART(dayofyear, TIMESTAMP)) / 7) as week, DATEPART(year, TIMESTAMP) as year FROM ";
+    avgQuery = queryBuilder(avgQuery, parent, building);
+    avgQuery += " GROUP BY DATEPART(year, TIMESTAMP), ((DATEPART(dayofyear, TIMESTAMP)) / 7)";
+  } else {
+    avgQuery = "SELECT DATEPART(year, TIMESTAMP) as year, ";
+    if (parent.average != "year") {
+      avgQuery += "DATEPART(month, TIMESTAMP) as month, ";
+    }
+    if (parent.average != "month") {
+      avgQuery += "DATEPART(dayofyear, TIMESTAMP) as day, DATEPART(day, TIMESTAMP) as date, "
+    }
+    avgQuery += "AVG(VALUE) as value FROM ";
+
+    avgQuery = queryBuilder(avgQuery, parent, building);
+
+    avgQuery += " GROUP BY DATEPART(year, TIMESTAMP)";
+    if (parent.average != "year") {
+      avgQuery += ", DATEPART(month, TIMESTAMP)";
+    }
+    if (parent.average != "month") {
+      avgQuery += ", DATEPART(dayofyear, TIMESTAMP), DATEPART(day, TIMESTAMP)"
+    }
+  }
 
   if (avgSort != null) {
     if (avgSort == "value high") {
@@ -48,17 +61,41 @@ async function average(parent, building) {
     } else if (avgSort == "value low") {
       avgQuery += " ORDER BY AVG(VALUE) ASC";
     } else if (avgSort == "timestamp high") {
-      avgQuery += " ORDER BY DATEPART(year, TIMESTAMP) DESC, DATEPART(month, TIMESTAMP) DESC"
+      avgQuery += " ORDER BY DATEPART(year, TIMESTAMP) DESC";
+      if (parent.average != "year") {
+        if (parent.average == "week") {
+          avgQuery += ", ((DATEPART(dayofyear, TIMESTAMP)) / 7) DESC";
+        } else {
+            avgQuery += ", DATEPART(month, TIMESTAMP) DESC";
+            if (parent.average != "month") {
+              avgQuery += ", DATEPART(dayofyear, TIMESTAMP) DESC"
+            } 
+        }
+      }
     } else if (avgSort == "timestamp low") {
-      avgQuery += " ORDER BY DATEPART(year, TIMESTAMP) ASC, DATEPART(month, TIMESTAMP) ASC"
+      avgQuery += " ORDER BY DATEPART(year, TIMESTAMP) ASC";
+      if (parent.average != "year") {
+        if (parent.average == "week") {
+          avgQuery += ", ((DATEPART(dayofyear, TIMESTAMP)) / 7) ASC";
+        } else {
+            avgQuery += ", DATEPART(month, TIMESTAMP) ASC";
+            if (parent.average != "month") {
+              avgQuery += ", DATEPART(dayofyear, TIMESTAMP) ASC"
+            } 
+        }
+      }
     }
   }
+
   console.log(avgQuery);
   let returnData = await sqlserver.getSQLData(avgQuery, parameters);
   returnData.forEach(function(data) {
     data.timestamp = {
       year: data.year,
       month: data.month,
+      day: data.day,
+      date: data.date,
+      week: data.week
     }
   });
   return returnData;
@@ -295,7 +332,6 @@ function queryBuilder(query, parent, building) {
       query += " ORDER BY TIMESTAMP ASC"
     }
   }
-  console.log(query);
   return query;
 }
 

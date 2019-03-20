@@ -24,7 +24,9 @@ CREATING A QUERY
       }
       
  note that there are two primary data fields you can retreive: timestamp and value. value returns a single number, 
-   while timestamp is an object that can return any or all of the date parts. if you don't want one of these fields, just don't include it
+   while timestamp is an object that can return any or all of the date parts*. if you don't want one of these fields, just don't include it
+   * the 'week' part only works if you are averaging by week. 
+   helpful hint: if you are averaging by 'day', the 'day' field refers to the day's number with response to year (1-365), while 'date' returns the number with response to month (1-31). sorry this is so weird but it's the way it is
    
 QUERY PARAMETERS
   to limit or arrange the data retrieved, here are some parameters you can use:
@@ -36,9 +38,10 @@ QUERY PARAMETERS
       Davies(dataType:"energy",start:"01-01-2019") {...
     end: counterpart to 'start'. Doesn't HAVE to be used along with 'start', but you can
       Davies(dataType:"energy",start:"01-01-2018",end:"01-01-2019") {...
-    average: data can be averaged by month or year. you probably want to use a sort with this one since it won't be sorted by default
+    average: data can be averaged by day, week, month, or year. you probably want to use a sort with this one since it won't be sorted by default
       be careful if you use it with start/end, since it'll only average the values that fall in that range for the month
       Davies(dataType:"energy",average:"month") {...
+      not all timestamp fields will return data when you use averages, obviously (ex. the 'week' average only returns 'week' and 'year')
  
  *Note: multiple parameters must be separated with commas, and all parameter values except for 'only' must be in double-quotes
  

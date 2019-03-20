@@ -46,6 +46,7 @@ var energySchema = buildSchema(`
         year: Int,
         month: Int,
         day: Int,
+        week: Int,
         hour: Int,
         minute: Int,
         second: Int,
