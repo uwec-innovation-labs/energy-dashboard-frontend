@@ -311,6 +311,14 @@ function queryBuilder(query, parent, building) {
     });
   }
 
+  if (parent.baseIndex != null) {
+    whereClauses.push("id >= @baseIndex");
+    parameters.push({
+      name:'baseIndex',
+      value: parent.baseIndex
+    });
+  }
+
   if (whereClauses.length > 0) {
     query += " WHERE " + whereClauses[0];
     var i = 1;

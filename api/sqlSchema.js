@@ -2,7 +2,7 @@ var { buildSchema } = require('graphql')
 
 var energySchema = buildSchema(`
     type Query { 
-        Davies(dataType:String!, average:String, sort:String, only:Int, start:String, end:String): [timeValue]
+        Davies(dataType:String!, average:String, sort:String, only:Int, baseIndex: Int, start:String, end:String): [timeValue]
         Schneider(dataType:String!, average:String, sort:String, only:Int, start:String, end:String): [timeValue]
         Chancellors(dataType:String!, average:String, sort:String, only:Int, start:String, end:String): [timeValue]
         Crest(dataType:String!, average:String, sort:String, only:Int, start:String, end:String): [timeValue]
