@@ -6,6 +6,36 @@ import Export from './components/Export'
 import PrivacyPolicy from './components/PrivacyPolicy'
 import Layout from './components/Layout'
 
+
+const axios = require("axios")
+axios({
+  url: 'http://localhost:4000/graphql',
+  method: 'post',
+  data: {
+    query: `
+    query {
+      Davies(dataType: "energy", only: 5, sort: "timestamp high") {
+        timestamp {
+          year
+          dateTime
+        }
+        value
+      }
+      Library(dataType: "energy", only: 5, sort: "timestamp high") {
+        timestamp {
+          year
+          dateTime
+        }
+        value
+      }
+    }
+      `
+  }
+}).then((result) => {
+  console.log(result.data)
+});
+
+
 class Routes extends Component {
   render() {
     return (
