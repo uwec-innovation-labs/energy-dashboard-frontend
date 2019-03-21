@@ -155,6 +155,9 @@ class ScatterPlot extends Component {
           .duration(200)
           .attr('r', 10)
 
+        // Formats our value output to a float with two decimal places
+        var formatValue = d3.format(".2f")
+        
         svg
           .append('text')
           .attr('id', 't' + d.x + '-' + d.y + '-' + i)
@@ -162,7 +165,7 @@ class ScatterPlot extends Component {
           .attr('y', 0)
           .attr('font-size', 20)
           .style('text-anchor', 'end')
-          .text('[' + d.timestamp.month + '/' + d.timestamp.day + ': ' + d.value + ']')
+          .text('[' + d.timestamp.month + '/' + d.timestamp.day + ': ' + formatValue(d.value) + ']')
       })
       .on('mouseout', function(d, i) {
         d3.select(this)
