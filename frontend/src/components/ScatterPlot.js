@@ -44,7 +44,8 @@ class ScatterPlot extends Component {
         query {
           Davies(dataType: "energy", only: 5, sort: "timestamp high") {
             timestamp {
-              dateTime
+              month
+              day
             }
             value
           }
@@ -164,7 +165,7 @@ class ScatterPlot extends Component {
           .attr('y', 0)
           .attr('font-size', 20)
           .style('text-anchor', 'end')
-          .text('[ ' + d.timestamp.dateTime + ' , ' + d.value + ' ]')
+          .text('[' + d.timestamp.month + '/' + d.timestamp.day + ': ' + d.value + ']')
       })
       .on('mouseout', function(d, i) {
         d3.select(this)
