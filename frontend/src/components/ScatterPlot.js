@@ -1,8 +1,5 @@
 import React, { Component } from 'react'
 import * as d3 from 'd3'
-import csv from '../media/solar_power.csv'
-import crossfilter from 'crossfilter'
-import Papa from 'papaparse'
 import '../styles/App.scss'
 import { Spinner } from 'reactstrap'
 
