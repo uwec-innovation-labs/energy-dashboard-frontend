@@ -3,10 +3,7 @@ import * as d3 from 'd3'
 import '../styles/App.scss'
 import { Spinner } from 'reactstrap'
 
-
 const axios = require("axios")
-
-
 
 class ScatterPlot extends Component {
   constructor(props) {
@@ -20,15 +17,10 @@ class ScatterPlot extends Component {
     }
 
     // Gets rid of errors
-    this.handleChange = this.handleChange.bind(this)
-    this.updateGraph = this.updateGraph.bind(this)
+    this.updateGraph = this.updateGraph.bind(this);
     this.handleDayClick = this.handleDayClick.bind(this)
     this.handleMonthClick = this.handleMonthClick.bind(this)
     this.handleYearClick = this.handleYearClick.bind(this)
-  }
-
-  handleChange(event) {
-    console.log('Event: ' + event)
   }
 
   componentDidMount() {
@@ -39,7 +31,7 @@ class ScatterPlot extends Component {
       data: {
         query: `
         query {
-          Davies(dataType: "energy", only: 96, sort: "timestamp high") {
+          Davies(dataType: "energy", only: 672, sort: "timestamp high") {
             timestamp {
               date
               time
@@ -54,34 +46,31 @@ class ScatterPlot extends Component {
     });
   }
 
-
-
   updateGraph(results) {
     results = results.data.Davies
-
-    // Allows us to parse the time
+    console.log(results[0]);
+    /* ---- Parsetime Format ---- */
     var parseTime = d3.timeParse("%a %b %e %Y %H:%M:%S");
 
-    // Setting up Sizing Variables
+    /* ---- Sizing Variables ---- */
     var margin = { top: 80, right: 30, bottom: 50, left: 150 }
     var width = 1000 - margin.left - margin.right
     var height = 400 - margin.top - margin.bottom
 
-    // We have to manually set the dates right now
-    var mindate = parseTime(results[95].timestamp.date + " " + results[95].timestamp.time);
+    /* ---- Min & Max Dates ---- */
+    var mindate = parseTime(results[671].timestamp.date + " " + results[671].timestamp.time);
     var maxdate = parseTime(results[0].timestamp.date + " " + results[0].timestamp.time);
 
-    // Used to give cushion to the Data on Graph
+    /* ---- Data Cushion ---- */
     let percentGap = 0.2
 
-    // This is the Date Scale
+    /* ---- X Scale ---- */
     var x = d3
       .scaleTime()
       .domain([mindate, maxdate])
-      // Pixel Range in X Direction
       .range([0, width])
 
-    // This is the Values Scale
+    /* ---- Y Scale ---- */
     var y = d3
       .scaleLinear()
       .domain([
@@ -92,10 +81,9 @@ class ScatterPlot extends Component {
           return d.value + d.value * percentGap
         })
       ])
-      // Pixel Range in Y Direction
       .range([height, 0])
 
-    // define the line
+    /* ---- Creates Valueline ---- */
     var valueline = d3
       .line()
       .x(function(d) {
@@ -108,7 +96,7 @@ class ScatterPlot extends Component {
       })
       .curve(d3.curveLinear)
 
-    // Appends our SVG Canvas and sets it to a variable for easy usage
+    /* ---- SVG Canvas ---- */
     var svg = d3
       .select('div.scatterPlotContainer')
       .append('svg')
@@ -119,7 +107,7 @@ class ScatterPlot extends Component {
       .append('g')
       .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
 
-    // Add the valueline path.
+    /* ---- Add Valueline ---- */
     svg
       .append('path')
       .data([results])
@@ -131,13 +119,13 @@ class ScatterPlot extends Component {
       .duration(500)
       .attr('opacity', 1)
 
-    // Binds all of the data we parsed
+    /* ---- Binds Data to Points ---- */
     var points = svg
       .selectAll('circles')
       .attr('class', 'plotPoint')
       .data(results)
 
-    //Appends circles for each data point binded
+    /* ---- Appends Circles to Points ---- */
     points
       .enter()
       .append('circle')
@@ -157,24 +145,25 @@ class ScatterPlot extends Component {
           .duration(200)
           .attr('r', 10)
 
-        // Formats our value output to a float with two decimal places
-        var formatValue = d3.format(".2f")
+    /* ---- Value Formmater ---- */
+    var formatValue = d3.format(".2f")
 
-      svg
-        .append('text')
-        .attr('id', 't' + d.x + '-' + d.y + '-' + i)
-        .attr('x', width)
-        .attr('y', 0)
-        .attr('font-size', 20)
-        .style('text-anchor', 'end')
-        .text('[' + d.timestamp.time + ' : ' + formatValue(d.value) + ']')
-      })
-      .on('mouseout', function(d, i) {
-        d3.select(this)
-          .transition()
-          .duration(200)
-          .attr('r', 5)
-          .delay(100)
+    /* ---- Hover Text ---- */
+    svg
+      .append('text')
+      .attr('id', 't' + d.x + '-' + d.y + '-' + i)
+      .attr('x', width)
+      .attr('y', 0)
+      .attr('font-size', 20)
+      .style('text-anchor', 'end')
+      .text('[' + d.timestamp.time + ' : ' + formatValue(d.value) + ']')
+    })
+    .on('mouseout', function(d, i) {
+      d3.select(this)
+        .transition()
+        .duration(200)
+        .attr('r', 5)
+        .delay(100)
 
         d3.select('#t' + d.x + '-' + d.y + '-' + i).remove()
       })
@@ -183,7 +172,7 @@ class ScatterPlot extends Component {
       .attr('opacity', 1)
       .attr('r', 5)
 
-    // Setting the x-axis
+    /* ---- X-Axis ---- */
     svg
       .append('g')
       .attr('class', 'axis')
@@ -191,10 +180,8 @@ class ScatterPlot extends Component {
       .call(
         d3
           .axisBottom(x)
-          // This is the Format of the Text
-          .tickFormat(d3.timeFormat('%H')) //%Y-%m-%d
-          // How many ticks to (We can play with this range)
-          .ticks(d3.timeMinute.every(60))
+          .tickFormat(d3.timeFormat('%A')) //%Y-%m-%d
+          .ticks(d3.timeDay.every(1))
       )
       .transition()
       .duration(1500)
@@ -204,7 +191,7 @@ class ScatterPlot extends Component {
       .attr('dx', '0')
       .attr('dy', '5.0')
 
-    // Setting up the y-axis
+    /* ---- Y-Axis ---- */
     svg
       .append('g')
       .attr('class', 'axis')
@@ -216,17 +203,17 @@ class ScatterPlot extends Component {
       .selectAll('text')
       .style('text-anchor', 'end')
 
-    /* Disabling this unless if we need it again
-      // Don't want to delete it incase we need it again as well
-      // Label for the X-axis
-      svg.append("text")
-        .attr("x", width / 2.0)
-        .attr("y", height + margin.bottom)
-        .style("text-anchor", "middle")
-        .text("Date")
-      */
+    /* CURRENTLY DISABLED */
+    /* ---- X-Axis Label ---- */
+    /*
+    svg.append("text")
+      .attr("x", width / 2.0)
+      .attr("y", height + margin.bottom)
+      .style("text-anchor", "middle")
+      .text("Date")
+    */
 
-    // Label for the Y-Axis
+    /* ---- Y-Axis Label ---- */
     svg
       .append('text')
       .attr('x', 0 - height / 2.0)
@@ -238,9 +225,10 @@ class ScatterPlot extends Component {
       .duration(1500)
       .attr('opacity', 1)
 
-    /* Also disabling the title. The title should be seperate from the svg for now
-      // Title for the graph
-      svg.append("text")
+    /* CURRENTlY DISABLED */
+    /* ---- Title ---- */
+    /*
+    svg.append("text")
       .attr("x", 0 - margin.left + (width + margin.left + margin.right) / 2.0)
       .attr("y", 0 - margin.top / 2.0)
       .attr("font-size", 36)
@@ -248,6 +236,7 @@ class ScatterPlot extends Component {
       .style("text-anchor", "middle")
       .text("Time vs. Total Yield");
       */
+
     this.setState({ loading: false })
   }
 
