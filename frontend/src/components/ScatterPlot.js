@@ -59,7 +59,7 @@ class ScatterPlot extends Component {
     /* ---- Sizing Variables ---- */
     var margin = { top: 80, right: 30, bottom: 50, left: 150 }
     var width = 1000 - margin.left - margin.right
-    var height = 400 - margin.top - margin.bottom
+    var height = 300 - margin.top - margin.bottom
 
     /* ---- Min & Max Dates ---- */
     var mindate = parseTime(results[671].timestamp.date + " " + results[671].timestamp.time);
@@ -160,7 +160,7 @@ class ScatterPlot extends Component {
       .attr('y', 0)
       .attr('font-size', 20)
       .style('text-anchor', 'end')
-      .text('[' + d.timestamp.time + ' : ' + formatValue(d.value) + ']')
+      .text('Timestamp: ' + d.timestamp.time + ' - Value: ' + formatValue(d.value))
     })
     .on('mouseout', function(d, i) {
       d3.select(this)
