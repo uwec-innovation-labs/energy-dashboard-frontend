@@ -143,8 +143,9 @@ form {
 
 .plotPoint {
   fill: $graph-color;
+  opacity: 0;
   stroke: white;
-  stroke-width: 3px;
+  stroke-width: 1px;
 }
 
 .graphRow {

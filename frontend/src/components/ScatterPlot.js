@@ -39,10 +39,10 @@ class ScatterPlot extends Component {
       data: {
         query: `
         query {
-          Davies(dataType: "energy", only: 5, sort: "timestamp high") {
+          Davies(dataType: "energy", only: 96, sort: "timestamp high") {
             timestamp {
-              month
-              day
+              date
+              time
             }
             value
           }
@@ -54,11 +54,13 @@ class ScatterPlot extends Component {
     });
   }
 
-  
+
 
   updateGraph(results) {
-
     results = results.data.Davies
+
+    // Allows us to parse the time
+    var parseTime = d3.timeParse("%a %b %e %Y %H:%M:%S");
 
     // Setting up Sizing Variables
     var margin = { top: 80, right: 30, bottom: 50, left: 150 }
@@ -66,11 +68,10 @@ class ScatterPlot extends Component {
     var height = 400 - margin.top - margin.bottom
 
     // We have to manually set the dates right now
-    var mindate = new Date(2019, 20, 3)
-    var maxdate = new Date(2019, 21, 3)
+    var mindate = parseTime(results[95].timestamp.date + " " + results[95].timestamp.time);
+    var maxdate = parseTime(results[0].timestamp.date + " " + results[0].timestamp.time);
 
-    // This is a number used so the min and max aren't exactly data points
-    // It gives the graph some breathing room. Its found in the y Scale
+    // Used to give cushion to the Data on Graph
     let percentGap = 0.2
 
     // This is the Date Scale
@@ -94,14 +95,13 @@ class ScatterPlot extends Component {
       // Pixel Range in Y Direction
       .range([height, 0])
 
-
-    console.log(results)
-
     // define the line
     var valueline = d3
       .line()
       .x(function(d) {
-        return x(d.timestamp.dateTime)
+        var time = d.timestamp.date + " " + d.timestamp.time
+        time = parseTime(time);
+        return x(time)
       })
       .y(function(d) {
         return y(d.value)
@@ -146,7 +146,9 @@ class ScatterPlot extends Component {
         return y(d.value)
       })
       .attr('cx', function(d) {
-        return x(d.timestamp.dateTime)
+        var time = d.timestamp.date + " " + d.timestamp.time
+        time = parseTime(time)
+        return x(time)
       })
       .attr('opacity', 0)
       .on('mouseover', function(d, i) {
@@ -157,21 +159,21 @@ class ScatterPlot extends Component {
 
         // Formats our value output to a float with two decimal places
         var formatValue = d3.format(".2f")
-        
-        svg
-          .append('text')
-          .attr('id', 't' + d.x + '-' + d.y + '-' + i)
-          .attr('x', width)
-          .attr('y', 0)
-          .attr('font-size', 20)
-          .style('text-anchor', 'end')
-          .text('[' + d.timestamp.month + '/' + d.timestamp.day + ': ' + formatValue(d.value) + ']')
+
+      svg
+        .append('text')
+        .attr('id', 't' + d.x + '-' + d.y + '-' + i)
+        .attr('x', width)
+        .attr('y', 0)
+        .attr('font-size', 20)
+        .style('text-anchor', 'end')
+        .text('[' + d.timestamp.time + ' : ' + formatValue(d.value) + ']')
       })
       .on('mouseout', function(d, i) {
         d3.select(this)
           .transition()
           .duration(200)
-          .attr('r', 6)
+          .attr('r', 5)
           .delay(100)
 
         d3.select('#t' + d.x + '-' + d.y + '-' + i).remove()
@@ -179,7 +181,7 @@ class ScatterPlot extends Component {
       .transition()
       .duration(1500)
       .attr('opacity', 1)
-      .attr('r', 6)
+      .attr('r', 5)
 
     // Setting the x-axis
     svg
@@ -190,9 +192,9 @@ class ScatterPlot extends Component {
         d3
           .axisBottom(x)
           // This is the Format of the Text
-          .tickFormat(d3.timeFormat('%Y')) //%Y-%m-%d
+          .tickFormat(d3.timeFormat('%H')) //%Y-%m-%d
           // How many ticks to (We can play with this range)
-          .ticks(d3.timeYear.every(1))
+          .ticks(d3.timeMinute.every(60))
       )
       .transition()
       .duration(1500)
@@ -230,7 +232,7 @@ class ScatterPlot extends Component {
       .attr('x', 0 - height / 2.0)
       .attr('y', 0 - margin.bottom * 2)
       .style('text-anchor', 'middle')
-      .text('British Thermal Unit (BTU)')
+      .text('Energy Consumption')
       .attr('transform', 'rotate(-90)')
       .transition()
       .duration(1500)
