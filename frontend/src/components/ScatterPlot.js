@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import * as d3 from 'd3'
 import '../styles/App.scss'
 import { Spinner } from 'reactstrap'
+import { CSVLink } from 'react-csv'
 
 const axios = require("axios")
 
@@ -13,7 +14,8 @@ class ScatterPlot extends Component {
       maxdate: '',
       loading: true,
       mounted: false,
-      filterBy: 'year'
+      filterBy: 'year',
+      resultsState: ''
     }
 
     // Gets rid of errors
@@ -48,8 +50,10 @@ class ScatterPlot extends Component {
 
   updateGraph(results) {
     results = results.data.Davies
-    console.log(results[0]);
-    /* ---- Parsetime Format ---- */
+
+    this.setState({resultsState: results})
+
+    // Allows us to parse the time
     var parseTime = d3.timeParse("%a %b %e %Y %H:%M:%S");
 
     /* ---- Sizing Variables ---- */
@@ -272,6 +276,15 @@ class ScatterPlot extends Component {
       <div>
         <center>{spinner}</center>
         <div className="scatterPlotContainer" />
+        <div>
+        <CSVLink
+              className="btn btn-outline-primary"
+              filename="mock_data.csv"
+              data={this.state.resultsState}
+            >
+              Download
+        </CSVLink>
+        </div>
       </div>
     )
   }
