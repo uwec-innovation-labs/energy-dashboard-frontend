@@ -50,9 +50,7 @@ class Home extends Component {
           <div class="card" id="graphCard">
             <ScatterPlot graphName="graph1" />
           </div>
-          <div class="card" id="graphControlsCard">
-            Something goes here
-          </div>
+          
         </div>
         <div class="cards" id="statCards">
           {this.renderStats(this.state.stats)}

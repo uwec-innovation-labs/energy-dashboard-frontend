@@ -57,9 +57,9 @@ class ScatterPlot extends Component {
     var parseTime = d3.timeParse("%a %b %e %Y %H:%M:%S");
 
     /* ---- Sizing Variables ---- */
-    var margin = { top: 80, right: 30, bottom: 50, left: 150 }
+    var margin = { top: 20, right: 30, bottom: 50, left: 150 }
     var width = 1000 - margin.left - margin.right
-    var height = 300 - margin.top - margin.bottom
+    var height = 275 - margin.top - margin.bottom
 
     /* ---- Min & Max Dates ---- */
     var mindate = parseTime(results[671].timestamp.date + " " + results[671].timestamp.time);
@@ -107,7 +107,7 @@ class ScatterPlot extends Component {
       .attr('width', '100%')
       .attr('height', '100%')
 
-      .attr('viewBox', '0 0 1000 400')
+      .attr('viewBox', '0 0 1000 275')
       .append('g')
       .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
 
@@ -160,7 +160,7 @@ class ScatterPlot extends Component {
       .attr('y', 0)
       .attr('font-size', 20)
       .style('text-anchor', 'end')
-      .text('Timestamp: ' + d.timestamp.time + ' - Value: ' + formatValue(d.value))
+      .text('[' + d.timestamp.time + ' : ' + formatValue(d.value) + ']')
     })
     .on('mouseout', function(d, i) {
       d3.select(this)
@@ -223,7 +223,7 @@ class ScatterPlot extends Component {
       .attr('x', 0 - height / 2.0)
       .attr('y', 0 - margin.bottom * 2)
       .style('text-anchor', 'middle')
-      .text('Energy Consumption')
+      .text('Energy Consumption') 
       .attr('transform', 'rotate(-90)')
       .transition()
       .duration(1500)
@@ -273,18 +273,9 @@ class ScatterPlot extends Component {
       spinner = null
     }
     return (
-      <div>
+      <div className="scatterCard">
         <center>{spinner}</center>
         <div className="scatterPlotContainer" />
-        <div>
-        <CSVLink
-              className="btn btn-outline-primary"
-              filename="mock_data.csv"
-              data={this.state.resultsState}
-            >
-              Download
-        </CSVLink>
-        </div>
       </div>
     )
   }
