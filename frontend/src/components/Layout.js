@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import AppNav from './AppNav'
-import FooterBar from './FooterBar'
 
 export default class Layout extends Component {
   render() {
@@ -8,7 +7,6 @@ export default class Layout extends Component {
       <div>
         <AppNav />
         {this.props.children}
-        <FooterBar />
       </div>
     )
   }

@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import * as d3 from 'd3'
 import '../styles/App.scss'
-import { Spinner } from 'reactstrap'
+import { Spinner, ButtonGroup, Button, DropdownMenu, ButtonDropdown, DropdownItem, DropdownToggle } from 'reactstrap'
 import { CSVLink } from 'react-csv'
 
 const axios = require("axios")
@@ -14,38 +14,67 @@ class ScatterPlot extends Component {
       maxdate: '',
       loading: true,
       mounted: false,
-      filterBy: 'year',
-      resultsState: ''
+      filterBy: 'week',
+      resultsState: '',
+      dropdownOpen: false,
+      amountOfPoints: 0,
+      updatingGraph: false
     }
 
     // Gets rid of errors
+    this.getData = this.getData.bind(this);
     this.updateGraph = this.updateGraph.bind(this);
-    this.handleDayClick = this.handleDayClick.bind(this)
-    this.handleMonthClick = this.handleMonthClick.bind(this)
-    this.handleYearClick = this.handleYearClick.bind(this)
+    this.handleButtons = this.handleButtons.bind(this)
+    this.toggle = this.toggle.bind(this);
+  }
+
+  toggle() {
+  this.setState(prevState => ({
+    dropdownOpen: !prevState.dropdownOpen
+  }));
   }
 
   componentDidMount() {
     this.setState({ mounted: true })
-    axios({
-      url: 'http://localhost:4000/graphql',
-      method: 'post',
-      data: {
-        query: `
-        query {
-          Davies(dataType: "energy", only: 672, sort: "timestamp high") {
-            timestamp {
-              date
-              time
+    this.getData();
+  }
+
+  getData() {
+    if (this.state.filterBy === 'day') {
+      this.setState({amountOfPoints: 96, updatingGraph: true});
+    } else if (this.state.filterBy === 'week') {
+      this.setState({amountOfPoints: 672, updatingGraph: true});
+      console.log(this.state.amountOfPoints);
+    } else if (this.state.filterBy === 'month') {
+      this.setState({amountOfPoints: 2688, updatingGraph: true});
+    } else if (this.state.FilterBy === 'year') {
+      this.setState({amountOfPoints: 32256, updatingGraph: true});
+    }
+  }
+
+  componentDidUpdate() {
+    if (this.state.updatingGraph) {
+      axios({
+        url: 'http://localhost:4000/graphql',
+        method: 'post',
+        data: {
+          query: `
+          query {
+            Davies(dataType: "energy", only: ` + this.state.amountOfPoints + `, sort: "timestamp high") {
+              timestamp {
+                date
+                time
+              }
+              value
             }
-            value
           }
+            `
         }
-          `
-      }
-    }).then((result) => {
-      this.updateGraph(result.data)
-    });
+      }).then((result) => {
+        this.setState({updatingGraph: false});
+        this.updateGraph(result.data)
+      });
+    }
   }
 
   updateGraph(results) {
@@ -62,7 +91,7 @@ class ScatterPlot extends Component {
     var height = 275 - margin.top - margin.bottom
 
     /* ---- Min & Max Dates ---- */
-    var mindate = parseTime(results[671].timestamp.date + " " + results[671].timestamp.time);
+    var mindate = parseTime(results[this.state.amountOfPoints-1].timestamp.date + " " + results[this.state.amountOfPoints-1].timestamp.time);
     var maxdate = parseTime(results[0].timestamp.date + " " + results[0].timestamp.time);
 
     /* ---- Data Cushion ---- */
@@ -176,7 +205,8 @@ class ScatterPlot extends Component {
       .attr('opacity', 1)
       .attr('r', 5)
 
-    /* ---- X-Axis ---- */
+    /* ---- X-Axis (Year) ---- */
+    console.log(d3.timeDay.every(1));
     svg
       .append('g')
       .attr('class', 'axis')
@@ -194,6 +224,8 @@ class ScatterPlot extends Component {
       .style('text-anchor', 'middle')
       .attr('dx', '0')
       .attr('dy', '5.0')
+
+
 
     /* ---- Y-Axis ---- */
     svg
@@ -223,7 +255,7 @@ class ScatterPlot extends Component {
       .attr('x', 0 - height / 2.0)
       .attr('y', 0 - margin.bottom * 2)
       .style('text-anchor', 'middle')
-      .text('Energy Consumption') 
+      .text('Energy Consumption')
       .attr('transform', 'rotate(-90)')
       .transition()
       .duration(1500)
@@ -248,16 +280,10 @@ class ScatterPlot extends Component {
     this.setState({ mounted: false })
   }
 
-  handleYearClick() {
-    this.setState({ filterBy: 'year' })
-  }
-
-  handleMonthClick() {
-    this.setState({ filterBy: 'month' })
-  }
-
-  handleDayClick() {
-    this.setState({ filterBy: 'day' })
+  handleButtons(event) {
+    event.preventDefault();
+    this.setState({ filterBy: event.target.value });
+    this.getData();
   }
 
   render() {
@@ -274,6 +300,22 @@ class ScatterPlot extends Component {
     }
     return (
       <div className="scatterCard">
+        <center>
+        <ButtonGroup size="lg">
+          <Button onClick={this.handleButtons} value="year">Year</Button>
+          <Button onClick={this.handleButtons} value="month">Month</Button>
+          <Button onClick={this.handleButtons} value="week">Week</Button>
+          <Button onClick={this.handleButtons} value="day">Day</Button>
+          <ButtonDropdown isOpen={this.state.dropdownOpen} toggle={this.toggle}>
+            <DropdownToggle caret>
+              Buildings
+            </DropdownToggle>
+            <DropdownMenu>
+              <DropdownItem>Davies</DropdownItem>
+            </DropdownMenu>
+          </ButtonDropdown>
+        </ButtonGroup>
+        </center>
         <center>{spinner}</center>
         <div className="scatterPlotContainer" />
       </div>
