@@ -80,7 +80,10 @@ async function average(parent, building) {
     if (parent.average != "year") {
       avgQuery += "DATEPART(month, TIMESTAMP) as month, ";
       if (parent.average != "month") {
-        avgQuery += "DATEPART(dayofyear, TIMESTAMP) as day, DATEPART(day, TIMESTAMP) as date, "
+        avgQuery += "DATEPART(dayofyear, TIMESTAMP) as day, DATEPART(day, TIMESTAMP) as date, ";
+        if (parent.average != "day") {
+          avgQuery += "DATEPART(hour, TIMESTAMP) as hour, ";
+        }
       }
     }
     avgQuery += "AVG(VALUE) as value FROM ";
@@ -91,7 +94,10 @@ async function average(parent, building) {
     if (parent.average != "year") {
       avgQuery += ", DATEPART(month, TIMESTAMP)";
       if (parent.average != "month") {
-        avgQuery += ", DATEPART(dayofyear, TIMESTAMP), DATEPART(day, TIMESTAMP)"
+        avgQuery += ", DATEPART(dayofyear, TIMESTAMP), DATEPART(day, TIMESTAMP)";
+        if (parent.average != "day") {
+          avgQuery += ", DATEPART(hour, TIMESTAMP)";
+        }
       }
     }
   }
@@ -109,7 +115,10 @@ async function average(parent, building) {
         } else {
             avgQuery += ", DATEPART(month, TIMESTAMP) DESC";
             if (parent.average != "month") {
-              avgQuery += ", DATEPART(dayofyear, TIMESTAMP) DESC"
+              avgQuery += ", DATEPART(dayofyear, TIMESTAMP) DESC";
+              if (parent.average != "day") {
+                avgQuery += ", DATEPART(hour, TIMESTAMP) DESC"
+              }
             } 
         }
       }
@@ -121,7 +130,10 @@ async function average(parent, building) {
         } else {
             avgQuery += ", DATEPART(month, TIMESTAMP) ASC";
             if (parent.average != "month") {
-              avgQuery += ", DATEPART(dayofyear, TIMESTAMP) ASC"
+              avgQuery += ", DATEPART(dayofyear, TIMESTAMP) ASC";
+              if (parent.average != "day") {
+                avgQuery += ", DATEPART(hour, TIMESTAMP) ASC"
+              }
             } 
         }
       }
@@ -137,24 +149,56 @@ async function average(parent, building) {
     return [{value: changeValue}];
   } else {
     returnData.forEach(function(data) {
-      data.timestamp = {
-        year: data.year,
-        month: data.month,
-        day: data.day,
-        date: data.date,
-        week: data.week
+      data.timestamp = {};
+      data.timestamp.year = data.year;
+      console.log(data.month);
+      if (data.month == undefined) {
+        console.log("first loop");
+        data.timestamp.month = 0;
+      } else {
+        console.log("second loop");
+        data.timestamp.month = data.month;
       }
+      if (data.day == undefined) {
+        data.timestamp.day = 0;
+      } else {
+        data.timestamp.day = data.day;
+      }
+      if (data.date == undefined) {
+        data.timestamp.date = "Mon Jan 01 2019"; 
+      } else {
+        data.timestamp.date = data.date;
+      }
+      if (data.week == undefined) {
+        data.timestamp.week = 0;
+      } else {
+        data.timestamp.week = data.week;
+      }
+      if (data.hour == undefined) {
+        data.timestamp.hour = 0;
+      } else {
+        data.timestamp.hour = data.hour;
+      }
+      data.timestamp.minute = 0;
+      data.timestamp.second = 0;
+      data.timestamp.time = "0:00:00 AM";
+      data.timestamp.dateTime = "2019-01-01T00:00:00.000Z";
     });
 
-    /*var shortData = [];
+    //stuff for tensorflow, ignore
+    /*var fullData = {
+      y: [],
+      x1: [],
+      x2: [],
+      x3: []
+    }
   returnData.forEach(function(data) {
-    var newData = {
-      timestamp: data.timestamp.day,
-      value: data.value
-    };
-    shortData.push(newData);
+    fullData.y.push(data.value);
+    fullData.x1.push(data.timestamp.day);
+    fullData.x2.push(data.timestamp.month);
+    fullData.x3.push(data.timestamp.year);
   });
-  var jsonData = JSON.stringify(shortData);
+  var jsonData = JSON.stringify(fullData);
     fs.writeFile("test.json", jsonData, function(err) {
         if (err) {
             console.log(err);
