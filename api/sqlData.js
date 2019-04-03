@@ -151,12 +151,9 @@ async function average(parent, building) {
     returnData.forEach(function(data) {
       data.timestamp = {};
       data.timestamp.year = data.year;
-      console.log(data.month);
       if (data.month == undefined) {
-        console.log("first loop");
         data.timestamp.month = 0;
       } else {
-        console.log("second loop");
         data.timestamp.month = data.month;
       }
       if (data.day == undefined) {
