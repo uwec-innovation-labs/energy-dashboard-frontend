@@ -41,14 +41,13 @@ class ScatterPlot extends Component {
 
   getData() {
     if (this.state.filterBy === 'day') {
-      this.setState({amountOfPoints: 96, updatingGraph: true});
+      this.setState({amountOfPoints: 96, updatingGraph: true }, console.log("BEEEEEP: " + this.state.amountOfPoints));
     } else if (this.state.filterBy === 'week') {
-      this.setState({amountOfPoints: 672, updatingGraph: true});
-      console.log(this.state.amountOfPoints);
+      this.setState({amountOfPoints: 672, updatingGraph: true}, console.log("BEEEEEP: " + this.state.amountOfPoints));
     } else if (this.state.filterBy === 'month') {
-      this.setState({amountOfPoints: 2688, updatingGraph: true});
-    } else if (this.state.FilterBy === 'year') {
-      this.setState({amountOfPoints: 32256, updatingGraph: true});
+      this.setState({amountOfPoints: 2688, updatingGraph: true}, console.log("BEEEEEP: " + this.state.amountOfPoints));
+    } else if (this.state.filterBy === 'year') {
+      this.setState({amountOfPoints: 32256, updatingGraph: true}, console.log("BEEEEEP: " + this.state.amountOfPoints));
     }
   }
 
@@ -206,7 +205,17 @@ class ScatterPlot extends Component {
       .attr('r', 5)
 
     /* ---- X-Axis (Year) ---- */
-    console.log(d3.timeDay.every(1));
+    var tickFormat;
+    var ticks;
+    if (this.state.filterBy === 'day') {
+      ticks = d3.timeHour.every(1)
+    } else if (this.state.filterBy === 'week') {
+      ticks = d3.timeDay.every(1)
+    } else if (this.state.filterBy === 'month') {
+      ticks = d3.timeWeek.every(1)
+    } else if (this.state.FilterBy === 'year') {
+      ticks = d3.timeMonth.every(1)
+    }
     svg
       .append('g')
       .attr('class', 'axis')
@@ -215,7 +224,7 @@ class ScatterPlot extends Component {
         d3
           .axisBottom(x)
           .tickFormat(d3.timeFormat('%A')) //%Y-%m-%d
-          .ticks(d3.timeDay.every(1))
+          .ticks(ticks)
       )
       .transition()
       .duration(1500)
@@ -282,8 +291,7 @@ class ScatterPlot extends Component {
 
   handleButtons(event) {
     event.preventDefault();
-    this.setState({ filterBy: event.target.value });
-    this.getData();
+    this.setState({ filterBy: event.target.value}, this.getData())
   }
 
   render() {
