@@ -18,7 +18,8 @@ class ScatterPlot extends Component {
       resultsState: '',
       dropdownOpen: false,
       amountOfPoints: 0,
-      updatingGraph: false
+      updatingGraph: false,
+      updatingPoints: false,
     }
 
     // Gets rid of errors
@@ -52,6 +53,11 @@ class ScatterPlot extends Component {
   }
 
   componentDidUpdate() {
+    console.log(this.state.filterBy);
+    if (this.state.updatingPoints) {
+      this.setState({updatingPoints: false})
+      this.getData();
+    }
     if (this.state.updatingGraph) {
       axios({
         url: 'http://localhost:4000/graphql',
@@ -129,6 +135,7 @@ class ScatterPlot extends Component {
       .curve(d3.curveLinear)
 
     /* ---- SVG Canvas ---- */
+    d3.select("svg").remove()
     var svg = d3
       .select('div.scatterPlotContainer')
       .append('svg')
@@ -208,12 +215,16 @@ class ScatterPlot extends Component {
     var tickFormat;
     var ticks;
     if (this.state.filterBy === 'day') {
-      ticks = d3.timeHour.every(1)
+      tickFormat = d3.timeFormat('%I %p')
+      ticks = d3.timeHour.every(3)
     } else if (this.state.filterBy === 'week') {
+      tickFormat = d3.timeFormat('%A')
       ticks = d3.timeDay.every(1)
     } else if (this.state.filterBy === 'month') {
+      tickFormat = d3.timeFormat('%B %m-%d')
       ticks = d3.timeWeek.every(1)
     } else if (this.state.FilterBy === 'year') {
+      tickFormat = d3.timeFormat('%A')
       ticks = d3.timeMonth.every(1)
     }
     svg
@@ -223,7 +234,7 @@ class ScatterPlot extends Component {
       .call(
         d3
           .axisBottom(x)
-          .tickFormat(d3.timeFormat('%A')) //%Y-%m-%d
+          .tickFormat(tickFormat) //%Y-%m-%d
           .ticks(ticks)
       )
       .transition()
@@ -291,7 +302,7 @@ class ScatterPlot extends Component {
 
   handleButtons(event) {
     event.preventDefault();
-    this.setState({ filterBy: event.target.value}, this.getData())
+    this.setState({ filterBy: event.target.value, updatingPoints: true})
   }
 
   render() {
