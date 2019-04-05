@@ -6,8 +6,9 @@ var whereClauses;
 var parameters;
 
 async function test() {
-  var newQuery = 'SELECT TOP 10 VALUE, ((DATEPART(dayofyear, TIMESTAMP)) / 7) as week, DATEPART(year, TIMESTAMP) as year FROM dbo.SCHNEIDER_HALL_DAVIESKW_TOT_VALUE';
+  var newQuery = 'SELECT name FROM master.sys.databases';
   let returnData = await sqlserver.getSQLData(newQuery, []);
+  console.log(returnData);
   return returnData;
 
 }
@@ -80,7 +81,10 @@ async function average(parent, building) {
     if (parent.average != "year") {
       avgQuery += "DATEPART(month, TIMESTAMP) as month, ";
       if (parent.average != "month") {
-        avgQuery += "DATEPART(dayofyear, TIMESTAMP) as day, DATEPART(day, TIMESTAMP) as date, "
+        avgQuery += "DATEPART(dayofyear, TIMESTAMP) as day, DATEPART(day, TIMESTAMP) as date, ";
+        if (parent.average != "day") {
+          avgQuery += "DATEPART(hour, TIMESTAMP) as hour, ";
+        }
       }
     }
     avgQuery += "AVG(VALUE) as value FROM ";
@@ -91,7 +95,10 @@ async function average(parent, building) {
     if (parent.average != "year") {
       avgQuery += ", DATEPART(month, TIMESTAMP)";
       if (parent.average != "month") {
-        avgQuery += ", DATEPART(dayofyear, TIMESTAMP), DATEPART(day, TIMESTAMP)"
+        avgQuery += ", DATEPART(dayofyear, TIMESTAMP), DATEPART(day, TIMESTAMP)";
+        if (parent.average != "day") {
+          avgQuery += ", DATEPART(hour, TIMESTAMP)";
+        }
       }
     }
   }
@@ -109,7 +116,10 @@ async function average(parent, building) {
         } else {
             avgQuery += ", DATEPART(month, TIMESTAMP) DESC";
             if (parent.average != "month") {
-              avgQuery += ", DATEPART(dayofyear, TIMESTAMP) DESC"
+              avgQuery += ", DATEPART(dayofyear, TIMESTAMP) DESC";
+              if (parent.average != "day") {
+                avgQuery += ", DATEPART(hour, TIMESTAMP) DESC"
+              }
             } 
         }
       }
@@ -121,7 +131,10 @@ async function average(parent, building) {
         } else {
             avgQuery += ", DATEPART(month, TIMESTAMP) ASC";
             if (parent.average != "month") {
-              avgQuery += ", DATEPART(dayofyear, TIMESTAMP) ASC"
+              avgQuery += ", DATEPART(dayofyear, TIMESTAMP) ASC";
+              if (parent.average != "day") {
+                avgQuery += ", DATEPART(hour, TIMESTAMP) ASC"
+              }
             } 
         }
       }
@@ -137,24 +150,53 @@ async function average(parent, building) {
     return [{value: changeValue}];
   } else {
     returnData.forEach(function(data) {
-      data.timestamp = {
-        year: data.year,
-        month: data.month,
-        day: data.day,
-        date: data.date,
-        week: data.week
+      data.timestamp = {};
+      data.timestamp.year = data.year;
+      if (data.month == undefined) {
+        data.timestamp.month = 0;
+      } else {
+        data.timestamp.month = data.month;
       }
+      if (data.day == undefined) {
+        data.timestamp.day = 0;
+      } else {
+        data.timestamp.day = data.day;
+      }
+      if (data.date == undefined) {
+        data.timestamp.date = "Mon Jan 01 2019"; 
+      } else {
+        data.timestamp.date = data.date;
+      }
+      if (data.week == undefined) {
+        data.timestamp.week = 0;
+      } else {
+        data.timestamp.week = data.week;
+      }
+      if (data.hour == undefined) {
+        data.timestamp.hour = 0;
+      } else {
+        data.timestamp.hour = data.hour;
+      }
+      data.timestamp.minute = 0;
+      data.timestamp.second = 0;
+      data.timestamp.time = "0:00:00 AM";
+      data.timestamp.dateTime = "2019-01-01T00:00:00.000Z";
     });
 
-    /*var shortData = [];
+    //stuff for tensorflow, ignore
+    /*var fullData = {
+      y: [],
+      x1: [],
+      x2: [],
+      x3: []
+    }
   returnData.forEach(function(data) {
-    var newData = {
-      timestamp: data.timestamp.day,
-      value: data.value
-    };
-    shortData.push(newData);
+    fullData.y.push(data.value);
+    fullData.x1.push(data.timestamp.day);
+    fullData.x2.push(data.timestamp.month);
+    fullData.x3.push(data.timestamp.year);
   });
-  var jsonData = JSON.stringify(shortData);
+  var jsonData = JSON.stringify(fullData);
     fs.writeFile("test.json", jsonData, function(err) {
         if (err) {
             console.log(err);
@@ -165,7 +207,7 @@ async function average(parent, building) {
 }
 
 async function getTables(parent, args, context, info) {
-  var tableQuery = 'SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES';
+  var tableQuery = 'SELECT * FROM INFORMATION_SCHEMA.TABLES';
   var tableNames = [];
   let returnData = await sqlserver.getSQLData(tableQuery, []);
   returnData.forEach(function(data) {
@@ -273,10 +315,6 @@ function queryBuilder(query, parent, building) {
     } else if (parent.dataType == "energy") {
       query += "dbo.SCHNEIDER_HALL_TOWERS_SOUTHKW_TOT_VALUE";
     } 
-  } else if (building == "ED") {
-    if (parent.dataType == "heat") {
-      query += "dbo.ED_BLDG_2ND_FL_JENE_CONDENSATEMETER_CONDYESTERDAY";
-    }
   } else if (building == "Bridgman") {
     if (parent.dataType == "energy") {
       query += "dbo.SCHNEIDER_HALL_BRIDGEMANKW_TOT_VALUE";
@@ -284,6 +322,8 @@ function queryBuilder(query, parent, building) {
   } else if (building == "Centennial") {
     if (parent.dataType == "energy") {
       query += "dbo.SCHNEIDER_HALL_CENTENNIAL_HALLKW_TOT_VALUE";
+    } else if (parent.dataType == "heat") {
+      query += "dbo.ED_BLDG_2ND_FL_JENE_CONDENSATEMETER_CONDYESTERDAY";
     }
   } else if (building == "KV") {
     if (parent.dataType == "energy") {
