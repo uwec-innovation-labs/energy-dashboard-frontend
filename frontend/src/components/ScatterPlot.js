@@ -80,6 +80,21 @@ class ScatterPlot extends Component {
       }).then((result) => {
         this.setState({updatingGraph: false});
         this.updateGraph(result.data)
+        axios({
+          url: 'http://localhost:4000/graphql',
+          method: 'post',
+          data: {
+            query: `
+            query {
+              Davies(dataType: "energy", percentChange: "day") {
+                value
+              }
+            }
+              `
+          }
+        }).then((result2) => {
+          console.log(result2.data.data.Davies[0].value)
+        });
       });
     }
   }
