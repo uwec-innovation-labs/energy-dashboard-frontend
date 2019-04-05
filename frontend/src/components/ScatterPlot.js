@@ -43,7 +43,7 @@ class ScatterPlot extends Component {
     if (this.state.filterBy === 'day') {
       this.setState({amountOfPoints: 96, queryFilter: "", updatingGraph: true });
     } else if (this.state.filterBy === 'week') {
-      this.setState({amountOfPoints: 168, queryFilter: 'average: "hour"', updatingGraph: true});
+      this.setState({amountOfPoints: 672, queryFilter: '', updatingGraph: true});
     } else if (this.state.filterBy === 'month') {
       this.setState({amountOfPoints: 28, queryFilter: 'average: "day"', updatingGraph: true});
     } else if (this.state.filterBy === 'year') {
@@ -103,6 +103,7 @@ class ScatterPlot extends Component {
     // RESULTS
     results = results.data.Davies
     this.setState({resultsState: results})
+    console.log(results);
 
     // TIME PARSARS
     var parseDayTime = d3.timeParse("%a %b %e %Y %H:%M:%S");
@@ -164,7 +165,7 @@ class ScatterPlot extends Component {
           time = d.timestamp.date + " " + d.timestamp.time;
           time = parseDayTime(time);
         } else {
-          time = d.timestamp.day + " " + d.timestamp.month + " " + d.timestamp.year;
+          time = d.timestamp.date + " " + d.timestamp.month + " " + d.timestamp.year;
           time = parseOtherTime(time);
         }
 
@@ -220,7 +221,7 @@ class ScatterPlot extends Component {
           time = d.timestamp.date + " " + d.timestamp.time
           time = parseDayTime(time);
         } else {
-          time = d.timestamp.day + " " + d.timestamp.month + " " + d.timestamp.year;
+          time = d.timestamp.date + " " + d.timestamp.month + " " + d.timestamp.year;
           time = parseOtherTime(time);
         }
         return x(time)
@@ -271,8 +272,8 @@ class ScatterPlot extends Component {
     } else if (this.state.filterBy === 'month') {
       tickFormat = d3.timeFormat('%B %m-%d')
       ticks = d3.timeWeek.every(1)
-    } else if (this.state.FilterBy === 'year') {
-      tickFormat = d3.timeFormat('%A')
+    } else if (this.state.filterBy === 'year') {
+      tickFormat = d3.timeFormat('%m')
       ticks = d3.timeMonth.every(1)
     }
     svg
