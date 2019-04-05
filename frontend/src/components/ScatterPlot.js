@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import * as d3 from 'd3'
 import '../styles/App.scss'
 import { Spinner, ButtonGroup, Button, DropdownMenu, ButtonDropdown, DropdownItem, DropdownToggle } from 'reactstrap'
-import { CSVLink } from 'react-csv'
 
 const axios = require("axios")
 
@@ -20,9 +19,9 @@ class ScatterPlot extends Component {
       amountOfPoints: 0,
       updatingGraph: false,
       updatingPoints: false,
+      queryFilter: ''
     }
 
-    // Gets rid of errors
     this.getData = this.getData.bind(this);
     this.updateGraph = this.updateGraph.bind(this);
     this.handleButtons = this.handleButtons.bind(this)
@@ -42,22 +41,22 @@ class ScatterPlot extends Component {
 
   getData() {
     if (this.state.filterBy === 'day') {
-      this.setState({amountOfPoints: 96, updatingGraph: true }, console.log("BEEEEEP: " + this.state.amountOfPoints));
+      this.setState({amountOfPoints: 96, queryFilter: "", updatingGraph: true });
     } else if (this.state.filterBy === 'week') {
-      this.setState({amountOfPoints: 672, updatingGraph: true}, console.log("BEEEEEP: " + this.state.amountOfPoints));
+      this.setState({amountOfPoints: 168, queryFilter: 'average: "hour"', updatingGraph: true});
     } else if (this.state.filterBy === 'month') {
-      this.setState({amountOfPoints: 2688, updatingGraph: true}, console.log("BEEEEEP: " + this.state.amountOfPoints));
+      this.setState({amountOfPoints: 28, queryFilter: 'average: "day"', updatingGraph: true});
     } else if (this.state.filterBy === 'year') {
-      this.setState({amountOfPoints: 32256, updatingGraph: true}, console.log("BEEEEEP: " + this.state.amountOfPoints));
+      this.setState({amountOfPoints: 12, queryFilter: 'average: "month"', updatingGraph: true});
     }
   }
 
   componentDidUpdate() {
-    console.log(this.state.filterBy);
     if (this.state.updatingPoints) {
       this.setState({updatingPoints: false})
       this.getData();
     }
+
     if (this.state.updatingGraph) {
       axios({
         url: 'http://localhost:4000/graphql',
@@ -65,10 +64,13 @@ class ScatterPlot extends Component {
         data: {
           query: `
           query {
-            Davies(dataType: "energy", only: ` + this.state.amountOfPoints + `, sort: "timestamp high") {
+            Davies(dataType: "energy", only: ` + this.state.amountOfPoints + `, sort: "timestamp high" ` + this.state.queryFilter + `) {
               timestamp {
                 date
                 time
+                year
+                month
+                day
               }
               value
             }
@@ -83,32 +85,48 @@ class ScatterPlot extends Component {
   }
 
   updateGraph(results) {
+    // RESULTS
     results = results.data.Davies
-
     this.setState({resultsState: results})
 
-    // Allows us to parse the time
-    var parseTime = d3.timeParse("%a %b %e %Y %H:%M:%S");
+    // TIME PARSARS
+    var parseDayTime = d3.timeParse("%a %b %e %Y %H:%M:%S");
+    var parseOtherTime = d3.timeParse("%d %m %Y");
 
-    /* ---- Sizing Variables ---- */
+    // SIZING VARIABLES
     var margin = { top: 20, right: 30, bottom: 50, left: 150 }
     var width = 1000 - margin.left - margin.right
     var height = 275 - margin.top - margin.bottom
 
-    /* ---- Min & Max Dates ---- */
-    var mindate = parseTime(results[this.state.amountOfPoints-1].timestamp.date + " " + results[this.state.amountOfPoints-1].timestamp.time);
-    var maxdate = parseTime(results[0].timestamp.date + " " + results[0].timestamp.time);
+    console.log(parseOtherTime("10 10 2019"));
 
-    /* ---- Data Cushion ---- */
+    // MIN AND MAX DATES
+    var mindate;
+    var maxdate;
+    if (this.state.queryFilter === "") {
+      mindate = parseDayTime(results[this.state.amountOfPoints-1].timestamp.date + " " + results[this.state.amountOfPoints-1].timestamp.time);
+      maxdate = parseDayTime(results[0].timestamp.date + " " + results[0].timestamp.time);
+    } else {
+      mindate = parseOtherTime(results[this.state.amountOfPoints-1].timestamp.date + " " + results[this.state.amountOfPoints-1].timestamp.month + " " + results[this.state.amountOfPoints-1].timestamp.year);
+      maxdate = parseOtherTime(results[0].timestamp.date + " " + results[0].timestamp.month + " " + results[0].timestamp.year);
+    }
+
+    console.log("Min: " + mindate + " Max: " + maxdate);
+
+    // DATA GAP
+    /*
+     * This is the gap between the max value and the top, and the min value and bottom.
+     * It basically just looks better this way.
+     */
     let percentGap = 0.2
 
-    /* ---- X Scale ---- */
+    // X-SCALE
     var x = d3
       .scaleTime()
       .domain([mindate, maxdate])
       .range([0, width])
 
-    /* ---- Y Scale ---- */
+    // Y-SCALE
     var y = d3
       .scaleLinear()
       .domain([
@@ -121,12 +139,20 @@ class ScatterPlot extends Component {
       ])
       .range([height, 0])
 
-    /* ---- Creates Valueline ---- */
+    // CREATES VALUELINE
+    var queryFilter = this.state.queryFilter;
     var valueline = d3
       .line()
       .x(function(d) {
-        var time = d.timestamp.date + " " + d.timestamp.time
-        time = parseTime(time);
+        var time;
+        if (queryFilter === "") {
+          time = d.timestamp.date + " " + d.timestamp.time;
+          time = parseDayTime(time);
+        } else {
+          time = d.timestamp.day + " " + d.timestamp.month + " " + d.timestamp.year;
+          time = parseOtherTime(time);
+        }
+
         return x(time)
       })
       .y(function(d) {
@@ -134,7 +160,7 @@ class ScatterPlot extends Component {
       })
       .curve(d3.curveLinear)
 
-    /* ---- SVG Canvas ---- */
+    // SVG CANVAS
     d3.select("svg").remove()
     var svg = d3
       .select('div.scatterPlotContainer')
@@ -146,7 +172,7 @@ class ScatterPlot extends Component {
       .append('g')
       .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
 
-    /* ---- Add Valueline ---- */
+    // ADDS VALUELINE
     svg
       .append('path')
       .data([results])
@@ -158,13 +184,14 @@ class ScatterPlot extends Component {
       .duration(500)
       .attr('opacity', 1)
 
-    /* ---- Binds Data to Points ---- */
+    // BINDS DATA TO POINTS
     var points = svg
       .selectAll('circles')
       .attr('class', 'plotPoint')
       .data(results)
 
-    /* ---- Appends Circles to Points ---- */
+    // APPENDS CIRCLES TO POINTS
+    var queryFilter = this.state.queryFilter;
     points
       .enter()
       .append('circle')
@@ -173,8 +200,14 @@ class ScatterPlot extends Component {
         return y(d.value)
       })
       .attr('cx', function(d) {
-        var time = d.timestamp.date + " " + d.timestamp.time
-        time = parseTime(time)
+        var time;
+        if (queryFilter === "") {
+          time = d.timestamp.date + " " + d.timestamp.time
+          time = parseDayTime(time);
+        } else {
+          time = d.timestamp.day + " " + d.timestamp.month + " " + d.timestamp.year;
+          time = parseOtherTime(time);
+        }
         return x(time)
       })
       .attr('opacity', 0)
@@ -184,10 +217,10 @@ class ScatterPlot extends Component {
           .duration(200)
           .attr('r', 10)
 
-    /* ---- Value Formmater ---- */
+    // VALUE FORMATTER
     var formatValue = d3.format(".2f")
 
-    /* ---- Hover Text ---- */
+    // HOVER TEXT
     svg
       .append('text')
       .attr('id', 't' + d.x + '-' + d.y + '-' + i)
@@ -211,7 +244,7 @@ class ScatterPlot extends Component {
       .attr('opacity', 1)
       .attr('r', 5)
 
-    /* ---- X-Axis (Year) ---- */
+    // X-AXIS
     var tickFormat;
     var ticks;
     if (this.state.filterBy === 'day') {
@@ -234,7 +267,7 @@ class ScatterPlot extends Component {
       .call(
         d3
           .axisBottom(x)
-          .tickFormat(tickFormat) //%Y-%m-%d
+          .tickFormat(tickFormat)
           .ticks(ticks)
       )
       .transition()
@@ -247,7 +280,7 @@ class ScatterPlot extends Component {
 
 
 
-    /* ---- Y-Axis ---- */
+    // Y-AXIS
     svg
       .append('g')
       .attr('class', 'axis')
@@ -259,8 +292,7 @@ class ScatterPlot extends Component {
       .selectAll('text')
       .style('text-anchor', 'end')
 
-    /* CURRENTLY DISABLED */
-    /* ---- X-Axis Label ---- */
+    // X-AXIS LABEL (CURRENTLY DISABLED)
     /*
     svg.append("text")
       .attr("x", width / 2.0)
@@ -269,20 +301,19 @@ class ScatterPlot extends Component {
       .text("Date")
     */
 
-    /* ---- Y-Axis Label ---- */
+    // Y-AXIS LABEL
     svg
       .append('text')
       .attr('x', 0 - height / 2.0)
       .attr('y', 0 - margin.bottom * 2)
       .style('text-anchor', 'middle')
-      .text('Energy Consumption')
+      .text('Energy (kw)')
       .attr('transform', 'rotate(-90)')
       .transition()
       .duration(1500)
       .attr('opacity', 1)
 
-    /* CURRENTlY DISABLED */
-    /* ---- Title ---- */
+    // TITLE (CURRENTLY DISABLED)
     /*
     svg.append("text")
       .attr("x", 0 - margin.left + (width + margin.left + margin.right) / 2.0)
@@ -291,7 +322,7 @@ class ScatterPlot extends Component {
       .attr("text-decoration", "underline")
       .style("text-anchor", "middle")
       .text("Time vs. Total Yield");
-      */
+    */
 
     this.setState({ loading: false })
   }
@@ -342,13 +373,4 @@ class ScatterPlot extends Component {
   }
 }
 
-/* Button Navigation
-<div>
-  <ButtonGroup>
-     <Button onClick={this.handleYearClick}>Year</Button>
-     <Button onClick={this.handleMonthClick}>Month</Button>
-     <Button onClick={this.handleDayClick}>Day</Button>
-   </ButtonGroup>
-</div>
-*/
 export default ScatterPlot
