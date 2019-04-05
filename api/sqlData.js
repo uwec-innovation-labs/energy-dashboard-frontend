@@ -6,8 +6,9 @@ var whereClauses;
 var parameters;
 
 async function test() {
-  var newQuery = 'SELECT TOP 10 VALUE, ((DATEPART(dayofyear, TIMESTAMP)) / 7) as week, DATEPART(year, TIMESTAMP) as year FROM dbo.SCHNEIDER_HALL_DAVIESKW_TOT_VALUE';
+  var newQuery = 'SELECT name FROM master.sys.databases';
   let returnData = await sqlserver.getSQLData(newQuery, []);
+  console.log(returnData);
   return returnData;
 
 }
@@ -206,7 +207,7 @@ async function average(parent, building) {
 }
 
 async function getTables(parent, args, context, info) {
-  var tableQuery = 'SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES';
+  var tableQuery = 'SELECT * FROM INFORMATION_SCHEMA.TABLES';
   var tableNames = [];
   let returnData = await sqlserver.getSQLData(tableQuery, []);
   returnData.forEach(function(data) {
@@ -314,10 +315,6 @@ function queryBuilder(query, parent, building) {
     } else if (parent.dataType == "energy") {
       query += "dbo.SCHNEIDER_HALL_TOWERS_SOUTHKW_TOT_VALUE";
     } 
-  } else if (building == "ED") {
-    if (parent.dataType == "heat") {
-      query += "dbo.ED_BLDG_2ND_FL_JENE_CONDENSATEMETER_CONDYESTERDAY";
-    }
   } else if (building == "Bridgman") {
     if (parent.dataType == "energy") {
       query += "dbo.SCHNEIDER_HALL_BRIDGEMANKW_TOT_VALUE";
@@ -325,6 +322,8 @@ function queryBuilder(query, parent, building) {
   } else if (building == "Centennial") {
     if (parent.dataType == "energy") {
       query += "dbo.SCHNEIDER_HALL_CENTENNIAL_HALLKW_TOT_VALUE";
+    } else if (parent.dataType == "heat") {
+      query += "dbo.ED_BLDG_2ND_FL_JENE_CONDENSATEMETER_CONDYESTERDAY";
     }
   } else if (building == "KV") {
     if (parent.dataType == "energy") {
