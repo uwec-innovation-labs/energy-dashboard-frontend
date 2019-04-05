@@ -30,24 +30,6 @@ class Home extends Component {
     }
   }
 
-  componentDidMount(){
-    axios({
-      url: 'http://localhost:4000/graphql',
-      method: 'post',
-      data: {
-        query: `
-        query {
-          Davies(dataType: "energy", percentChange: "day") {
-            value
-          }
-        }
-          `
-      }
-    }).then((result) => {
-      console.log(result.data)
-    });
-  }
-
   renderStats(statCards) {
     return (
       <div id="stats-container">
