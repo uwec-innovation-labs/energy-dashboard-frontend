@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import '../styles/App.scss'
 import ScatterPlot from './ScatterPlot'
+import APIFrame from '../helpers/APIFrame.js'
 
 const axios = require("axios")
 
@@ -30,24 +31,6 @@ class Home extends Component {
     }
   }
 
-componentDidMount(){
-  axios({
-    url: 'http://localhost:4000/graphql',
-    method: 'post',
-    data: {
-      query: `
-      query {
-        Davies(dataType: "energy", percentChange: "day") {
-          value
-        }
-      }
-        `
-    }
-  }).then((result2) => {
-    console.log(result2.data.data.Davies[0].value)
-  });
-}
-
 
   renderStats(statCards) {
     return (
@@ -73,6 +56,7 @@ componentDidMount(){
           </div>
         </div>
         <div className="cards" id="statCards">
+          {this.props.getStatCardData}
           {this.renderStats(this.state.stats)}
         </div>
       </div>

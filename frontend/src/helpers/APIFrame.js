@@ -1,20 +1,40 @@
-import React, { Component } from 'react'
-
 const axios = require("axios")
 
-class APIFrame extends Component {
+class APIFrame {
 
-
-    
     getGraphData(){
-
+        var graphResults
         return graphResults
     }
     
     getStatCardData(){
-    
-    
-        return statCardResults
+        console.log("Function called.")
+        var statCardResults
+        axios({
+            url: 'http://localhost:4000/graphql',
+            method: 'post',
+            data: {
+              query: `
+              query {
+                Davies(dataType: "energy", percentChange: "day") {
+                  timestamp {
+                    date
+                    time
+                    year
+                    month
+                    day
+                  }
+                  value
+                }
+              }
+                `
+            }
+          }).then((statCardResults) => {
+            statCardResults = statCardResults.data.data.Davies[0].value
+            console.log('Got the data.')
+          });
+
+          return statCardResults
     }
 }
 
