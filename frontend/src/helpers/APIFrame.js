@@ -1,13 +1,11 @@
 const axios = require("axios")
 
-class APIFrame {
-
-    getGraphData(){
+    export function getGraphData(){
         var graphResults
         return graphResults
     }
     
-    getStatCardData(){
+    export function getStatCardData() {
         console.log("Function called.")
         var statCardResults
         axios({
@@ -17,13 +15,6 @@ class APIFrame {
               query: `
               query {
                 Davies(dataType: "energy", percentChange: "day") {
-                  timestamp {
-                    date
-                    time
-                    year
-                    month
-                    day
-                  }
                   value
                 }
               }
@@ -31,11 +22,10 @@ class APIFrame {
             }
           }).then((statCardResults) => {
             statCardResults = statCardResults.data.data.Davies[0].value
-            console.log('Got the data.')
+            console.log('Stat card results are:')
+            console.log(statCardResults)
           });
 
           return statCardResults
     }
-}
 
-export default APIFrame

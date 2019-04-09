@@ -1,19 +1,19 @@
 import React, { Component } from 'react'
 import '../styles/App.scss'
 import ScatterPlot from './ScatterPlot'
-import APIFrame from '../helpers/APIFrame.js'
-
-const axios = require("axios")
+import { getStatCardData } from '../helpers/APIFrame'
 
 class Home extends Component {
   constructor(props) {
     super(props)
     this.renderStats = this.renderStats.bind(this)
+    var test = getStatCardData()
+    console.log(test)
     this.state = {
       stats: [
         {
           interval: 'Daily',
-          label: '--%'
+          label: test
         },
         {
           interval: 'Weekly',
@@ -33,6 +33,7 @@ class Home extends Component {
 
 
   renderStats(statCards) {
+    
     return (
       <div id="stats-container">
         {statCards.map((statCard, i) => (
@@ -56,7 +57,6 @@ class Home extends Component {
           </div>
         </div>
         <div className="cards" id="statCards">
-          {this.props.getStatCardData}
           {this.renderStats(this.state.stats)}
         </div>
       </div>
