@@ -88,7 +88,6 @@ class ScatterPlot extends Component {
     // RESULTS
     results = results.data.Davies
     this.setState({resultsState: results})
-    console.log(results);
 
     // TIME PARSARS
     var parseDayTime = d3.timeParse("%a %b %e %Y %H:%M:%S");
@@ -99,7 +98,6 @@ class ScatterPlot extends Component {
     var width = 1000 - margin.left - margin.right
     var height = 275 - margin.top - margin.bottom
 
-    console.log(parseOtherTime("10 10 2019"));
 
     // MIN AND MAX DATES
     var mindate;
@@ -111,8 +109,6 @@ class ScatterPlot extends Component {
       mindate = parseOtherTime(results[this.state.amountOfPoints-1].timestamp.date + " " + results[this.state.amountOfPoints-1].timestamp.month + " " + results[this.state.amountOfPoints-1].timestamp.year);
       maxdate = parseOtherTime(results[0].timestamp.date + " " + results[0].timestamp.month + " " + results[0].timestamp.year);
     }
-
-    console.log("Min: " + mindate + " Max: " + maxdate);
 
     // DATA GAP
     /*
