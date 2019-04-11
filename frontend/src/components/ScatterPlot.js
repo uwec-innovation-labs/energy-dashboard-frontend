@@ -47,7 +47,7 @@ class ScatterPlot extends Component {
     } else if (this.state.filterBy === 'month') {
       this.setState({amountOfPoints: 28, queryFilter: 'average: "day"', updatingGraph: true});
     } else if (this.state.filterBy === 'year') {
-      this.setState({amountOfPoints: 12, queryFilter: 'average: "month"', updatingGraph: true});
+      this.setState({amountOfPoints: 365, queryFilter: 'average: "day"', updatingGraph: true});
     }
   }
 
@@ -71,6 +71,7 @@ class ScatterPlot extends Component {
                 year
                 month
                 day
+                hour
               }
               value
             }
@@ -100,21 +101,20 @@ class ScatterPlot extends Component {
   }
 
   updateGraph(results) {
+    console.log(results);
     // RESULTS
     results = results.data.Davies
     this.setState({resultsState: results})
-    console.log(results);
 
     // TIME PARSARS
     var parseDayTime = d3.timeParse("%a %b %e %Y %H:%M:%S");
     var parseOtherTime = d3.timeParse("%d %m %Y");
+    var parseHourTime = d3.timeParse("%d %m %Y %H");
 
     // SIZING VARIABLES
     var margin = { top: 20, right: 30, bottom: 50, left: 150 }
     var width = 1000 - margin.left - margin.right
     var height = 275 - margin.top - margin.bottom
-
-    console.log(parseOtherTime("10 10 2019"));
 
     // MIN AND MAX DATES
     var mindate;
@@ -122,12 +122,16 @@ class ScatterPlot extends Component {
     if (this.state.queryFilter === "") {
       mindate = parseDayTime(results[this.state.amountOfPoints-1].timestamp.date + " " + results[this.state.amountOfPoints-1].timestamp.time);
       maxdate = parseDayTime(results[0].timestamp.date + " " + results[0].timestamp.time);
+    } else if (this.state.queryFilter === 'average: "month"') {
+      mindate = parseOtherTime(results[this.state.amountOfPoints-1].timestamp.day + " " + results[this.state.amountOfPoints-1].timestamp.month + " " + results[this.state.amountOfPoints-1].timestamp.year);
+      maxdate = parseOtherTime(results[0].timestamp.day + " " + results[0].timestamp.month + " " + results[0].timestamp.year);
+    } else if (this.state.queryFilter === 'average: "hour"') {
+      mindate = parseHourTime(results[this.state.amountOfPoints-1].timestamp.date + " " + results[this.state.amountOfPoints-1].timestamp.month + " " + results[this.state.amountOfPoints-1].timestamp.year + " " + results[this.state.amountOfPoints-1].timestamp.hour);
+      maxdate = parseHourTime(results[0].timestamp.date + " " + results[0].timestamp.month + " " + results[0].timestamp.year + " " + results[0].timestamp.hour);
     } else {
       mindate = parseOtherTime(results[this.state.amountOfPoints-1].timestamp.date + " " + results[this.state.amountOfPoints-1].timestamp.month + " " + results[this.state.amountOfPoints-1].timestamp.year);
       maxdate = parseOtherTime(results[0].timestamp.date + " " + results[0].timestamp.month + " " + results[0].timestamp.year);
     }
-
-    console.log("Min: " + mindate + " Max: " + maxdate);
 
     // DATA GAP
     /*
@@ -164,6 +168,12 @@ class ScatterPlot extends Component {
         if (queryFilter === "") {
           time = d.timestamp.date + " " + d.timestamp.time;
           time = parseDayTime(time);
+        } else if (queryFilter === 'average: "month"') {
+          time = d.timestamp.day + " " + d.timestamp.month + " " + d.timestamp.year;
+          time = parseOtherTime(time);
+        } else if (queryFilter === 'average: "hour"') {
+          time = d.timestamp.day + " " + d.timestamp.month + " " + d.timestamp.year + " " + d.timestamp.hour;
+          time = parseOtherTime(time);
         } else {
           time = d.timestamp.date + " " + d.timestamp.month + " " + d.timestamp.year;
           time = parseOtherTime(time);
@@ -206,6 +216,8 @@ class ScatterPlot extends Component {
       .attr('class', 'plotPoint')
       .data(results)
 
+    // Append Lines
+
     // APPENDS CIRCLES TO POINTS
     var queryFilter = this.state.queryFilter;
     points
@@ -220,6 +232,12 @@ class ScatterPlot extends Component {
         if (queryFilter === "") {
           time = d.timestamp.date + " " + d.timestamp.time
           time = parseDayTime(time);
+        } else if (queryFilter === 'average: "month"') {
+          time = d.timestamp.day + " " + d.timestamp.month + " " + d.timestamp.year;
+          time = parseOtherTime(time);
+        } else if (queryFilter === 'average: "hour"') {
+          time = d.timestamp.day + " " + d.timestamp.month + " " + d.timestamp.year + " " + d.timestamp.hour;
+          time = parseOtherTime(time);
         } else {
           time = d.timestamp.date + " " + d.timestamp.month + " " + d.timestamp.year;
           time = parseOtherTime(time);
@@ -232,6 +250,8 @@ class ScatterPlot extends Component {
           .transition()
           .duration(200)
           .attr('r', 10)
+
+        d3.select(this).append("line").attr("x1", 20).attr("x2", 20).attr("y1", 0).attr("y2", 400).attr("stroke-width", 2).attr("stroke", "black").attr("fill","black")
 
     // VALUE FORMATTER
     var formatValue = d3.format(".2f")
@@ -273,7 +293,7 @@ class ScatterPlot extends Component {
       tickFormat = d3.timeFormat('%B %m-%d')
       ticks = d3.timeWeek.every(1)
     } else if (this.state.filterBy === 'year') {
-      tickFormat = d3.timeFormat('%m')
+      tickFormat = d3.timeFormat('%B')
       ticks = d3.timeMonth.every(1)
     }
     svg
@@ -339,6 +359,11 @@ class ScatterPlot extends Component {
       .style("text-anchor", "middle")
       .text("Time vs. Total Yield");
     */
+
+    svg.append("line")
+        .attr("class", "y-hover-line hover-line")
+        .attr("x1", width)
+        .attr("x2", width);
 
     this.setState({ loading: false })
   }

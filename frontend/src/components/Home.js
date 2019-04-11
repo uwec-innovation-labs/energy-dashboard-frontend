@@ -47,14 +47,18 @@ class Home extends Component {
 
   render() {
     return (
-      <div className="centered">
-        <div className="graphRow">
-          <div className="card" id="graphCard">
-            <ScatterPlot graphName="graph1" />
+      <div>
+
+        <div className="centered">
+          <div className="graphRow">
+              <h1> Davies Building </h1>
+            <div className="card" id="graphCard">
+              <ScatterPlot graphName="graph1" />
+            </div>
           </div>
-        </div>
-        <div className="cards" id="statCards">
-          {this.renderStats(this.state.stats)}
+          <div className="cards" id="statCards">
+            {this.renderStats(this.state.stats)}
+          </div>
         </div>
       </div>
     )
