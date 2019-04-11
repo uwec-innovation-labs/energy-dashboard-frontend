@@ -1,11 +1,11 @@
 const axios = require("axios")
 
-    export function getGraphData(){
+    function getGraphData(){
         var graphResults
         return graphResults
     }
     
-    export function getStatCardData() {
+    function getStatCardData() {
         console.log("Function called.")
         var statCardResults
         axios({
@@ -25,7 +25,11 @@ const axios = require("axios")
             console.log('Stat card results are:')
             console.log(statCardResults)
           });
-
           return statCardResults
+    }
+
+    module.exports = {
+      "getGraphData": getGraphData,
+      "getStatCardData": getStatCardData
     }
 

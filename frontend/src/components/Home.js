@@ -7,13 +7,11 @@ class Home extends Component {
   constructor(props) {
     super(props)
     this.renderStats = this.renderStats.bind(this)
-    var test = getStatCardData()
-    console.log(test)
     this.state = {
       stats: [
         {
           interval: 'Daily',
-          label: test
+          label: '--%'
         },
         {
           interval: 'Weekly',
