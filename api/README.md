@@ -41,10 +41,11 @@ QUERY PARAMETERS
     baseIndex: restricts records to those at or after the base index. can be used with 'only' to get 'pages' of data
       Davies(dataType:"energy", baseIndex:100, only:50) will retrieve records #100-#149
     endIndex: counterpart of 'baseIndex'
-    average: data can be averaged by day, week, month, or year. you probably want to use a sort parameter with this one since it won't be sorted by default
+    average: data can be averaged by hour, day, week, month, or year. you probably want to use a sort parameter with this one since it won't be sorted by default
       be careful if you use it with start/end, since it'll only average the values that fall in that range for the month
       Davies(dataType:"energy",average:"month") {...
-      not all timestamp fields will return data when you use averages, obviously (ex. the 'week' average only returns 'week' and 'year')
+      dummy data is supplied for parts of the timestamp that are otherwise undefined 
+        ex. if you average by year, the query only returns 'year' values, so the api defaults the month to 0, the day to 0, etc
     percentChange: this is the only parameter that can NOT be used with other parameters, as it is only used to measure the percent of change over the 
       past day, week, month, or year. It returns one record with one field ('value'), which represents the percent change.
       Davies(dataType:"energy",percentChange:"day") {...

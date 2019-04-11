@@ -10,6 +10,8 @@ var path = require('path');
 var schema = require("./sqlSchema.js").energySchema;
 const app = express();
 
+app.use(cors())
+
 var global = {
   Davies: sqlData.master,
   Schneider: sqlData.master,

@@ -1,10 +1,9 @@
 import React, { Component } from 'react'
 import * as d3 from 'd3'
-import csv from '../media/solar_power.csv'
-import crossfilter from 'crossfilter'
-import Papa from 'papaparse'
 import '../styles/App.scss'
-import { Spinner } from 'reactstrap'
+import { Spinner, ButtonGroup, Button, DropdownMenu, ButtonDropdown, DropdownItem, DropdownToggle } from 'reactstrap'
+
+const axios = require("axios")
 
 class ScatterPlot extends Component {
   constructor(props) {
@@ -14,146 +13,195 @@ class ScatterPlot extends Component {
       maxdate: '',
       loading: true,
       mounted: false,
-      filterBy: 'year'
+      filterBy: 'week',
+      resultsState: '',
+      dropdownOpen: false,
+      amountOfPoints: 0,
+      updatingGraph: false,
+      updatingPoints: false,
+      queryFilter: ''
     }
 
-    // Gets rid of errors
-    this.handleChange = this.handleChange.bind(this)
-    this.updateGraph = this.updateGraph.bind(this)
-    this.handleDayClick = this.handleDayClick.bind(this)
-    this.handleMonthClick = this.handleMonthClick.bind(this)
-    this.handleYearClick = this.handleYearClick.bind(this)
+    this.getData = this.getData.bind(this);
+    this.updateGraph = this.updateGraph.bind(this);
+    this.handleButtons = this.handleButtons.bind(this)
+    this.toggle = this.toggle.bind(this);
   }
 
-  handleChange(event) {
-    console.log('Event: ' + event)
+  toggle() {
+  this.setState(prevState => ({
+    dropdownOpen: !prevState.dropdownOpen
+  }));
   }
 
   componentDidMount() {
     this.setState({ mounted: true })
-    Papa.parse(csv, {
-      header: true,
-      download: true,
-      dynamicTyping: true,
-      complete: this.updateGraph
-    })
+    this.getData();
+  }
+
+  getData() {
+    if (this.state.filterBy === 'day') {
+      this.setState({amountOfPoints: 96, queryFilter: "", updatingGraph: true });
+    } else if (this.state.filterBy === 'week') {
+      this.setState({amountOfPoints: 672, queryFilter: '', updatingGraph: true});
+    } else if (this.state.filterBy === 'month') {
+      this.setState({amountOfPoints: 28, queryFilter: 'average: "day"', updatingGraph: true});
+    } else if (this.state.filterBy === 'year') {
+      this.setState({amountOfPoints: 365, queryFilter: 'average: "day"', updatingGraph: true});
+    }
+  }
+
+  componentDidUpdate() {
+    if (this.state.updatingPoints) {
+      this.setState({updatingPoints: false})
+      this.getData();
+    }
+
+    if (this.state.updatingGraph) {
+      axios({
+        url: 'http://localhost:4000/graphql',
+        method: 'post',
+        data: {
+          query: `
+          query {
+            Davies(dataType: "energy", only: ` + this.state.amountOfPoints + `, sort: "timestamp high" ` + this.state.queryFilter + `) {
+              timestamp {
+                date
+                time
+                year
+                month
+                day
+                hour
+              }
+              value
+            }
+          }
+            `
+        }
+      }).then((result) => {
+        this.setState({updatingGraph: false});
+        this.updateGraph(result.data)
+        axios({
+          url: 'http://localhost:4000/graphql',
+          method: 'post',
+          data: {
+            query: `
+            query {
+              Davies(dataType: "energy", percentChange: "day") {
+                value
+              }
+            }
+              `
+          }
+        }).then((result2) => {
+          console.log(result2.data.data.Davies[0].value)
+        });
+      });
+    }
   }
 
   updateGraph(results) {
-    var data = []
-    var dataFilteredByYear = []
-    results.data.forEach(function(element) {
-      var dates = element.TIMESTAMP.split(' ')
-      // Setups up the expected date format (This is assuming it follows this specific format)
-      var timeParser = d3.timeParse('%Y-%m-%d %H:%M:%S')
+    console.log(results);
+    // RESULTS
+    results = results.data.Davies
+    this.setState({resultsState: results})
 
-      // Splits off unnessary data
-      var date = dates[0] + ' ' + dates[1]
+    // TIME PARSARS
+    var parseDayTime = d3.timeParse("%a %b %e %Y %H:%M:%S");
+    var parseOtherTime = d3.timeParse("%d %m %Y");
+    var parseHourTime = d3.timeParse("%d %m %Y %H");
 
-      data.push({ TIMESTAMP: timeParser(date), VALUE: element.VALUE })
-    })
-
-    /* -------- DATA FILTERING -------- */
-    // This is the data to be Filtered
-    var filteredData = crossfilter(data)
-
-    // Adding a dimension for the filter for "Year"
-    var yearlyDimension = filteredData.dimension(function(d) {
-      return d.TIMESTAMP.toString().split(' ')[3]
-    })
-
-    //var orderByYearDimension = filteredData.dimension(function(d) { return d.TIMESTAMP.toString().split(" ")[3]; });
-
-    // Groups the data by the filter then sums up the yields for each year
-    var yearlyYield = yearlyDimension
-      .group()
-      .reduceSum(function(d) {
-        return d.VALUE
-      })
-      .top(Infinity)
-
-    var temp, tempz
-    for (let i = 0; i < yearlyYield.length - 1; i++) {
-      temp = i
-      for (let j = i + 1; j < yearlyYield.length; j++) {
-        if (yearlyYield[j].key < yearlyYield[temp].key) {
-          temp = j
-        }
-      }
-      tempz = yearlyYield[temp]
-      yearlyYield[temp] = yearlyYield[i]
-      yearlyYield[i] = tempz
-    }
-
-    // Pushes the data found into a JSON object
-    for (let i = 0; i < yearlyYield.length; i++) {
-      dataFilteredByYear.push({
-        year: new Date(yearlyYield[i].key, 0, 1),
-        total_yield: yearlyYield[i].value
-      })
-    }
-    /* -------- DATA FILTERING END -------- */
-
-    // Setting up Sizing Variables
-    var margin = { top: 80, right: 30, bottom: 50, left: 150 }
+    // SIZING VARIABLES
+    var margin = { top: 20, right: 30, bottom: 50, left: 150 }
     var width = 1000 - margin.left - margin.right
-    var height = 400 - margin.top - margin.bottom
+    var height = 275 - margin.top - margin.bottom
 
-    // We have to manually set the dates right now
-    var mindate = new Date(2014, 0, 0)
-    var maxdate = new Date(2019, 0, 0)
+    // MIN AND MAX DATES
+    var mindate;
+    var maxdate;
+    if (this.state.queryFilter === "") {
+      mindate = parseDayTime(results[this.state.amountOfPoints-1].timestamp.date + " " + results[this.state.amountOfPoints-1].timestamp.time);
+      maxdate = parseDayTime(results[0].timestamp.date + " " + results[0].timestamp.time);
+    } else if (this.state.queryFilter === 'average: "month"') {
+      mindate = parseOtherTime(results[this.state.amountOfPoints-1].timestamp.day + " " + results[this.state.amountOfPoints-1].timestamp.month + " " + results[this.state.amountOfPoints-1].timestamp.year);
+      maxdate = parseOtherTime(results[0].timestamp.day + " " + results[0].timestamp.month + " " + results[0].timestamp.year);
+    } else if (this.state.queryFilter === 'average: "hour"') {
+      mindate = parseHourTime(results[this.state.amountOfPoints-1].timestamp.date + " " + results[this.state.amountOfPoints-1].timestamp.month + " " + results[this.state.amountOfPoints-1].timestamp.year + " " + results[this.state.amountOfPoints-1].timestamp.hour);
+      maxdate = parseHourTime(results[0].timestamp.date + " " + results[0].timestamp.month + " " + results[0].timestamp.year + " " + results[0].timestamp.hour);
+    } else {
+      mindate = parseOtherTime(results[this.state.amountOfPoints-1].timestamp.date + " " + results[this.state.amountOfPoints-1].timestamp.month + " " + results[this.state.amountOfPoints-1].timestamp.year);
+      maxdate = parseOtherTime(results[0].timestamp.date + " " + results[0].timestamp.month + " " + results[0].timestamp.year);
+    }
 
-    // This is a number used so the min and max aren't exactly data points
-    // It gives the graph some breathing room. Its found in the y Scale
+    // DATA GAP
+    /*
+     * This is the gap between the max value and the top, and the min value and bottom.
+     * It basically just looks better this way.
+     */
     let percentGap = 0.2
 
-    // This is the Date Scale
+    // X-SCALE
     var x = d3
       .scaleTime()
       .domain([mindate, maxdate])
-      // Pixel Range in X Direction
       .range([0, width])
 
-    // This is the Values Scale
+    // Y-SCALE
     var y = d3
       .scaleLinear()
       .domain([
-        d3.min(dataFilteredByYear, function(d) {
-          return d.total_yield - d.total_yield * percentGap
+        d3.min(results, function(d) {
+          return d.value - d.value * percentGap
         }),
-        d3.max(dataFilteredByYear, function(d) {
-          return d.total_yield + d.total_yield * percentGap
+        d3.max(results, function(d) {
+          return d.value + d.value * percentGap
         })
       ])
-      // Pixel Range in Y Direction
       .range([height, 0])
 
-    // define the line
+    // CREATES VALUELINE
+    var queryFilter = this.state.queryFilter;
     var valueline = d3
       .line()
       .x(function(d) {
-        return x(d.year)
+        var time;
+        if (queryFilter === "") {
+          time = d.timestamp.date + " " + d.timestamp.time;
+          time = parseDayTime(time);
+        } else if (queryFilter === 'average: "month"') {
+          time = d.timestamp.day + " " + d.timestamp.month + " " + d.timestamp.year;
+          time = parseOtherTime(time);
+        } else if (queryFilter === 'average: "hour"') {
+          time = d.timestamp.day + " " + d.timestamp.month + " " + d.timestamp.year + " " + d.timestamp.hour;
+          time = parseOtherTime(time);
+        } else {
+          time = d.timestamp.date + " " + d.timestamp.month + " " + d.timestamp.year;
+          time = parseOtherTime(time);
+        }
+
+        return x(time)
       })
       .y(function(d) {
-        return y(d.total_yield)
+        return y(d.value)
       })
       .curve(d3.curveLinear)
 
-    // Appends our SVG Canvas and sets it to a variable for easy usage
+    // SVG CANVAS
+    d3.select("svg").remove()
     var svg = d3
       .select('div.scatterPlotContainer')
       .append('svg')
       .attr('width', '100%')
       .attr('height', '100%')
 
-      .attr('viewBox', '0 0 1000 400')
+      .attr('viewBox', '0 0 1000 275')
       .append('g')
       .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
 
-    // Add the valueline path.
+    // ADDS VALUELINE
     svg
       .append('path')
-      .data([dataFilteredByYear])
+      .data([results])
       .attr('class', 'line')
       .attr('d', valueline)
       .attr('opacity', 0)
@@ -162,22 +210,38 @@ class ScatterPlot extends Component {
       .duration(500)
       .attr('opacity', 1)
 
-    // Binds all of the data we parsed
+    // BINDS DATA TO POINTS
     var points = svg
       .selectAll('circles')
       .attr('class', 'plotPoint')
-      .data(dataFilteredByYear)
+      .data(results)
 
-    //Appends circles for each data point binded
+    // Append Lines
+
+    // APPENDS CIRCLES TO POINTS
     points
       .enter()
       .append('circle')
       .attr('class', 'plotPoint')
       .attr('cy', function(d) {
-        return y(d.total_yield)
+        return y(d.value)
       })
       .attr('cx', function(d) {
-        return x(d.year)
+        var time;
+        if (queryFilter === "") {
+          time = d.timestamp.date + " " + d.timestamp.time
+          time = parseDayTime(time);
+        } else if (queryFilter === 'average: "month"') {
+          time = d.timestamp.day + " " + d.timestamp.month + " " + d.timestamp.year;
+          time = parseOtherTime(time);
+        } else if (queryFilter === 'average: "hour"') {
+          time = d.timestamp.day + " " + d.timestamp.month + " " + d.timestamp.year + " " + d.timestamp.hour;
+          time = parseOtherTime(time);
+        } else {
+          time = d.timestamp.date + " " + d.timestamp.month + " " + d.timestamp.year;
+          time = parseOtherTime(time);
+        }
+        return x(time)
       })
       .attr('opacity', 0)
       .on('mouseover', function(d, i) {
@@ -186,30 +250,51 @@ class ScatterPlot extends Component {
           .duration(200)
           .attr('r', 10)
 
-        svg
-          .append('text')
-          .attr('id', 't' + d.x + '-' + d.y + '-' + i)
-          .attr('x', width)
-          .attr('y', 0)
-          .attr('font-size', 20)
-          .style('text-anchor', 'end')
-          .text('[ ' + d.year + ' , ' + d.total_yield + ' ]')
-      })
-      .on('mouseout', function(d, i) {
-        d3.select(this)
-          .transition()
-          .duration(200)
-          .attr('r', 6)
-          .delay(100)
+        d3.select(this).append("line").attr("x1", 20).attr("x2", 20).attr("y1", 0).attr("y2", 400).attr("stroke-width", 2).attr("stroke", "black").attr("fill","black")
+
+    // VALUE FORMATTER
+    var formatValue = d3.format(".2f")
+
+    // HOVER TEXT
+    svg
+      .append('text')
+      .attr('id', 't' + d.x + '-' + d.y + '-' + i)
+      .attr('x', width)
+      .attr('y', 0)
+      .attr('font-size', 20)
+      .style('text-anchor', 'end')
+      .text('[' + d.timestamp.time + ' : ' + formatValue(d.value) + ']')
+    })
+    .on('mouseout', function(d, i) {
+      d3.select(this)
+        .transition()
+        .duration(200)
+        .attr('r', 5)
+        .delay(100)
 
         d3.select('#t' + d.x + '-' + d.y + '-' + i).remove()
       })
       .transition()
       .duration(1500)
       .attr('opacity', 1)
-      .attr('r', 6)
+      .attr('r', 5)
 
-    // Setting the x-axis
+    // X-AXIS
+    var tickFormat;
+    var ticks;
+    if (this.state.filterBy === 'day') {
+      tickFormat = d3.timeFormat('%I %p')
+      ticks = d3.timeHour.every(3)
+    } else if (this.state.filterBy === 'week') {
+      tickFormat = d3.timeFormat('%A')
+      ticks = d3.timeDay.every(1)
+    } else if (this.state.filterBy === 'month') {
+      tickFormat = d3.timeFormat('%B %m-%d')
+      ticks = d3.timeWeek.every(1)
+    } else if (this.state.filterBy === 'year') {
+      tickFormat = d3.timeFormat('%B')
+      ticks = d3.timeMonth.every(1)
+    }
     svg
       .append('g')
       .attr('class', 'axis')
@@ -217,10 +302,8 @@ class ScatterPlot extends Component {
       .call(
         d3
           .axisBottom(x)
-          // This is the Format of the Text
-          .tickFormat(d3.timeFormat('%Y')) //%Y-%m-%d
-          // How many ticks to (We can play with this range)
-          .ticks(d3.timeYear.every(1))
+          .tickFormat(tickFormat)
+          .ticks(ticks)
       )
       .transition()
       .duration(1500)
@@ -230,7 +313,9 @@ class ScatterPlot extends Component {
       .attr('dx', '0')
       .attr('dy', '5.0')
 
-    // Setting up the y-axis
+
+
+    // Y-AXIS
     svg
       .append('g')
       .attr('class', 'axis')
@@ -242,38 +327,43 @@ class ScatterPlot extends Component {
       .selectAll('text')
       .style('text-anchor', 'end')
 
-    /* Disabling this unless if we need it again
-      // Don't want to delete it incase we need it again as well
-      // Label for the X-axis
-      svg.append("text")
-        .attr("x", width / 2.0)
-        .attr("y", height + margin.bottom)
-        .style("text-anchor", "middle")
-        .text("Date")
-      */
+    // X-AXIS LABEL (CURRENTLY DISABLED)
+    /*
+    svg.append("text")
+      .attr("x", width / 2.0)
+      .attr("y", height + margin.bottom)
+      .style("text-anchor", "middle")
+      .text("Date")
+    */
 
-    // Label for the Y-Axis
+    // Y-AXIS LABEL
     svg
       .append('text')
       .attr('x', 0 - height / 2.0)
       .attr('y', 0 - margin.bottom * 2)
       .style('text-anchor', 'middle')
-      .text('British Thermal Unit (BTU)')
+      .text('Energy (kw)')
       .attr('transform', 'rotate(-90)')
       .transition()
       .duration(1500)
       .attr('opacity', 1)
 
-    /* Also disabling the title. The title should be seperate from the svg for now
-      // Title for the graph
-      svg.append("text")
+    // TITLE (CURRENTLY DISABLED)
+    /*
+    svg.append("text")
       .attr("x", 0 - margin.left + (width + margin.left + margin.right) / 2.0)
       .attr("y", 0 - margin.top / 2.0)
       .attr("font-size", 36)
       .attr("text-decoration", "underline")
       .style("text-anchor", "middle")
       .text("Time vs. Total Yield");
-      */
+    */
+
+    svg.append("line")
+        .attr("class", "y-hover-line hover-line")
+        .attr("x1", width)
+        .attr("x2", width);
+
     this.setState({ loading: false })
   }
 
@@ -281,16 +371,9 @@ class ScatterPlot extends Component {
     this.setState({ mounted: false })
   }
 
-  handleYearClick() {
-    this.setState({ filterBy: 'year' })
-  }
-
-  handleMonthClick() {
-    this.setState({ filterBy: 'month' })
-  }
-
-  handleDayClick() {
-    this.setState({ filterBy: 'day' })
+  handleButtons(event) {
+    event.preventDefault();
+    this.setState({ filterBy: event.target.value, updatingPoints: true})
   }
 
   render() {
@@ -306,7 +389,23 @@ class ScatterPlot extends Component {
       spinner = null
     }
     return (
-      <div>
+      <div className="scatterCard">
+        <center>
+        <ButtonGroup size="lg">
+          <Button onClick={this.handleButtons} value="year">Year</Button>
+          <Button onClick={this.handleButtons} value="month">Month</Button>
+          <Button onClick={this.handleButtons} value="week">Week</Button>
+          <Button onClick={this.handleButtons} value="day">Day</Button>
+          <ButtonDropdown isOpen={this.state.dropdownOpen} toggle={this.toggle}>
+            <DropdownToggle caret>
+              Buildings
+            </DropdownToggle>
+            <DropdownMenu>
+              <DropdownItem>Davies</DropdownItem>
+            </DropdownMenu>
+          </ButtonDropdown>
+        </ButtonGroup>
+        </center>
         <center>{spinner}</center>
         <div className="scatterPlotContainer" />
       </div>
@@ -314,13 +413,4 @@ class ScatterPlot extends Component {
   }
 }
 
-/* Button Navigation
-<div>
-  <ButtonGroup>
-     <Button onClick={this.handleYearClick}>Year</Button>
-     <Button onClick={this.handleMonthClick}>Month</Button>
-     <Button onClick={this.handleDayClick}>Day</Button>
-   </ButtonGroup>
-</div>
-*/
 export default ScatterPlot
