@@ -2,8 +2,6 @@ import React, { Component } from 'react'
 import '../styles/App.scss'
 import ScatterPlot from './ScatterPlot'
 
-const axios = require("axios")
-
 class Home extends Component {
   constructor(props) {
     super(props)

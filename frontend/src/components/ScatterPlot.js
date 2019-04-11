@@ -219,7 +219,6 @@ class ScatterPlot extends Component {
     // Append Lines
 
     // APPENDS CIRCLES TO POINTS
-    var queryFilter = this.state.queryFilter;
     points
       .enter()
       .append('circle')
