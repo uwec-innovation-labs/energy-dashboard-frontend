@@ -45,7 +45,7 @@ class ScatterPlot extends Component {
     } else if (this.state.filterBy === 'week') {
       this.setState({amountOfPoints: 672, queryFilter: '', updatingGraph: true});
     } else if (this.state.filterBy === 'month') {
-      this.setState({amountOfPoints: 28, queryFilter: 'average: "day"', updatingGraph: true});
+      this.setState({amountOfPoints: 2688, queryFilter: '', updatingGraph: true});
     } else if (this.state.filterBy === 'year') {
       this.setState({amountOfPoints: 365, queryFilter: 'average: "day"', updatingGraph: true});
     }
@@ -283,16 +283,16 @@ class ScatterPlot extends Component {
     var tickFormat;
     var ticks;
     if (this.state.filterBy === 'day') {
-      tickFormat = d3.timeFormat('%I %p')
+      tickFormat = d3.timeFormat('%I:%M %p')
       ticks = d3.timeHour.every(3)
     } else if (this.state.filterBy === 'week') {
-      tickFormat = d3.timeFormat('%A')
+      tickFormat = d3.timeFormat('%a, %B %e')
       ticks = d3.timeDay.every(1)
     } else if (this.state.filterBy === 'month') {
-      tickFormat = d3.timeFormat('%B %m-%d')
-      ticks = d3.timeWeek.every(1)
+      tickFormat = d3.timeFormat('%b %e')
+      ticks = d3.timeDay.every(3)
     } else if (this.state.filterBy === 'year') {
-      tickFormat = d3.timeFormat('%B')
+      tickFormat = d3.timeFormat('%b %Y')
       ticks = d3.timeMonth.every(1)
     }
     svg
@@ -398,10 +398,11 @@ class ScatterPlot extends Component {
           <Button onClick={this.handleButtons} value="day">Day</Button>
           <ButtonDropdown isOpen={this.state.dropdownOpen} toggle={this.toggle}>
             <DropdownToggle caret>
-              Buildings
+              Energy
             </DropdownToggle>
             <DropdownMenu>
-              <DropdownItem>Davies</DropdownItem>
+              <DropdownItem>Electricity</DropdownItem>
+              <DropdownItem>Condensate</DropdownItem>
             </DropdownMenu>
           </ButtonDropdown>
         </ButtonGroup>
