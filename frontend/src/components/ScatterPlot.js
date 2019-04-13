@@ -1,110 +1,87 @@
 import React, { Component } from 'react'
 import * as d3 from 'd3'
 import '../styles/App.scss'
-import { Spinner, ButtonGroup, Button, DropdownMenu, ButtonDropdown, DropdownItem, DropdownToggle } from 'reactstrap'
-
-const axios = require("axios")
+import { Spinner } from 'reactstrap'
+import { getGraphData } from '../helpers/APIFrame'
+import GraphNavigation from './GraphNavigation'
 
 class ScatterPlot extends Component {
   constructor(props) {
     super(props)
     this.state = {
+      data: '',
       mindate: '',
       maxdate: '',
       loading: true,
       mounted: false,
       filterBy: 'week',
-      resultsState: '',
-      dropdownOpen: false,
       amountOfPoints: 0,
       updatingGraph: false,
-      updatingPoints: false,
+      buttonUpdate: false,
       queryFilter: ''
     }
 
-    this.getData = this.getData.bind(this);
+    this.getSettings = this.getSettings.bind(this);
     this.updateGraph = this.updateGraph.bind(this);
-    this.handleButtons = this.handleButtons.bind(this)
-    this.toggle = this.toggle.bind(this);
+    this.drawGraph = this.drawGraph.bind(this);
+    this.updateFromButton = this.updateFromButton.bind(this);
+
   }
 
-  toggle() {
-  this.setState(prevState => ({
-    dropdownOpen: !prevState.dropdownOpen
-  }));
+  updateFromButton(value) {
+    this.setState({filterBy: value, buttonUpdate: true});
+  }
+
+
+
+  updateGraph() {
+    this.getSettings().then((message) => {
+      getGraphData(this.state.amountOfPoints, this.state.queryFilter).then(res => {
+        this.setState({data: res, updatingGraph: true});
+      })
+    })
+  }
+
+  getSettings() {
+    return new Promise((resolve, reject) => {
+      if (this.state.filterBy === 'day') {
+        this.setState({amountOfPoints: 96, queryFilter: "" });
+        resolve("Test");
+      } else if (this.state.filterBy === 'week') {
+        this.setState({amountOfPoints: 672, queryFilter: ''});
+        resolve("Test");
+      } else if (this.state.filterBy === 'month') {
+        this.setState({amountOfPoints: 2688, queryFilter: ''});
+        resolve("Test");
+      } else if (this.state.filterBy === 'year') {
+        this.setState({amountOfPoints: 365, queryFilter: 'average: "day"'});
+        resolve("Test");
+      }
+    })
   }
 
   componentDidMount() {
     this.setState({ mounted: true })
-    this.getData();
-  }
-
-  getData() {
-    if (this.state.filterBy === 'day') {
-      this.setState({amountOfPoints: 96, queryFilter: "", updatingGraph: true });
-    } else if (this.state.filterBy === 'week') {
-      this.setState({amountOfPoints: 672, queryFilter: '', updatingGraph: true});
-    } else if (this.state.filterBy === 'month') {
-      this.setState({amountOfPoints: 2688, queryFilter: '', updatingGraph: true});
-    } else if (this.state.filterBy === 'year') {
-      this.setState({amountOfPoints: 365, queryFilter: 'average: "day"', updatingGraph: true});
-    }
+    this.updateGraph();
   }
 
   componentDidUpdate() {
-    if (this.state.updatingPoints) {
-      this.setState({updatingPoints: false})
-      this.getData();
-    }
-
     if (this.state.updatingGraph) {
-      axios({
-        url: 'http://localhost:4000/graphql',
-        method: 'post',
-        data: {
-          query: `
-          query {
-            Davies(dataType: "energy", only: ` + this.state.amountOfPoints + `, sort: "timestamp high" ` + this.state.queryFilter + `) {
-              timestamp {
-                date
-                time
-                year
-                month
-                day
-                hour
-              }
-              value
-            }
-          }
-            `
-        }
-      }).then((result) => {
-        this.setState({updatingGraph: false});
-        this.updateGraph(result.data)
-        axios({
-          url: 'http://localhost:4000/graphql',
-          method: 'post',
-          data: {
-            query: `
-            query {
-              Davies(dataType: "energy", percentChange: "day") {
-                value
-              }
-            }
-              `
-          }
-        }).then((result2) => {
-          console.log(result2.data.data.Davies[0].value)
-        });
-      });
+      this.setState({updatingGraph: false});
+      this.drawGraph(this.state.data);
+    } else if (this.state.buttonUpdate) {
+      this.setState({buttonUpdate: false })
+      this.getSettings().then((message) => {
+        getGraphData(this.state.amountOfPoints, this.state.queryFilter).then(res => {
+          this.setState({data: res, updatingGraph: true});
+        })
+      })
     }
   }
 
-  updateGraph(results) {
-    console.log(results);
+  drawGraph(results) {
     // RESULTS
     results = results.data.Davies
-    this.setState({resultsState: results})
 
     // TIME PARSARS
     var parseDayTime = d3.timeParse("%a %b %e %Y %H:%M:%S");
@@ -263,7 +240,7 @@ class ScatterPlot extends Component {
       .attr('y', 0)
       .attr('font-size', 20)
       .style('text-anchor', 'end')
-      .text('[' + d.timestamp.time + ' : ' + formatValue(d.value) + ']')
+      .text('[DATE] ' + d.timestamp.date + ' ' + d.timestamp.time + ' [VALUE]: ' + formatValue(d.value))
     })
     .on('mouseout', function(d, i) {
       d3.select(this)
@@ -371,11 +348,6 @@ class ScatterPlot extends Component {
     this.setState({ mounted: false })
   }
 
-  handleButtons(event) {
-    event.preventDefault();
-    this.setState({ filterBy: event.target.value, updatingPoints: true})
-  }
-
   render() {
     let spinner
     if (this.state.loading) {
@@ -389,26 +361,18 @@ class ScatterPlot extends Component {
       spinner = null
     }
     return (
-      <div className="scatterCard">
-        <center>
-        <ButtonGroup size="lg">
-          <Button onClick={this.handleButtons} value="year">Year</Button>
-          <Button onClick={this.handleButtons} value="month">Month</Button>
-          <Button onClick={this.handleButtons} value="week">Week</Button>
-          <Button onClick={this.handleButtons} value="day">Day</Button>
-          <ButtonDropdown isOpen={this.state.dropdownOpen} toggle={this.toggle}>
-            <DropdownToggle caret>
-              Energy
-            </DropdownToggle>
-            <DropdownMenu>
-              <DropdownItem>Electricity</DropdownItem>
-              <DropdownItem>Condensate</DropdownItem>
-            </DropdownMenu>
-          </ButtonDropdown>
-        </ButtonGroup>
-        </center>
-        <center>{spinner}</center>
-        <div className="scatterPlotContainer" />
+      <div>
+        <GraphNavigation function={this.updateFromButton}></GraphNavigation>
+          <div className="graphRow">
+            <div className="card-graph">
+              <div id="graphCard">
+                <div className="scatterCard">
+                  <center>{spinner}</center>
+                  <div className="scatterPlotContainer" />
+                </div>
+              </div>
+            </div>
+          </div>
       </div>
     )
   }
