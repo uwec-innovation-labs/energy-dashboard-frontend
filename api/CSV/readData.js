@@ -1,6 +1,7 @@
 //gets data from CVS files
 
-const csv=require('csvtojson');
+var csv = require('csvtojson');
+var fs = require('browserify-fs');
 const converter=csv({
     noheader:true,
     trim:true,
