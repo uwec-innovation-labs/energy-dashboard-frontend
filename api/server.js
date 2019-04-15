@@ -1,10 +1,6 @@
 const express = require('express')
 const graphqlHTTP = require('express-graphql')
-const bodyParser = require('body-parser')
-const morgan = require('morgan')
-const cors = require('cors')
 const sqlData = require('./sqlData.js');
-var path = require('path');
 
 //get data types (Query, Solar, Building, Date)
 var schema = require("./sqlSchema.js").energySchema;
