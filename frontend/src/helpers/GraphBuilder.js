@@ -7,7 +7,7 @@ export function buildGraph (results, queryFilter, amountOfPoints, filterBy) {
   var parseHourTime = d3.timeParse("%d %m %Y %H");
 
   // SIZING VARIABLES
-  var margin = { top: 20, right: 30, bottom: 50, left: 150 }
+  var margin = { top: 20, right: 40, bottom: 50, left: 150 }
   var width = 1000 - margin.left - margin.right
   var height = 275 - margin.top - margin.bottom
 
@@ -55,7 +55,6 @@ export function buildGraph (results, queryFilter, amountOfPoints, filterBy) {
     .range([height, 0])
 
   // CREATES VALUELINE
-  var queryFilter = queryFilter;
   var valueline = d3
     .line()
     .x(function(d) {

@@ -8,7 +8,7 @@ const axios = require("axios")
            data: {
              query: `
              query {
-               Davies(dataType: "energy", only:  `+ amountOfPoints +` , sort: "timestamp high"  `+ queryFilter +` ) {
+               Library(dataType: "energy", only:  `+ amountOfPoints +` , sort: "timestamp high"  `+ queryFilter +` ) {
                  timestamp {
                    date
                    time
@@ -22,6 +22,7 @@ const axios = require("axios")
                `
            }
          }).then((result) => {
+           console.log(result)
            resolve(result.data)
          })
        })
@@ -36,14 +37,14 @@ const axios = require("axios")
            data: {
              query: `
              query {
-               Davies(dataType: "energy", percentChange: "day") {
+               Library(dataType: "energy", percentChange: "day") {
                  value
                }
              }
                `
            }
          }).then((statCardResults) => {
-           statCardResults = statCardResults.data.data.Davies[0].value
+           statCardResults = statCardResults.data.data.Library[0].value
            console.log('Stat card results are:')
            console.log(statCardResults)
          });

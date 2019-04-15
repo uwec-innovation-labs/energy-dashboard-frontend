@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import * as d3 from 'd3'
 import '../styles/App.scss'
 import { Spinner } from 'reactstrap'
 import { getGraphData } from '../helpers/APIFrame'
@@ -29,10 +28,9 @@ class ScatterPlot extends Component {
   }
 
   updateFromButton(value) {
+    // This value is from GraphNavigation
     this.setState({filterBy: value, buttonUpdate: true});
   }
-
-
 
   updateGraph() {
     this.getSettings().then((message) => {
@@ -46,16 +44,18 @@ class ScatterPlot extends Component {
     return new Promise((resolve, reject) => {
       if (this.state.filterBy === 'day') {
         this.setState({amountOfPoints: 96, queryFilter: "" });
-        resolve("Test");
+        resolve("Successfully set the correct amount of points and filter");
       } else if (this.state.filterBy === 'week') {
         this.setState({amountOfPoints: 672, queryFilter: ''});
-        resolve("Test");
+        resolve("Successfully set the correct amount of points and filter");
       } else if (this.state.filterBy === 'month') {
         this.setState({amountOfPoints: 2688, queryFilter: ''});
-        resolve("Test");
+        resolve("Successfully set the correct amount of points and filter");
       } else if (this.state.filterBy === 'year') {
         this.setState({amountOfPoints: 365, queryFilter: 'average: "day"'});
-        resolve("Test");
+        resolve("Successfully set the correct amount of points and filter");
+      } else {
+        reject("Something went wrong here!");
       }
     })
   }
@@ -79,8 +79,9 @@ class ScatterPlot extends Component {
   }
 
   drawGraph(results) {
+    console.log(this.state.data);
     // Calls the Graph Builder Helper Method
-    buildGraph(results.data.Davies, this.state.queryFilter, this.state.amountOfPoints, this.state.filterBy);
+    buildGraph(results.data.Library, this.state.queryFilter, this.state.amountOfPoints, this.state.filterBy);
 
     // Removes the Spinner
     this.setState({ loading: false })
@@ -98,6 +99,7 @@ class ScatterPlot extends Component {
     } else {
       spinner = null
     }
+
     return (
       <div>
         <GraphNavigation function={this.updateFromButton}></GraphNavigation>
