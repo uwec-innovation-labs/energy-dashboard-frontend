@@ -36,7 +36,7 @@ class GraphNavigation extends Component {
               </Row>
               <Row>
               <Col>
-                <Button onClick={this.handleButtons} size="lg" block value="day">Electricity</Button>
+                <Button onClick={this.handleButtons} size="lg" block value="week">Electricity</Button>
               </Col>
               <Col>
                 <Button onClick={this.handleButtons} size="lg" block value="week">Condensate</Button>
@@ -49,4 +49,4 @@ class GraphNavigation extends Component {
       }
     }
 
-    export default GraphNavigation
+export default GraphNavigation
