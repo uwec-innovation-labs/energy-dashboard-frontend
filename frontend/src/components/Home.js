@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import '../styles/App.scss'
 import ScatterPlot from './ScatterPlot'
+import { getDaily } from '../helpers/APIFrame'
 
 class Home extends Component {
   constructor(props) {
@@ -10,35 +11,57 @@ class Home extends Component {
       stats: [
         {
           interval: 'Daily',
-          label: '--%'
+          dailyLabel: ''
         },
         {
           interval: 'Weekly',
-          label: '--%'
+          weeklyLabel: ''
         },
         {
           interval: 'Monthly',
-          label: '--%'
+          monthlyLabel: ''
         },
         {
           interval: 'Yearly',
-          label: '--%'
+          yearlyLabel: ''
         }
       ]
     }
   }
 
+componentDidMount(){
+  getDaily().then((result) => {
+    console.log(result.data)
+  })
+}
+
   renderStats(statCards) {
     return (
       <div id="stats-container">
-        {statCards.map((statCard, i) => (
-          <div className="card" id="statCard" key={i}>
+          <div className="card" id="statCard">
             <div className="card-content">
-              <h5> {statCard.interval} </h5>
-              <h4> {statCard.label} </h4>
+              <h5> {this.state.stats[0].interval} </h5>
+              <h4> {this.state.stats[0].dailyLabel} </h4>
             </div>
           </div>
-        ))}
+          <div className="card" id="statCard">
+            <div className="card-content">
+              <h5> {this.state.stats[1].interval} </h5>
+              <h4> {this.state.stats[1].dailyLabel} </h4>
+            </div>
+          </div>
+          <div className="card" id="statCard">
+            <div className="card-content">
+              <h5> {this.state.stats[2].interval} </h5>
+              <h4> {this.state.stats[2].dailyLabel} </h4>
+            </div>
+          </div>
+          <div className="card" id="statCard">
+            <div className="card-content">
+              <h5> {this.state.stats[3].interval} </h5>
+              <h4> {this.state.stats[3].dailyLabel} </h4>
+            </div>
+          </div>
       </div>
     )
   }

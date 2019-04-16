@@ -28,9 +28,9 @@ const axios = require("axios")
        })
    }
 
-   function getStatCardData() {
+   function getDaily() {
+     return new Promise((resolve, reject) => {
        console.log("Function called.")
-       var statCardResults
        axios({
            url: 'http://localhost:4000/graphql',
            method: 'post',
@@ -43,15 +43,13 @@ const axios = require("axios")
              }
                `
            }
-         }).then((statCardResults) => {
-           statCardResults = statCardResults.data.data.Library[0].value
-           console.log('Stat card results are:')
-           console.log(statCardResults)
-         });
-         return statCardResults
+         }).then((results) => {
+           resolve(results.data)
+         })
+        })
    }
 
    module.exports = {
      "getGraphData": getGraphData,
-     "getStatCardData": getStatCardData
+     "getDaily": getDaily
    }
