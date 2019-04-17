@@ -58,9 +58,9 @@ async function master(parent, args, context, info) {
       pastAvg += data.value;
     });
     pastAvg /= grab;
-  
+
     return [{value: (presentAvg / pastAvg * 100 - 100)}];
-  } 
+  }
   if (parent.average != null) {
     return average(parent, building);
   } else {
@@ -120,7 +120,7 @@ async function average(parent, building) {
               if (parent.average != "day") {
                 avgQuery += ", DATEPART(hour, TIMESTAMP) DESC"
               }
-            } 
+            }
         }
       }
     } else if (avgSort == "timestamp low") {
@@ -135,7 +135,7 @@ async function average(parent, building) {
               if (parent.average != "day") {
                 avgQuery += ", DATEPART(hour, TIMESTAMP) ASC"
               }
-            } 
+            }
         }
       }
     }
@@ -163,7 +163,7 @@ async function average(parent, building) {
         data.timestamp.day = data.day;
       }
       if (data.date == undefined) {
-        data.timestamp.date = "Mon Jan 01 2019"; 
+        data.timestamp.date = "Mon Jan 01 2019";
       } else {
         data.timestamp.date = data.date;
       }
@@ -218,7 +218,7 @@ async function getTables(parent, args, context, info) {
 
 async function select(parent, building) {
   var solarQuery = 'SELECT TIMESTAMP AS timestamp, VALUE as value FROM ';
-  solarQuery = queryBuilder(solarQuery, parent, building);  
+  solarQuery = queryBuilder(solarQuery, parent, building);
   console.log(solarQuery);
   let returnData = await sqlserver.getSQLData(solarQuery, parameters);
   returnData.forEach(function(data) {
@@ -231,7 +231,7 @@ async function select(parent, building) {
         "minute": fullDate.getMinutes(),
         "second": fullDate.getSeconds(),
         "date": fullDate.toDateString(),
-        "time": fullDate.toLocaleTimeString(),
+        "time": fullDate.toLocaleTimeString("en-GB"),
         "dateTime": fullDate.toISOString()
     };
   });
@@ -250,19 +250,19 @@ function queryBuilder(query, parent, building) {
       query += "dbo.WRDAVIES_NC1_CONDENSATE_CONDYESTERDAY";
     } else if (parent.dataType == "energy") {
       query += "dbo.SCHNEIDER_HALL_DAVIESKW_TOT_VALUE";
-    } 
+    }
   } else if (building == "Schneider") {
     if (parent.dataType == "solar") {
       query += "dbo.SCHNEIDER_HALL_LIBSOLTOTALYIELD";
     } else if (parent.dataType == "energy") {
       query += "dbo.SCHNEIDER_HALL_SCHNEIDERKW_TOT_VALUE";
-    } 
+    }
   } else if (building == "Governors") {
     if (parent.dataType == "heat") {
       query += "dbo.UWEC_GOVERNORS_CONDYESTERDAY";
     } else if (parent.dataType == "energy") {
       query += "dbo.SCHNEIDER_HALL_GOVERNORSKW_TOT_VALUE";
-    } 
+    }
   } else if (building == "Chancellors") {
     if (parent.dataType == "heat") {
       query += "dbo.CHANCELLORS_CHANCELLORS_CONDMTR_CONDYESTERDAY";
@@ -276,7 +276,7 @@ function queryBuilder(query, parent, building) {
       query += "dbo.UWEC_HORAN_CONDYESTERDAY";
     } else if (parent.dataType == "chiller") {
       query += "dbo.SCHNEIDER_HALL_HORANKW_TOT_VALUE";
-    } 
+    }
   } else if (building == "Crest") {
     if (parent.dataType == "heat") {
       query += "dbo.CREST_CWC_CONDENSATE_CONDYESTERDAY";
@@ -296,7 +296,7 @@ function queryBuilder(query, parent, building) {
       query += "dbo.SCHNEIDER_HALL_HILLTOPKW_TOT_VALUE";
     } else if (parent.dataType == "chiller") {
       query += "dbo.SCHNEIDER_HALL_HILLTOP_CHILLERKW_TOT_VALUE";
-    } 
+    }
   } else if (building == "HSS") {
     if (parent.dataType == "heat") {
       query += "dbo.UWEC_HSS_CONDMTR_CONDYESTERDAY";
@@ -308,13 +308,13 @@ function queryBuilder(query, parent, building) {
       query += "dbo.MCPHEE_NATATORIUM_CONDENSATE_CONDYESTERDAY";
     } else if (parent.dataType == "energy") {
       query += "dbo.SCHNEIDER_HALL_MCPHEEKW_TOT_VALUE";
-    } 
+    }
   } else if (building == "TowersSouth") {
     if (parent.dataType == "heat") {
       query += "dbo.UWEC_TOWERSSOUTH3RD_HWCONV_CONDYESTERDAY";
     } else if (parent.dataType == "energy") {
       query += "dbo.SCHNEIDER_HALL_TOWERS_SOUTHKW_TOT_VALUE";
-    } 
+    }
   } else if (building == "Bridgman") {
     if (parent.dataType == "energy") {
       query += "dbo.SCHNEIDER_HALL_BRIDGEMANKW_TOT_VALUE";

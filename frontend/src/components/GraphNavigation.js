@@ -20,8 +20,8 @@ class GraphNavigation extends Component {
           <div>
 
             <Container>
-              <h1 id="building"> McIntyre Library
-                <h5 id="building"> <Badge color="secondary">Size: 41,247 ft<sup>2</sup></Badge> <Badge color="secondary">Built: 2003</Badge> <Badge color="secondary">Library</Badge></h5>
+              <h1 id="building"> Davies Student Center
+                <h5 id="building"> <Badge color="secondary">Size: 175,000 ft<sup>2</sup></Badge> <Badge color="secondary">Built: 2012</Badge> <Badge color="secondary">Non-Academic</Badge></h5>
               </h1>
               <Row>
                 <Col>
