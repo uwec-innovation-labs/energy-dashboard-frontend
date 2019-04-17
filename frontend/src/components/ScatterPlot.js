@@ -68,7 +68,7 @@ class ScatterPlot extends Component {
       }
     })
   }
-
+  //
   componentDidMount() {
     this.updateGraph()
   }
