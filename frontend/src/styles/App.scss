@@ -13,6 +13,10 @@
   display: inline;
 }
 
+.badge {
+  display: inline;
+  font-size: 14px;
+}
 
 .export {
   margin: 0 auto;
@@ -229,7 +233,6 @@ form {
 @media screen and (max-width: 768px) {
   #graphCard {
     width: 90vw;
-
   }
 }
 

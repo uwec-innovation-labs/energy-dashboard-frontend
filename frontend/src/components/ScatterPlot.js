@@ -17,13 +17,19 @@ class ScatterPlot extends Component {
       amountOfPoints: 0,
       updatingGraph: false,
       buttonUpdate: false,
-      queryFilter: ''
+      queryFilter: '',
+      building: 'Davies'
     }
 
+    this.updateForBuilding = this.updateForBuilding.bind(this)
     this.getSettings = this.getSettings.bind(this)
     this.updateGraph = this.updateGraph.bind(this)
     this.drawGraph = this.drawGraph.bind(this)
     this.updateFromButton = this.updateFromButton.bind(this)
+  }
+
+  updateForBuilding(value) {
+    this.setState({ building: value, buttonUpdate: true })
   }
 
   updateFromButton(value) {
@@ -33,11 +39,13 @@ class ScatterPlot extends Component {
 
   updateGraph() {
     this.getSettings().then(message => {
-      getGraphData(this.state.amountOfPoints, this.state.queryFilter).then(
-        res => {
-          this.setState({ data: res, updatingGraph: true })
-        }
-      )
+      getGraphData(
+        this.state.amountOfPoints,
+        this.state.queryFilter,
+        this.state.building
+      ).then(res => {
+        this.setState({ data: res, updatingGraph: true })
+      })
     })
   }
 
@@ -72,11 +80,13 @@ class ScatterPlot extends Component {
     } else if (this.state.buttonUpdate) {
       this.setState({ buttonUpdate: false })
       this.getSettings().then(message => {
-        getGraphData(this.state.amountOfPoints, this.state.queryFilter).then(
-          res => {
-            this.setState({ data: res, updatingGraph: true })
-          }
-        )
+        getGraphData(
+          this.state.amountOfPoints,
+          this.state.queryFilter,
+          this.state.building
+        ).then(res => {
+          this.setState({ data: res, updatingGraph: true })
+        })
       })
     }
   }
@@ -85,7 +95,7 @@ class ScatterPlot extends Component {
     console.log(this.state.data)
     // Calls the Graph Builder Helper Method
     buildGraph(
-      results.data.Davies,
+      results.data.query,
       this.state.queryFilter,
       this.state.amountOfPoints,
       this.state.filterBy
@@ -110,7 +120,10 @@ class ScatterPlot extends Component {
 
     return (
       <div>
-        <GraphNavigation function={this.updateFromButton} />
+        <GraphNavigation
+          functionFilter={this.updateFromButton}
+          functionBuilding={this.updateForBuilding}
+        />
         <div className="graphRow">
           <div className="card-graph">
             <div id="graphCard">

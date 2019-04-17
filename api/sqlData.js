@@ -1,25 +1,11 @@
 const sqlserver = require('./sqlConnect.js')
 const sql = require('mssql')
-var fs = require('fs')
 
 var whereClauses
 var parameters
 
-async function test() {
-  var newQuery = 'SELECT name FROM master.sys.databases'
-  let returnData = await sqlserver.getSQLData(newQuery, [])
-  console.log(returnData)
-  return returnData
-}
-
-async function getHistoryConfig(parent, args, context, info) {
-  var newQuery = 'SELECT * FROM dbo.HISTORY_CONFIG'
-  let returnData = await sqlserver.getSQLData(newQuery, [])
-  return returnData
-}
-
 async function master(parent, args, context, info) {
-  var building = context.fieldName
+  var building = parent.building
   if (parent.percentChange != null) {
     var grab = 96
     if (parent.percentChange == 'week') {
@@ -184,38 +170,8 @@ async function average(parent, building) {
       data.timestamp.time = '0:00:00 AM'
       data.timestamp.dateTime = '2019-01-01T00:00:00.000Z'
     })
-
-    //stuff for tensorflow, ignore
-    /*var fullData = {
-      y: [],
-      x1: [],
-      x2: [],
-      x3: []
-    }
-  returnData.forEach(function(data) {
-    fullData.y.push(data.value);
-    fullData.x1.push(data.timestamp.day);
-    fullData.x2.push(data.timestamp.month);
-    fullData.x3.push(data.timestamp.year);
-  });
-  var jsonData = JSON.stringify(fullData);
-    fs.writeFile("test.json", jsonData, function(err) {
-        if (err) {
-            console.log(err);
-        }
-    });*/
     return returnData
   }
-}
-
-async function getTables(parent, args, context, info) {
-  var tableQuery = 'SELECT * FROM INFORMATION_SCHEMA.TABLES'
-  var tableNames = []
-  let returnData = await sqlserver.getSQLData(tableQuery, [])
-  returnData.forEach(function(data) {
-    tableNames.push(data.TABLE_NAME)
-  })
-  return tableNames
 }
 
 async function select(parent, building) {
@@ -237,7 +193,6 @@ async function select(parent, building) {
       dateTime: fullDate.toISOString()
     }
   })
-
   return returnData
 }
 
@@ -459,8 +414,5 @@ function queryBuilder(query, parent, building) {
 }
 
 module.exports = {
-  getTables: getTables,
-  test: test,
-  master: master,
-  history: getHistoryConfig
+  master: master
 }
