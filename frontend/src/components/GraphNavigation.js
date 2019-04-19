@@ -20,17 +20,30 @@ class GraphNavigation extends Component {
       sendBuilding: this.props.functionBuilding,
       dropdownOpen: false,
       dropdownOpenTwo: false,
-      building: 'Davies'
+      building: 'Davies',
+      increment: '15m',
+      sendDownloadData: this.props.functionDownloadData
     }
 
     this.toggle = this.toggle.bind(this)
     this.toggleTwo = this.toggleTwo.bind(this)
     this.handleGraphButtons = this.handleGraphButtons.bind(this)
     this.handleBuildingButtons = this.handleBuildingButtons.bind(this)
+    this.handleDownloadDataButtons = this.handleDownloadDataButtons.bind(this)
+  }
+
+  handleDownloadDataButtons(event) {
+    event.preventDefault()
+    this.state.sendDownloadData()
   }
 
   handleGraphButtons(event) {
     event.preventDefault()
+    if (event.target.value === 'year') {
+      this.setState({ increment: '1day' })
+    } else {
+      this.setState({ increment: '15m' })
+    }
     this.state.sendFilter(event.target.value)
   }
 
@@ -65,7 +78,8 @@ class GraphNavigation extends Component {
                 Size: 175,000 ft<sup>2</sup>
               </Badge>{' '}
               <Badge color="secondary">Built: 2012</Badge>{' '}
-              <Badge color="secondary">Non-Academic</Badge>
+              <Badge color="secondary">Non-Academic</Badge>{' '}
+              <Badge color="secondary">{this.state.increment}</Badge>
             </span>
           </h1>
           <Row>
@@ -100,7 +114,7 @@ class GraphNavigation extends Component {
                 >
                   Year
                 </Button>
-              </ButtonGroup>
+              </ButtonGroup>{' '}
               <ButtonGroup>
                 <Button
                   color="success"
@@ -130,12 +144,12 @@ class GraphNavigation extends Component {
                 >
                   Chiller
                 </Button>
-              </ButtonGroup>
+              </ButtonGroup>{' '}
               <ButtonDropdown
                 isOpen={this.state.dropdownOpen}
                 toggle={this.toggle}
               >
-                <DropdownToggle caret>Buildings 1</DropdownToggle>
+                <DropdownToggle caret>Buildings Set 1</DropdownToggle>
                 <DropdownMenu>
                   <DropdownItem
                     onClick={this.handleBuildingButtons}
@@ -222,96 +236,109 @@ class GraphNavigation extends Component {
                     HSS
                   </DropdownItem>
                 </DropdownMenu>
-              </ButtonDropdown>
-              <ButtonDropdown
-                isOpen={this.state.dropdownOpenTwo}
-                toggle={this.toggleTwo}
-              >
-                <DropdownToggle caret>Buildings 2</DropdownToggle>
-                <DropdownMenu>
-                  <DropdownItem
-                    onClick={this.handleBuildingButtons}
-                    value="Nursing"
-                  >
-                    Nursing
-                  </DropdownItem>
-                  <DropdownItem onClick={this.handleBuildingButtons} value="KV">
-                    KV
-                  </DropdownItem>
-                  <DropdownItem
-                    onClick={this.handleBuildingButtons}
-                    value="Maintenance"
-                  >
-                    Maintenance
-                  </DropdownItem>
-                  <DropdownItem
-                    onClick={this.handleBuildingButtons}
-                    value="Murray"
-                  >
-                    Murray
-                  </DropdownItem>
-                  <DropdownItem
-                    onClick={this.handleBuildingButtons}
-                    value="OakRidge"
-                  >
-                    OakRidge
-                  </DropdownItem>
-                  <DropdownItem
-                    onClick={this.handleBuildingButtons}
-                    value="PhillipsNorth"
-                  >
-                    PhillipsNorth
-                  </DropdownItem>
-                  <DropdownItem
-                    onClick={this.handleBuildingButtons}
-                    value="PhillipsSouth"
-                  >
-                    PhillipsSouth
-                  </DropdownItem>
-                  <DropdownItem
-                    onClick={this.handleBuildingButtons}
-                    value="Putnam"
-                  >
-                    Putnam
-                  </DropdownItem>
-                  <DropdownItem
-                    onClick={this.handleBuildingButtons}
-                    value="Schneider"
-                  >
-                    Schneider
-                  </DropdownItem>
-                  <DropdownItem
-                    onClick={this.handleBuildingButtons}
-                    value="Schofield"
-                  >
-                    Schofield
-                  </DropdownItem>
-                  <DropdownItem
-                    onClick={this.handleBuildingButtons}
-                    value="Sutherland"
-                  >
-                    Sutherland
-                  </DropdownItem>
-                  <DropdownItem
-                    onClick={this.handleBuildingButtons}
-                    value="Thomas"
-                  >
-                    Thomas
-                  </DropdownItem>
-                  <DropdownItem
-                    onClick={this.handleBuildingButtons}
-                    value="TowersSouth"
-                  >
-                    TowersSouth
-                  </DropdownItem>
-                  <DropdownItem
-                    onClick={this.handleBuildingButtons}
-                    value="Zorn"
-                  >
-                    Zorn
-                  </DropdownItem>
-                </DropdownMenu>
-              </ButtonDropdown>
+              </ButtonDropdown>{' '}
+              <ButtonGroup>
+                <ButtonDropdown
+                  isOpen={this.state.dropdownOpenTwo}
+                  toggle={this.toggleTwo}
+                >
+                  <DropdownToggle caret>Buildings Set 2</DropdownToggle>
+                  <DropdownMenu>
+                    <DropdownItem
+                      onClick={this.handleBuildingButtons}
+                      value="Nursing"
+                    >
+                      Nursing
+                    </DropdownItem>
+                    <DropdownItem
+                      onClick={this.handleBuildingButtons}
+                      value="KV"
+                    >
+                      KV
+                    </DropdownItem>
+                    <DropdownItem
+                      onClick={this.handleBuildingButtons}
+                      value="Maintenance"
+                    >
+                      Maintenance
+                    </DropdownItem>
+                    <DropdownItem
+                      onClick={this.handleBuildingButtons}
+                      value="Murray"
+                    >
+                      Murray
+                    </DropdownItem>
+                    <DropdownItem
+                      onClick={this.handleBuildingButtons}
+                      value="OakRidge"
+                    >
+                      OakRidge
+                    </DropdownItem>
+                    <DropdownItem
+                      onClick={this.handleBuildingButtons}
+                      value="PhillipsNorth"
+                    >
+                      PhillipsNorth
+                    </DropdownItem>
+                    <DropdownItem
+                      onClick={this.handleBuildingButtons}
+                      value="PhillipsSouth"
+                    >
+                      PhillipsSouth
+                    </DropdownItem>
+                    <DropdownItem
+                      onClick={this.handleBuildingButtons}
+                      value="Putnam"
+                    >
+                      Putnam
+                    </DropdownItem>
+                    <DropdownItem
+                      onClick={this.handleBuildingButtons}
+                      value="Schneider"
+                    >
+                      Schneider
+                    </DropdownItem>
+                    <DropdownItem
+                      onClick={this.handleBuildingButtons}
+                      value="Schofield"
+                    >
+                      Schofield
+                    </DropdownItem>
+                    <DropdownItem
+                      onClick={this.handleBuildingButtons}
+                      value="Sutherland"
+                    >
+                      Sutherland
+                    </DropdownItem>
+                    <DropdownItem
+                      onClick={this.handleBuildingButtons}
+                      value="Thomas"
+                    >
+                      Thomas
+                    </DropdownItem>
+                    <DropdownItem
+                      onClick={this.handleBuildingButtons}
+                      value="TowersSouth"
+                    >
+                      TowersSouth
+                    </DropdownItem>
+                    <DropdownItem
+                      onClick={this.handleBuildingButtons}
+                      value="Zorn"
+                    >
+                      Zorn
+                    </DropdownItem>
+                  </DropdownMenu>
+                </ButtonDropdown>
+              </ButtonGroup>{' '}
+              <ButtonGroup>
+                <Button
+                  color="primary"
+                  onClick={this.handleDownloadDataButtons}
+                >
+                  Download Current Data
+                </Button>
+              </ButtonGroup>
             </Col>
           </Row>
         </Container>

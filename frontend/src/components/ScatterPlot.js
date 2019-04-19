@@ -5,6 +5,8 @@ import { getGraphData } from '../helpers/APIFrame'
 import GraphNavigation from './GraphNavigation'
 import { buildGraph } from '../helpers/GraphBuilder'
 
+//const json2csv = require('json2csv')
+
 class ScatterPlot extends Component {
   constructor(props) {
     super(props)
@@ -26,6 +28,7 @@ class ScatterPlot extends Component {
     this.updateGraph = this.updateGraph.bind(this)
     this.drawGraph = this.drawGraph.bind(this)
     this.updateFromButton = this.updateFromButton.bind(this)
+    this.downloadData = this.downloadData.bind(this)
   }
 
   updateForBuilding(value) {
@@ -47,6 +50,19 @@ class ScatterPlot extends Component {
         this.setState({ data: res, updatingGraph: true })
       })
     })
+  }
+
+  downloadData() {
+    //const fields = ['field1', 'field2']
+    //const opts = { fields }
+    //const parseJSON = new json2csv(opts)
+    //const csv = parseJSON.parse(this.state.data)
+    /*
+    var hiddenElement = document.createElement('a')
+    hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv)
+    hiddenElement.target = '_blank'
+    hiddenElement.download = 'building.csv'
+    hiddenElement.click()*/
   }
 
   getSettings() {
@@ -92,7 +108,6 @@ class ScatterPlot extends Component {
   }
 
   drawGraph(results) {
-    console.log(this.state.data)
     // Calls the Graph Builder Helper Method
     buildGraph(
       results.data.query,
@@ -123,6 +138,7 @@ class ScatterPlot extends Component {
         <GraphNavigation
           functionFilter={this.updateFromButton}
           functionBuilding={this.updateForBuilding}
+          functionDownloadData={this.downloadData}
         />
         <div className="graphRow">
           <div className="card-graph">

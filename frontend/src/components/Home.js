@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import '../styles/App.scss'
 import ScatterPlot from './ScatterPlot'
+import { getStatCardData } from '../helpers/APIFrame'
 
 class Home extends Component {
   constructor(props) {
@@ -26,6 +27,14 @@ class Home extends Component {
         }
       ]
     }
+  }
+
+  componentDidMount() {
+    setTimeout(() => {
+      getStatCardData().then(res => {
+        console.log(res)
+      })
+    }, 1000)
   }
 
   renderStats(statCards) {
