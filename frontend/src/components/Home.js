@@ -89,12 +89,12 @@ class Home extends Component {
       <div id="stats-container">
         <div className="card" id="statCard">
           <div className="card-content">
-            <h5> {this.state.stats[0].interval} </h5>
+            <h3> {this.state.stats[0].interval} </h3>
             <h3 id="dailyValue" style={{ color: Text >= 0 ? 'red' : 'green' }}>
               <CountUp
                 start="0.00"
                 end={this.state.stats[0].dailyLabel}
-                duration="2.0"
+                duration="1.5"
                 decimals="2"
               />
             </h3>
@@ -102,12 +102,12 @@ class Home extends Component {
         </div>
         <div className="card" id="statCard">
           <div className="card-content">
-            <h5> {this.state.stats[1].interval} </h5>
+            <h3> {this.state.stats[1].interval} </h3>
             <h3 id="dailyValue" style={{ color: Text >= 0 ? 'red' : 'green' }}>
               <CountUp
                 start="0.00"
                 end={this.state.stats[1].weeklyLabel}
-                duration="2.0"
+                duration="1.5"
                 decimals="2"
               />
             </h3>
@@ -115,12 +115,12 @@ class Home extends Component {
         </div>
         <div className="card" id="statCard">
           <div className="card-content">
-            <h5> {this.state.stats[2].interval} </h5>
+            <h3> {this.state.stats[2].interval} </h3>
             <h3 id="dailyValue" style={{ color: Text >= 0 ? 'red' : 'green' }}>
               <CountUp
                 start="0.00"
                 end={this.state.stats[2].monthlyLabel}
-                duration="2.0"
+                duration="1.5"
                 decimals="2"
               />
             </h3>
@@ -128,7 +128,7 @@ class Home extends Component {
         </div>
         <div className="card" id="statCard">
           <div className="card-content">
-            <h5> {this.state.stats[3].interval} </h5>
+            <h3> {this.state.stats[3].interval} </h3>
             <h3
               id="dailyValue"
               style={{ color: Text.to >= 0 ? 'red' : 'green' }}
@@ -136,7 +136,7 @@ class Home extends Component {
               <CountUp
                 start="0.00"
                 end={this.state.stats[3].yearlyLabel}
-                duration="2.0"
+                duration="1.5"
                 decimals="2"
               />
             </h3>
