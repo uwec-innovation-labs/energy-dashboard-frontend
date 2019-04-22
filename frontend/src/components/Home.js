@@ -3,12 +3,12 @@ import '../styles/App.scss'
 import ScatterPlot from './ScatterPlot'
 import { getDaily, getWeekly, getMonthly, getYearly } from '../helpers/APIFrame'
 import update from 'react-addons-update' // ES6
+import CountUp from 'react-countup'
 
 class Home extends Component {
   constructor(props) {
     super(props)
     this.renderStats = this.renderStats.bind(this)
-    this.handleStatColors = this.handleStatColors.bind(this)
     this.state = {
       stats: [
         {
@@ -34,7 +34,6 @@ class Home extends Component {
   componentDidMount() {
     setTimeout(() => {
       getDaily().then(result => {
-        console.log(result.data.data.Library[0].value)
         this.setState({
           stats: update(this.state.stats, {
             0: {
@@ -45,7 +44,6 @@ class Home extends Component {
       })
       setTimeout(() => {
         getWeekly().then(result => {
-          console.log(result.data.data.Library[0].value)
           this.setState({
             stats: update(this.state.stats, {
               1: {
@@ -58,7 +56,6 @@ class Home extends Component {
         })
         setTimeout(() => {
           getMonthly().then(result => {
-            console.log(result.data.data.Library[0].value)
             this.setState({
               stats: update(this.state.stats, {
                 2: {
@@ -71,7 +68,6 @@ class Home extends Component {
           })
           setTimeout(() => {
             getYearly().then(result => {
-              console.log(result.data.data.Library[0].value)
               this.setState({
                 stats: update(this.state.stats, {
                   3: {
@@ -82,16 +78,10 @@ class Home extends Component {
                 })
               })
             })
-          }, 1000)
-        }, 1000)
-      }, 1000)
-    }, 1000)
-  }
-
-  handleStatColors() {
-    if (document.getElementById('dailyLabel').value === -72.15) {
-      alert('equal!')
-    }
+          }, 900)
+        }, 900)
+      }, 900)
+    }, 900)
   }
 
   renderStats(statCards) {
@@ -100,40 +90,56 @@ class Home extends Component {
         <div className="card" id="statCard">
           <div className="card-content">
             <h5> {this.state.stats[0].interval} </h5>
-            <h2 id="dailyValue" style={{ color: Text >= 0 ? 'red' : 'green' }}>
-              {' '}
-              {this.state.stats[0].dailyLabel}{' '}
-            </h2>
+            <h3 id="dailyValue" style={{ color: Text >= 0 ? 'red' : 'green' }}>
+              <CountUp
+                start="0.00"
+                end={this.state.stats[0].dailyLabel}
+                duration="2.0"
+                decimals="2"
+              />
+            </h3>
           </div>
         </div>
         <div className="card" id="statCard">
           <div className="card-content">
             <h5> {this.state.stats[1].interval} </h5>
-            <h2 id="weeklyValue" style={{ color: Text >= 0 ? 'red' : 'green' }}>
-              {' '}
-              {this.state.stats[1].weeklyLabel}{' '}
-            </h2>
+            <h3 id="dailyValue" style={{ color: Text >= 0 ? 'red' : 'green' }}>
+              <CountUp
+                start="0.00"
+                end={this.state.stats[1].weeklyLabel}
+                duration="2.0"
+                decimals="2"
+              />
+            </h3>
           </div>
         </div>
         <div className="card" id="statCard">
           <div className="card-content">
             <h5> {this.state.stats[2].interval} </h5>
-            <h2
-              id="monthlyValue"
-              style={{ color: Text >= 0 ? 'red' : 'green' }}
-            >
-              {' '}
-              {this.state.stats[2].monthlyLabel}{' '}
-            </h2>
+            <h3 id="dailyValue" style={{ color: Text >= 0 ? 'red' : 'green' }}>
+              <CountUp
+                start="0.00"
+                end={this.state.stats[2].monthlyLabel}
+                duration="2.0"
+                decimals="2"
+              />
+            </h3>
           </div>
         </div>
         <div className="card" id="statCard">
           <div className="card-content">
             <h5> {this.state.stats[3].interval} </h5>
-            <h2 id="yearlyValue" style={{ color: Text >= 0 ? 'red' : 'green' }}>
-              {' '}
-              {this.state.stats[3].yearlyLabel}{' '}
-            </h2>
+            <h3
+              id="dailyValue"
+              style={{ color: Text.to >= 0 ? 'red' : 'green' }}
+            >
+              <CountUp
+                start="0.00"
+                end={this.state.stats[3].yearlyLabel}
+                duration="2.0"
+                decimals="2"
+              />
+            </h3>
           </div>
         </div>
       </div>
