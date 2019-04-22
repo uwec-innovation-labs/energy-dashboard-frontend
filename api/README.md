@@ -7,25 +7,13 @@ CREATING A QUERY
   for example, if you want to retrieve the 'energy' data from Davies, you query wouild be as follows:
 
       { query(dataType:"energy", building:"Davies") {
-          timestamp {
-            year
-            month
-            day
-            hour
-            minute
-            second
-            date
-            time
-            dateTime
-          }
+          timestamp
           value
         }
       }
       
  note that there are two primary data fields you can retreive: timestamp and value. value returns a single number, 
-   while timestamp is an object that can return any or all of the date parts*. if you don't want one of these fields, just don't include it
-   * the 'week' part only works if you are averaging by week. 
-   helpful hint: if you are averaging by 'day', the 'day' field refers to the day's number with response to year (1-365), while 'date' returns the number with response to month (1-31). sorry this is so weird but it's the way it is
+   while timestamp returns the date/time in milliseconds (epoch time)
    
 QUERY PARAMETERS
   to limit or arrange the data retrieved, here are some parameters you can use:
@@ -43,8 +31,7 @@ QUERY PARAMETERS
     average: data can be averaged by hour, day, week, month, or year. you probably want to use a sort parameter with this one since it won't be sorted by default
       be careful if you use it with start/end, since it'll only average the values that fall in that range for the month
       query(dataType:"energy", building:"Davies", average:"month") {...
-      dummy data is supplied for parts of the timestamp that are otherwise undefined 
-        ex. if you average by year, the query only returns 'year' values, so the api defaults the month to 0, the day to 0, etc
+      time values returned are approximate, and will default to the first month/day/hour. Month and day are approximated when averaging by week. 
     percentChange: this is the only parameter that can NOT be used with other parameters, as it is only used to measure the percent of change over the 
       past day, week, month, or year. It returns one record with one field ('value'), which represents the percent change.
       query(dataType:"energy", building:"Davies", percentChange:"day") {...

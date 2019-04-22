@@ -100,13 +100,13 @@ async function average(parent, building) {
         if (parent.average == "week") {
           avgQuery += ", ((DATEPART(dayofyear, TIMESTAMP)) / 7) DESC";
         } else {
-            avgQuery += ", DATEPART(month, TIMESTAMP) DESC";
-            if (parent.average != "month") {
-              avgQuery += ", DATEPART(dayofyear, TIMESTAMP) DESC";
-              if (parent.average != "day") {
-                avgQuery += ", DATEPART(hour, TIMESTAMP) DESC"
-              }
-            } 
+          avgQuery += ", DATEPART(month, TIMESTAMP) DESC";
+          if (parent.average != "month") {
+            avgQuery += ", DATEPART(dayofyear, TIMESTAMP) DESC";
+            if (parent.average != "day") {
+              avgQuery += ", DATEPART(hour, TIMESTAMP) DESC"
+            }
+          } 
         }
       }
     } else if (avgSort == "timestamp low") {
@@ -136,37 +136,27 @@ async function average(parent, building) {
     return [{value: changeValue}];
   } else {
     returnData.forEach(function(data) {
-      data.timestamp = {};
-      data.timestamp.year = data.year;
-      if (data.month == undefined) {
-        data.timestamp.month = 0;
+      var fullDate;
+      if (data.week != undefined) {
+        var month = Math.floor(data.week / 4.33);
+        var date = Math.floor((data.week - (month * 4.33)) * 7);
+        fullDate = new Date(data.year, month, date);
       } else {
-        data.timestamp.month = data.month;
+        if (data.month != undefined) {
+          if (data.day != undefined) {
+            if (data.hour != undefined) {
+              fullDate = new Date(data.year, data.month, data.date, data.hour, 0, 0, 0)
+            } else {
+              fullDate = new Date(data.year, data.month, data.date);
+            }
+          } else {
+            fullDate = new Date(data.year, data.month, 1);
+          }
+        } else {
+          fullDate = new Date(data.year, 0, 1);
+        }
       }
-      if (data.day == undefined) {
-        data.timestamp.day = 0;
-      } else {
-        data.timestamp.day = data.day;
-      }
-      if (data.date == undefined) {
-        data.timestamp.date = "Mon Jan 01 2019"; 
-      } else {
-        data.timestamp.date = data.date;
-      }
-      if (data.week == undefined) {
-        data.timestamp.week = 0;
-      } else {
-        data.timestamp.week = data.week;
-      }
-      if (data.hour == undefined) {
-        data.timestamp.hour = 0;
-      } else {
-        data.timestamp.hour = data.hour;
-      }
-      data.timestamp.minute = 0;
-      data.timestamp.second = 0;
-      data.timestamp.time = "0:00:00 AM";
-      data.timestamp.dateTime = "2019-01-01T00:00:00.000Z";
+      data.timestamp = fullDate.getTime();
     });
     return returnData;
   }
@@ -179,17 +169,7 @@ async function select(parent, building) {
   let returnData = await sqlserver.getSQLData(solarQuery, parameters);
   returnData.forEach(function(data) {
     var fullDate = new Date(data.timestamp);
-    data.timestamp = {
-        "year": fullDate.getFullYear(),
-        "month": fullDate.getMonth() + 1,
-        "day": fullDate.getDate(),
-        "hour": fullDate.getHours(),
-        "minute": fullDate.getMinutes(),
-        "second": fullDate.getSeconds(),
-        "date": fullDate.toDateString(),
-        "time": fullDate.toLocaleTimeString(),
-        "dateTime": fullDate.toISOString()
-    };
+    data.timestamp = fullDate.getTime();
   });
   return returnData;
 }

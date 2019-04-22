@@ -6,22 +6,9 @@ var energySchema = buildSchema(`
     }
 
     type timeValue {
-        timestamp: Date
+        timestamp: String
         value: Float
     }
-
-    type Date {
-        year: Int,
-        month: Int,
-        day: Int,
-        week: Int,
-        hour: Int,
-        minute: Int,
-        second: Int,
-        date: String,
-        time: String,
-        dateTime: String
-      }
 
 `)
 
