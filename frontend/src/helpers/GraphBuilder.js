@@ -236,7 +236,7 @@ export function buildGraph (results, queryFilter, amountOfPoints, filterBy) {
     .attr('x', 0 - height / 2.0)
     .attr('y', 0 - margin.bottom * 2)
     .style('text-anchor', 'middle')
-    .text('Energy (kw)')
+    .text('Electricity (kw)')
     .attr('transform', 'rotate(-90)')
     .transition()
     .duration(1500)
