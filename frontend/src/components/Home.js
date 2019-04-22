@@ -8,6 +8,7 @@ class Home extends Component {
   constructor(props) {
     super(props)
     this.renderStats = this.renderStats.bind(this)
+    this.handleStatColors = this.handleStatColors.bind(this)
     this.state = {
       stats: [
         {
@@ -87,31 +88,52 @@ class Home extends Component {
     }, 1000)
   }
 
+  handleStatColors() {
+    if (document.getElementById('dailyLabel').value === -72.15) {
+      alert('equal!')
+    }
+  }
+
   renderStats(statCards) {
     return (
       <div id="stats-container">
         <div className="card" id="statCard">
           <div className="card-content">
             <h5> {this.state.stats[0].interval} </h5>
-            <h4> {this.state.stats[0].dailyLabel} </h4>
+            <h2 id="dailyValue" style={{ color: Text >= 0 ? 'red' : 'green' }}>
+              {' '}
+              {this.state.stats[0].dailyLabel}{' '}
+            </h2>
           </div>
         </div>
         <div className="card" id="statCard">
           <div className="card-content">
             <h5> {this.state.stats[1].interval} </h5>
-            <h4> {this.state.stats[1].weeklyLabel} </h4>
+            <h2 id="weeklyValue" style={{ color: Text >= 0 ? 'red' : 'green' }}>
+              {' '}
+              {this.state.stats[1].weeklyLabel}{' '}
+            </h2>
           </div>
         </div>
         <div className="card" id="statCard">
           <div className="card-content">
             <h5> {this.state.stats[2].interval} </h5>
-            <h4> {this.state.stats[2].monthlyLabel} </h4>
+            <h2
+              id="monthlyValue"
+              style={{ color: Text >= 0 ? 'red' : 'green' }}
+            >
+              {' '}
+              {this.state.stats[2].monthlyLabel}{' '}
+            </h2>
           </div>
         </div>
         <div className="card" id="statCard">
           <div className="card-content">
             <h5> {this.state.stats[3].interval} </h5>
-            <h4> {this.state.stats[3].yearlyLabel} </h4>
+            <h2 id="yearlyValue" style={{ color: Text >= 0 ? 'red' : 'green' }}>
+              {' '}
+              {this.state.stats[3].yearlyLabel}{' '}
+            </h2>
           </div>
         </div>
       </div>
