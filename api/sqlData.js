@@ -1,26 +1,12 @@
 const sqlserver = require("./sqlConnect.js")
 const sql = require('mssql')
-var fs = require('fs');
 
 var whereClauses;
 var parameters;
 
-async function test() {
-  var newQuery = 'SELECT name FROM master.sys.databases';
-  let returnData = await sqlserver.getSQLData(newQuery, []);
-  console.log(returnData);
-  return returnData;
-
-}
-
-async function getHistoryConfig(parent, args , context, info) {
-  var newQuery = 'SELECT * FROM dbo.HISTORY_CONFIG';
-  let returnData = await sqlserver.getSQLData(newQuery, []);
-  return returnData;
-}
 
 async function master(parent, args, context, info) {
-  var building = context.fieldName;
+  var building = parent.building;
   if (parent.percentChange != null) {
     var grab = 96;
     if (parent.percentChange == "week") {
@@ -150,70 +136,30 @@ async function average(parent, building) {
     return [{value: changeValue}];
   } else {
     returnData.forEach(function(data) {
-      data.timestamp = {};
-      data.timestamp.year = data.year;
-      if (data.month == undefined) {
-        data.timestamp.month = 0;
+      var fullDate;
+      if (data.week != undefined) {
+        var month = Math.floor(data.week / 4.33);
+        var date = Math.floor((data.week - (month * 4.33)) * 7);
+        fullDate = new Date(data.year, month, date);
       } else {
-        data.timestamp.month = data.month;
-      }
-      if (data.day == undefined) {
-        data.timestamp.day = 0;
-      } else {
-        data.timestamp.day = data.day;
-      }
-      if (data.date == undefined) {
-        data.timestamp.date = "Mon Jan 01 2019";
-      } else {
-        data.timestamp.date = data.date;
-      }
-      if (data.week == undefined) {
-        data.timestamp.week = 0;
-      } else {
-        data.timestamp.week = data.week;
-      }
-      if (data.hour == undefined) {
-        data.timestamp.hour = 0;
-      } else {
-        data.timestamp.hour = data.hour;
-      }
-      data.timestamp.minute = 0;
-      data.timestamp.second = 0;
-      data.timestamp.time = "0:00:00 AM";
-      data.timestamp.dateTime = "2019-01-01T00:00:00.000Z";
-    });
-
-    //stuff for tensorflow, ignore
-    /*var fullData = {
-      y: [],
-      x1: [],
-      x2: [],
-      x3: []
-    }
-  returnData.forEach(function(data) {
-    fullData.y.push(data.value);
-    fullData.x1.push(data.timestamp.day);
-    fullData.x2.push(data.timestamp.month);
-    fullData.x3.push(data.timestamp.year);
-  });
-  var jsonData = JSON.stringify(fullData);
-    fs.writeFile("test.json", jsonData, function(err) {
-        if (err) {
-            console.log(err);
+        if (data.month != undefined) {
+          if (data.day != undefined) {
+            if (data.hour != undefined) {
+              fullDate = new Date(data.year, data.month, data.date, data.hour, 0, 0, 0)
+            } else {
+              fullDate = new Date(data.year, data.month, data.date);
+            }
+          } else {
+            fullDate = new Date(data.year, data.month, 1);
+          }
+        } else {
+          fullDate = new Date(data.year, 0, 1);
         }
-    });*/
+      }
+      data.timestamp = fullDate.getTime();
+    });
     return returnData;
   }
-}
-
-async function getTables(parent, args, context, info) {
-  var tableQuery = 'SELECT * FROM INFORMATION_SCHEMA.TABLES';
-  var tableNames = [];
-  let returnData = await sqlserver.getSQLData(tableQuery, []);
-  returnData.forEach(function(data) {
-    tableNames.push(data.TABLE_NAME);
-  });
-  return tableNames;
 }
 
 async function select(parent, building) {
@@ -223,19 +169,8 @@ async function select(parent, building) {
   let returnData = await sqlserver.getSQLData(solarQuery, parameters);
   returnData.forEach(function(data) {
     var fullDate = new Date(data.timestamp);
-    data.timestamp = {
-        "year": fullDate.getFullYear(),
-        "month": fullDate.getMonth() + 1,
-        "day": fullDate.getDate(),
-        "hour": fullDate.getHours(),
-        "minute": fullDate.getMinutes(),
-        "second": fullDate.getSeconds(),
-        "date": fullDate.toDateString(),
-        "time": fullDate.toLocaleTimeString("en-GB"),
-        "dateTime": fullDate.toISOString()
-    };
+    data.timestamp = fullDate.getTime();
   });
-
   return returnData;
 }
 
@@ -457,8 +392,5 @@ function queryBuilder(query, parent, building) {
 }
 
 module.exports = {
-  "getTables": getTables,
-  "test": test,
-  "master": master,
-  "history": getHistoryConfig
+  "master": master
 }
