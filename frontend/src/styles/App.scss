@@ -13,6 +13,10 @@
   display: inline;
 }
 
+.badge {
+  display: inline;
+  font-size: 14px;
+}
 
 .export {
   margin: 0 auto;
@@ -177,6 +181,7 @@ form {
   display: inherit;
   flex-flow: row wrap;
   justify-content: space-between;
+  padding-bottom: 10px;
 }
 
 .card {
@@ -229,7 +234,6 @@ form {
 @media screen and (max-width: 768px) {
   #graphCard {
     width: 90vw;
-
   }
 }
 
