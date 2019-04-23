@@ -42,8 +42,8 @@ function getDaily() {
       method: 'post',
       data: {
         query: `
-             query {
-               Library(dataType: "energy", percentChange: "day") {
+             { query 
+               (dataType: "energy", building: "Davies", percentChange: "day") {
                  value
                }
              }
@@ -63,12 +63,12 @@ function getWeekly() {
       method: 'post',
       data: {
         query: `
-             query {
-               Library(dataType: "energy", percentChange: "week") {
-                 value
-               }
-             }
-               `
+        { query 
+          (dataType: "energy", building: "Davies", percentChange: "week") {
+            value
+          }
+        }
+          `
       }
     }).then(results => {
       resolve(results)
@@ -84,12 +84,12 @@ function getMonthly() {
       method: 'post',
       data: {
         query: `
-             query {
-               Library(dataType: "energy", percentChange: "month") {
-                 value
-               }
-             }
-               `
+        { query 
+          (dataType: "energy", building: "Davies", percentChange: "month") {
+            value
+          }
+        }
+          `
       }
     }).then(results => {
       resolve(results)
@@ -105,12 +105,12 @@ function getYearly() {
       method: 'post',
       data: {
         query: `
-             query {
-               Library(dataType: "energy", percentChange: "year") {
-                 value
-               }
-             }
-               `
+        { query 
+          (dataType: "energy", building: "Davies", percentChange: "year") {
+            value
+          }
+        }
+          `
       }
     }).then(results => {
       resolve(results)

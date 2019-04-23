@@ -37,7 +37,7 @@ class Home extends Component {
         this.setState({
           stats: update(this.state.stats, {
             0: {
-              dailyLabel: { $set: result.data.data.Library[0].value.toFixed(2) }
+              dailyLabel: { $set: result.data.data.query[0].value.toFixed(2) }
             }
           })
         })
@@ -48,7 +48,7 @@ class Home extends Component {
             stats: update(this.state.stats, {
               1: {
                 weeklyLabel: {
-                  $set: result.data.data.Library[0].value.toFixed(2)
+                  $set: result.data.data.query[0].value.toFixed(2)
                 }
               }
             })
@@ -60,7 +60,7 @@ class Home extends Component {
               stats: update(this.state.stats, {
                 2: {
                   monthlyLabel: {
-                    $set: result.data.data.Library[0].value.toFixed(2)
+                    $set: result.data.data.query[0].value.toFixed(2)
                   }
                 }
               })
@@ -72,7 +72,7 @@ class Home extends Component {
                 stats: update(this.state.stats, {
                   3: {
                     yearlyLabel: {
-                      $set: result.data.data.Library[0].value.toFixed(2)
+                      $set: result.data.data.query[0].value.toFixed(2)
                     }
                   }
                 })
@@ -90,7 +90,10 @@ class Home extends Component {
         <div className="card" id="statCard">
           <div className="card-content">
             <h3> {this.state.stats[0].interval} </h3>
-            <h3 id="dailyValue" style={{ color: Text >= 0 ? 'red' : 'green' }}>
+            <h3
+              id="dailyValue"
+              style={{ color: parseFloat(Text) >= 0.0 ? 'red' : 'green' }}
+            >
               <CountUp
                 start="0.00"
                 end={this.state.stats[0].dailyLabel}
@@ -103,7 +106,10 @@ class Home extends Component {
         <div className="card" id="statCard">
           <div className="card-content">
             <h3> {this.state.stats[1].interval} </h3>
-            <h3 id="dailyValue" style={{ color: Text >= 0 ? 'red' : 'green' }}>
+            <h3
+              id="dailyValue"
+              style={{ color: parseFloat(Text) >= 0 ? 'red' : 'green' }}
+            >
               <CountUp
                 start="0.00"
                 end={this.state.stats[1].weeklyLabel}
@@ -116,7 +122,10 @@ class Home extends Component {
         <div className="card" id="statCard">
           <div className="card-content">
             <h3> {this.state.stats[2].interval} </h3>
-            <h3 id="dailyValue" style={{ color: Text >= 0 ? 'red' : 'green' }}>
+            <h3
+              id="dailyValue"
+              style={{ color: parseFloat(Text) >= 0 ? 'red' : 'green' }}
+            >
               <CountUp
                 start="0.00"
                 end={this.state.stats[2].monthlyLabel}
@@ -131,8 +140,9 @@ class Home extends Component {
             <h3> {this.state.stats[3].interval} </h3>
             <h3
               id="dailyValue"
-              style={{ color: Text.to >= 0 ? 'red' : 'green' }}
+              style={{ color: parseFloat(Text) >= 0 ? 'red' : 'green' }}
             >
+              {console.log(parseFloat(Text)) >= 0}
               <CountUp
                 start="0.00"
                 end={this.state.stats[3].yearlyLabel}
