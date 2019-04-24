@@ -7,6 +7,9 @@ var parameters;
 
 async function master(parent, args, context, info) {
   var building = parent.building;
+  console.log()
+
+
   if (parent.percentChange != null) {
     var grab = 96;
     if (parent.percentChange == "week") {
