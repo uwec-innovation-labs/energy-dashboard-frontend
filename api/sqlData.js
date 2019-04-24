@@ -13,15 +13,42 @@ async function master(parent, args, context, info) {
     await promise;
     var dataTypeName = dataType.name.value;
     parent.dataType = dataTypeName;
-    if (parent.average != null) {
-      let returnData = await average(parent, building);
-      fullData[dataTypeName] = returnData;
+    if (dataTypeName === "energyAvailable") {
+      fullData["energyAvailable"] = getEnergyAvailable(building);
     } else {
-      let returnData = await select(parent, building);
-      fullData[dataTypeName] = returnData;
+      if (parent.average != null) {
+        let returnData = await average(parent, building);
+        fullData[dataTypeName] = returnData;
+      } else {
+        let returnData = await select(parent, building);
+        fullData[dataTypeName] = returnData;
+      }
     }
   }, Promise.resolve());
   return fullData;
+}
+
+function getEnergyAvailable(building) {
+  var energyAvailable = [];
+  if (building !== "Horan") {
+    energyAvailable.push("electricity");
+  }
+  if (building === "Centennial" || building === "Chancellors" ||
+   building === "Crest" || building === "Davies" || building === "Governors" ||
+   building === "Hibbard" || building === "Hilltop" || building === "TowersSouth" ||
+   building ==="Horan" || building === "HSS") {
+     energyAvailable.push("heat");
+   }
+  if (building === "Schneider") {
+    energyAvailable.push("solar");
+  }
+  if (building == "Hilltop" || building == "Horan" || building == "Library") {
+    energyAvailable.push("chiller");
+  }
+  if (building == "Davies") {
+    energyAvailable.push("energyRate");
+  }
+  return energyAvailable;
 }
 
 /*if (parent.percentChange != null) {
