@@ -7,14 +7,21 @@ var parameters;
 
 async function master(parent, args, context, info) {
   var building = parent.building;
-  parent.dataTypes = context.fieldNodes[0].selectionSet.selections;
-  
-  
-  if (parent.average != null) {
-    return average(parent, building);
-  } else {
-    return select(parent, building)
-  }
+  var dataTypes = context.fieldNodes[0].selectionSet.selections;
+  var fullData = {};
+  await dataTypes.reduce(async (promise, dataType) => {
+    await promise;
+    var dataTypeName = dataType.name.value;
+    parent.dataType = dataTypeName;
+    if (parent.average != null) {
+      let returnData = await average(parent, building);
+      fullData[dataTypeName] = returnData;
+    } else {
+      let returnData = await select(parent, building);
+      fullData[dataTypeName] = returnData;
+    }
+  }, Promise.resolve());
+  return fullData;
 }
 
 /*if (parent.percentChange != null) {
