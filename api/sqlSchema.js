@@ -6,17 +6,34 @@ var energySchema = buildSchema(`
     }
 
     type Building {
-        electricity: [TimeValue]
-        solar: [TimeValue]
-        heat: [TimeValue]
-        chiller: [TimeValue]
-        energyRate: [TimeValue]
+        electricity: DataValue
+        solar: DataValue
+        heat: DataValue
+        chiller: DataValue
+        energyRate: DataValue
         energyAvailable: [String]
+    }
+
+    type DataValue {
+        data: [TimeValue]
+        stats: Stats
     }
 
     type TimeValue {
         timestamp: String
         value: Float
+    }
+
+    type Stats {
+        daily: Stat
+        weekly: Stat
+        monthly: Stat
+        yearly: Stat
+    }
+
+    type Stat {
+        present: Float
+        past: Float
     }
 
 `)

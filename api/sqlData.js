@@ -13,16 +13,29 @@ async function master(parent, args, context, info) {
     await promise;
     var dataTypeName = dataType.name.value;
     parent.dataType = dataTypeName;
+    fullData[dataTypeName] = {};
     if (dataTypeName === "energyAvailable") {
       fullData["energyAvailable"] = getEnergyAvailable(building);
     } else {
       if (parent.average != null) {
         let returnData = await average(parent, building);
-        fullData[dataTypeName] = returnData;
+        fullData[dataTypeName].data = returnData;
       } else {
         let returnData = await select(parent, building);
-        fullData[dataTypeName] = returnData;
+        fullData[dataTypeName].data = returnData;
       }
+
+      var findStats = undefined;
+      dataType.selectionSet.selections.forEach((selection) => {
+        if (selection.name.value === "stats") {
+          findStats = selection;
+        }
+      })
+      if (findStats != undefined) {
+        let stats = await computeStats(building, parent, findStats);
+        fullData[dataTypeName].stats = stats;
+        console.log(fullData);
+      } 
     }
   }, Promise.resolve());
   return fullData;
@@ -51,16 +64,21 @@ function getEnergyAvailable(building) {
   return energyAvailable;
 }
 
-/*if (parent.percentChange != null) {
+async function computeStats(building, parent, findStats) {
+  var allStats = {};
+  var statTypes = findStats.selectionSet.selections;
+  await statTypes.reduce(async (promise, statType) => {
+    await promise;
+    statName = statType.name.value;
     var grab = 96;
-    if (parent.percentChange == "week") {
+    if (statName === "weekly") {
       grab *= 7;
-    } else if (parent.percentChange == "month") {
+    } else if (statName === "monthly") {
       grab *= 30;
-    } else if (parent.percentChange == "year") {
+    } else if (statName === "yearly") {
       grab *= 365
     }
-
+    console.log(grab);
     presentParent = {
       only: grab,
       sort: "timestamp high",
@@ -88,9 +106,14 @@ function getEnergyAvailable(building) {
       pastAvg += data.value;
     });
     pastAvg /= grab;
-  
-    return [{value: (presentAvg / pastAvg * 100 - 100)}];
-  } */
+    
+    allStats[statName] = {
+      present: presentAvg,
+      past: pastAvg
+    }
+  }, Promise.resolve());
+  return allStats;
+}
 
 async function average(parent, building) {
   var avgQuery;
