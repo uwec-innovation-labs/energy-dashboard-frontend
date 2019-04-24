@@ -11,6 +11,7 @@ var energySchema = buildSchema(`
         heat: [TimeValue]
         chiller: [TimeValue]
         energyRate: [TimeValue]
+        energyAvailable: [String]
     }
 
     type TimeValue {
