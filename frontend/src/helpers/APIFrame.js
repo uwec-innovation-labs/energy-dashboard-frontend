@@ -3,7 +3,7 @@ const axios = require('axios')
 function getGraphData(amountOfPoints, queryFilter, building) {
   return new Promise((resolve, reject) => {
     axios({
-      url: 'http://18.213.193.137:4000/graphql',
+      url: 'http://localhost:4000/graphql',
       method: 'post',
       data: {
         query:
@@ -38,7 +38,7 @@ function getDaily() {
   return new Promise((resolve, reject) => {
     console.log('Function called.')
     axios({
-      url: 'http://18.213.193.137:4000/graphql',
+      url: 'http://localhost:4000/graphql',
       method: 'post',
       data: {
         query: `
@@ -59,7 +59,7 @@ function getWeekly() {
   return new Promise((resolve, reject) => {
     console.log('Function called.')
     axios({
-      url: 'http://18.213.193.137:4000/graphql',
+      url: 'http://localhost:4000/graphql',
       method: 'post',
       data: {
         query: `
@@ -80,7 +80,7 @@ function getMonthly() {
   return new Promise((resolve, reject) => {
     console.log('Function called.')
     axios({
-      url: 'http://18.213.193.137:4000/graphql',
+      url: 'http://localhost:4000/graphql',
       method: 'post',
       data: {
         query: `
@@ -101,7 +101,7 @@ function getYearly() {
   return new Promise((resolve, reject) => {
     console.log('Function called.')
     axios({
-      url: 'http://18.213.193.137:4000/graphql',
+      url: 'http://localhost:4000/graphql',
       method: 'post',
       data: {
         query: `
