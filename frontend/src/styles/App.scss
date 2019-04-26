@@ -9,6 +9,15 @@
   color: white;
 }
 
+#building {
+  display: inline;
+}
+
+.badge {
+  display: inline;
+  font-size: 14px;
+}
+
 .export {
   margin: 0 auto;
   text-align: center;
@@ -20,14 +29,14 @@
 
 .container {
   padding-top: 50px;
-  text-align: center;
+
   margin: 0 auto;
   width: 100%;
 }
 
 .line {
   fill: none;
-  stroke-width: 3px;
+  stroke-width: 2px;
   stroke: $line-color;
 }
 
@@ -141,8 +150,9 @@ form {
 
 .plotPoint {
   fill: $graph-color;
+  opacity: 0;
   stroke: white;
-  stroke-width: 3px;
+  stroke-width: 1px;
 }
 
 .graphRow {
@@ -157,6 +167,7 @@ form {
 
 .cards {
   width: 90vw;
+  height: 15vw;
   margin-left: auto;
   margin-right: auto;
   margin-top: 0;
@@ -170,11 +181,20 @@ form {
   display: inherit;
   flex-flow: row wrap;
   justify-content: space-between;
+  padding-bottom: 10px;
 }
 
 .card {
-  height: 10vw;
   width: 20vw;
+  margin-top: 5vh;
+  border: 3px solid #e7e7e7;
+  border-radius: 4px;
+  padding: 0.5em;
+  transition: all 0.3s ease-in-out;
+}
+
+.card-graph {
+  width: 90vw;
   margin-top: 5vh;
   border: 3px solid #e7e7e7;
   border-radius: 4px;
@@ -196,8 +216,7 @@ form {
 }
 
 #graphCard {
-  width: 50vw;
-  height: 50vh;
+  width: 90vw;
 }
 
 #graphControlsCard {
@@ -215,7 +234,6 @@ form {
 @media screen and (max-width: 768px) {
   #graphCard {
     width: 90vw;
-    height: 40vh;
   }
 }
 

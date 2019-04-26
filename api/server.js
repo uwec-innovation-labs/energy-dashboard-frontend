@@ -1,10 +1,13 @@
 const express = require('express')
 const graphqlHTTP = require('express-graphql')
-const sqlData = require('./sqlData.js');
+const sqlData = require('./sqlData.js')
+const cors = require('cors')
 
 //get data types (Query, Solar, Building, Date)
-var schema = require("./sqlSchema.js").energySchema;
-const app = express();
+var schema = require('./sqlSchema.js').energySchema
+const app = express()
+
+app.use(cors())
 
 var global = {
   query: sqlData.master
