@@ -1,4 +1,4 @@
-const sqlserver = require("./sqlConnect.js")
+const sqlserver = require('./sqlConnect.js')
 const sql = require('mssql')
 
 var whereClauses;
@@ -78,27 +78,27 @@ async function computeStats(building, parent, findStats) {
     }
     presentParent = {
       only: grab,
-      sort: "timestamp high",
+      sort: 'timestamp high',
       average: null,
       dataType: parent.dataType
     }
     pastParent = {
-      baseIndex: (grab * 2),
+      baseIndex: grab * 2,
       only: grab,
-      sort: "timestamp low",
+      sort: 'timestamp low',
       average: null,
       dataType: parent.dataType
     }
-    var presentData = await select(presentParent, building);
-    var pastData = await select(pastParent, building);
+    var presentData = await select(presentParent, building)
+    var pastData = await select(pastParent, building)
 
-    var presentAvg = 0;
+    var presentAvg = 0
     presentData.forEach(function(data) {
-      presentAvg += data.value;
-    });
-    presentAvg /= grab;
+      presentAvg += data.value
+    })
+    presentAvg /= grab
 
-    var pastAvg = 0;
+    var pastAvg = 0
     pastData.forEach(function(data) {
       pastAvg += data.value;
     });
@@ -113,85 +113,88 @@ async function computeStats(building, parent, findStats) {
 }
 
 async function average(parent, building) {
-  var avgQuery;
-  var avgSort = parent.sort;
-  parent.sort = null;
-  if (parent.average == "week") {
-    avgQuery = "SELECT AVG(VALUE) as value, ((DATEPART(dayofyear, TIMESTAMP)) / 7) as week, DATEPART(year, TIMESTAMP) as year FROM ";
-    avgQuery = queryBuilder(avgQuery, parent, building);
-    avgQuery += " GROUP BY DATEPART(year, TIMESTAMP), ((DATEPART(dayofyear, TIMESTAMP)) / 7)";
+  var avgQuery
+  var avgSort = parent.sort
+  parent.sort = null
+  if (parent.average == 'week') {
+    avgQuery =
+      'SELECT AVG(VALUE) as value, ((DATEPART(dayofyear, TIMESTAMP)) / 7) as week, DATEPART(year, TIMESTAMP) as year FROM '
+    avgQuery = queryBuilder(avgQuery, parent, building)
+    avgQuery +=
+      ' GROUP BY DATEPART(year, TIMESTAMP), ((DATEPART(dayofyear, TIMESTAMP)) / 7)'
   } else {
-    avgQuery = "SELECT DATEPART(year, TIMESTAMP) as year, ";
-    if (parent.average != "year") {
-      avgQuery += "DATEPART(month, TIMESTAMP) as month, ";
-      if (parent.average != "month") {
-        avgQuery += "DATEPART(dayofyear, TIMESTAMP) as day, DATEPART(day, TIMESTAMP) as date, ";
-        if (parent.average != "day") {
-          avgQuery += "DATEPART(hour, TIMESTAMP) as hour, ";
+    avgQuery = 'SELECT DATEPART(year, TIMESTAMP) as year, '
+    if (parent.average != 'year') {
+      avgQuery += 'DATEPART(month, TIMESTAMP) as month, '
+      if (parent.average != 'month') {
+        avgQuery +=
+          'DATEPART(dayofyear, TIMESTAMP) as day, DATEPART(day, TIMESTAMP) as date, '
+        if (parent.average != 'day') {
+          avgQuery += 'DATEPART(hour, TIMESTAMP) as hour, '
         }
       }
     }
-    avgQuery += "AVG(VALUE) as value FROM ";
+    avgQuery += 'AVG(VALUE) as value FROM '
 
-    avgQuery = queryBuilder(avgQuery, parent, building);
+    avgQuery = queryBuilder(avgQuery, parent, building)
 
-    avgQuery += " GROUP BY DATEPART(year, TIMESTAMP)";
-    if (parent.average != "year") {
-      avgQuery += ", DATEPART(month, TIMESTAMP)";
-      if (parent.average != "month") {
-        avgQuery += ", DATEPART(dayofyear, TIMESTAMP), DATEPART(day, TIMESTAMP)";
-        if (parent.average != "day") {
-          avgQuery += ", DATEPART(hour, TIMESTAMP)";
+    avgQuery += ' GROUP BY DATEPART(year, TIMESTAMP)'
+    if (parent.average != 'year') {
+      avgQuery += ', DATEPART(month, TIMESTAMP)'
+      if (parent.average != 'month') {
+        avgQuery += ', DATEPART(dayofyear, TIMESTAMP), DATEPART(day, TIMESTAMP)'
+        if (parent.average != 'day') {
+          avgQuery += ', DATEPART(hour, TIMESTAMP)'
         }
       }
     }
   }
 
   if (avgSort != null) {
-    if (avgSort == "value high") {
-      avgQuery += " ORDER BY AVG(VALUE) DESC";
-    } else if (avgSort == "value low") {
-      avgQuery += " ORDER BY AVG(VALUE) ASC";
-    } else if (avgSort == "timestamp high") {
-      avgQuery += " ORDER BY DATEPART(year, TIMESTAMP) DESC";
-      if (parent.average != "year") {
-        if (parent.average == "week") {
-          avgQuery += ", ((DATEPART(dayofyear, TIMESTAMP)) / 7) DESC";
+    if (avgSort == 'value high') {
+      avgQuery += ' ORDER BY AVG(VALUE) DESC'
+    } else if (avgSort == 'value low') {
+      avgQuery += ' ORDER BY AVG(VALUE) ASC'
+    } else if (avgSort == 'timestamp high') {
+      avgQuery += ' ORDER BY DATEPART(year, TIMESTAMP) DESC'
+      if (parent.average != 'year') {
+        if (parent.average == 'week') {
+          avgQuery += ', ((DATEPART(dayofyear, TIMESTAMP)) / 7) DESC'
         } else {
-            avgQuery += ", DATEPART(month, TIMESTAMP) DESC";
-            if (parent.average != "month") {
-              avgQuery += ", DATEPART(dayofyear, TIMESTAMP) DESC";
-              if (parent.average != "day") {
-                avgQuery += ", DATEPART(hour, TIMESTAMP) DESC"
-              }
+          avgQuery += ', DATEPART(month, TIMESTAMP) DESC'
+          if (parent.average != 'month') {
+            avgQuery += ', DATEPART(dayofyear, TIMESTAMP) DESC'
+            if (parent.average != 'day') {
+              avgQuery += ', DATEPART(hour, TIMESTAMP) DESC'
             }
+          }
         }
       }
-    } else if (avgSort == "timestamp low") {
-      avgQuery += " ORDER BY DATEPART(year, TIMESTAMP) ASC";
-      if (parent.average != "year") {
-        if (parent.average == "week") {
-          avgQuery += ", ((DATEPART(dayofyear, TIMESTAMP)) / 7) ASC";
+    } else if (avgSort == 'timestamp low') {
+      avgQuery += ' ORDER BY DATEPART(year, TIMESTAMP) ASC'
+      if (parent.average != 'year') {
+        if (parent.average == 'week') {
+          avgQuery += ', ((DATEPART(dayofyear, TIMESTAMP)) / 7) ASC'
         } else {
-            avgQuery += ", DATEPART(month, TIMESTAMP) ASC";
-            if (parent.average != "month") {
-              avgQuery += ", DATEPART(dayofyear, TIMESTAMP) ASC";
-              if (parent.average != "day") {
-                avgQuery += ", DATEPART(hour, TIMESTAMP) ASC"
-              }
+          avgQuery += ', DATEPART(month, TIMESTAMP) ASC'
+          if (parent.average != 'month') {
+            avgQuery += ', DATEPART(dayofyear, TIMESTAMP) ASC'
+            if (parent.average != 'day') {
+              avgQuery += ', DATEPART(hour, TIMESTAMP) ASC'
             }
+          }
         }
       }
     }
   }
 
-  console.log(avgQuery);
-  let returnData = await sqlserver.getSQLData(avgQuery, parameters);
+  console.log(avgQuery)
+  let returnData = await sqlserver.getSQLData(avgQuery, parameters)
   if (parent.percentChange != null) {
-    var currentValue = returnData[0].value;
-    var pastValue = returnData[1].value;
-    var changeValue = (currentValue / pastValue * 100) - 100;
-    return [{value: changeValue}];
+    var currentValue = returnData[0].value
+    var pastValue = returnData[1].value
+    var changeValue = (currentValue / pastValue) * 100 - 100
+    return [{ value: changeValue }]
   } else {
     returnData.forEach(function(data) {
       var fullDate;
@@ -221,10 +224,10 @@ async function average(parent, building) {
 }
 
 async function select(parent, building) {
-  var solarQuery = 'SELECT TIMESTAMP AS timestamp, VALUE as value FROM ';
-  solarQuery = queryBuilder(solarQuery, parent, building);
-  console.log(solarQuery);
-  let returnData = await sqlserver.getSQLData(solarQuery, parameters);
+  var solarQuery = 'SELECT TIMESTAMP AS timestamp, VALUE as value FROM '
+  solarQuery = queryBuilder(solarQuery, parent, building)
+  console.log(solarQuery)
+  let returnData = await sqlserver.getSQLData(solarQuery, parameters)
   returnData.forEach(function(data) {
     var fullDate = new Date(data.timestamp);
     data.timestamp = fullDate.getTime();
@@ -233,8 +236,8 @@ async function select(parent, building) {
 }
 
 function queryBuilder(query, parent, building) {
-  whereClauses = [];
-  parameters = [];
+  whereClauses = []
+  parameters = []
   //get building you want data from
   if (building == "Davies") {
     if (parent.dataType == "energyRate") {
@@ -388,67 +391,67 @@ function queryBuilder(query, parent, building) {
 
   //'only': selects first n records
   if (parent.only != null) {
-    query = query.slice(0, 6) + " TOP " + parent.only + query.slice(6);
+    query = query.slice(0, 6) + ' TOP ' + parent.only + query.slice(6)
   }
 
   //'start': earliest date
   if (parent.start != null) {
-    whereClauses.push("CAST(TIMESTAMP AS DATETIME) > CAST(@start AS DATETIME)");
+    whereClauses.push('CAST(TIMESTAMP AS DATETIME) > CAST(@start AS DATETIME)')
     parameters.push({
       name: 'start',
       value: new Date(parent.start)
-    });
+    })
   }
 
   //'end': latest date
   if (parent.end != null) {
-    whereClauses.push("CAST(TIMESTAMP AS DATETIME) < CAST(@end AS DATETIME)");
+    whereClauses.push('CAST(TIMESTAMP AS DATETIME) < CAST(@end AS DATETIME)')
     parameters.push({
       name: 'end',
       value: new Date(parent.end)
-    });
+    })
   }
 
   if (parent.baseIndex != null) {
-    whereClauses.push("id >= @baseIndex");
+    whereClauses.push('id >= @baseIndex')
     parameters.push({
-      name:'baseIndex',
+      name: 'baseIndex',
       value: parent.baseIndex
-    });
+    })
   }
 
   if (parent.endIndex != null) {
-    whereClauses.push("id <= @endIndex");
+    whereClauses.push('id <= @endIndex')
     parameters.push({
-      name:'endIndex',
+      name: 'endIndex',
       value: parent.endIndex
-    });
+    })
   }
 
   if (whereClauses.length > 0) {
-    query += " WHERE " + whereClauses[0];
-    var i = 1;
+    query += ' WHERE ' + whereClauses[0]
+    var i = 1
     while (i < whereClauses.length) {
-      query += " AND " + whereClauses[i];
-      i++;
+      query += ' AND ' + whereClauses[i]
+      i++
     }
   }
 
   //'sort': sorts by timestamp or value, asc or desc
   if (parent.sort != null) {
-    if (parent.sort == "value high") {
-      query += " ORDER BY VALUE DESC";
-    } else if (parent.sort == "value low") {
-      query += " ORDER BY VALUE ASC";
-    } else if (parent.sort == "timestamp high") {
-      query += " ORDER BY TIMESTAMP DESC"
-    } else if (parent.sort == "timestamp low") {
-      query += " ORDER BY TIMESTAMP ASC"
+    if (parent.sort == 'value high') {
+      query += ' ORDER BY VALUE DESC'
+    } else if (parent.sort == 'value low') {
+      query += ' ORDER BY VALUE ASC'
+    } else if (parent.sort == 'timestamp high') {
+      query += ' ORDER BY TIMESTAMP DESC'
+    } else if (parent.sort == 'timestamp low') {
+      query += ' ORDER BY TIMESTAMP ASC'
     }
   }
-  return query;
+  return query
 }
 
 module.exports = {
-  "master": master
+  master: master
 }
