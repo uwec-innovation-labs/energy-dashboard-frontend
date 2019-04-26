@@ -4,7 +4,6 @@ const sql = require('mssql')
 var whereClauses;
 var parameters;
 
-
 async function master(parent, args, context, info) {
   var building = parent.building;
   var dataTypes = context.fieldNodes[0].selectionSet.selections;
@@ -34,7 +33,6 @@ async function master(parent, args, context, info) {
       if (findStats != undefined) {
         let stats = await computeStats(building, parent, findStats);
         fullData[dataTypeName].stats = stats;
-        console.log(fullData);
       } 
     }
   }, Promise.resolve());
@@ -78,7 +76,6 @@ async function computeStats(building, parent, findStats) {
     } else if (statName === "yearly") {
       grab *= 365
     }
-    console.log(grab);
     presentParent = {
       only: grab,
       sort: "timestamp high",
