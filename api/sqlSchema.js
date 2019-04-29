@@ -2,7 +2,7 @@ var { buildSchema } = require('graphql')
 
 var energySchema = buildSchema(`
     type Query { 
-        query(building:String, average:String, sort:String, only:Int, baseIndex: Int, start:String, end:String, percentChange:String): Building
+        query(building:String, average:String, sort:String, only:Int, baseIndex: Int, start:String, end:String): Building
     }
 
     type Building {
