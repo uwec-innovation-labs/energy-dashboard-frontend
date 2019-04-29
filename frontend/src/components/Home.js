@@ -29,6 +29,27 @@ class Home extends Component {
         }
       ]
     }
+
+    this.updateGraphStats = this.updateGraphStats.bind(this)
+  }
+
+  updateGraphStats(daily, weekly, monthly, yearly) {
+    this.setState({
+      stats: update(this.state.stats, {
+        0: {
+          dailyLabel: { $set: daily.toFixed(2) }
+        },
+        1: {
+          weeklyLabel: { $set: weekly.toFixed(2) }
+        },
+        2: {
+          monthlyLabel: { $set: monthly.toFixed(2) }
+        },
+        3: {
+          yearlyLabel: { $set: yearly.toFixed(2) }
+        }
+      })
+    })
   }
 
   componentDidMount() {
@@ -87,7 +108,6 @@ class Home extends Component {
   }
 
   renderStats(statCards) {
-    /*
     return (
       <div id="stats-container">
         <div className="card" id="statCard">
@@ -157,14 +177,16 @@ class Home extends Component {
         </div>
       </div>
     )
-    */
   }
 
   render() {
     return (
       <div>
         <div className="centered">
-          <ScatterPlot graphName="graph1" />
+          <ScatterPlot
+            functionStats={this.updateGraphStats}
+            graphName="graph1"
+          />
         </div>
         <div className="cards" id="statCards">
           {this.renderStats(this.state.stats)}

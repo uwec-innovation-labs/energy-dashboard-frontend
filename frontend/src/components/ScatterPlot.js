@@ -21,7 +21,8 @@ class ScatterPlot extends Component {
       updatingGraph: false,
       buttonUpdate: false,
       queryFilter: '',
-      building: 'Davies'
+      building: 'Davies',
+      updateStatCards: this.props.functionStats
     }
 
     this.updateForBuilding = this.updateForBuilding.bind(this)
@@ -118,6 +119,7 @@ class ScatterPlot extends Component {
 
   drawGraph(results) {
     // Calls the Graph Builder Helper Method
+    this.state.updateStatCards(10, 10, 10, 10)
     buildGraph(
       results.data.query.electricity.data,
       this.state.queryFilter,
