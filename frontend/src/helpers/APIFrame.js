@@ -1,11 +1,37 @@
 const axios = require('axios')
 
-function getGraphData(amountOfPoints, queryFilter, building) {
+function getGraphData(amountOfPoints, queryFilter, building, energyType) {
+  console.log(energyType)
   return new Promise((resolve, reject) => {
     axios({
       url: 'http://localhost:4000/graphql',
       method: 'post',
       data: {
+        query:
+          `
+           { query(building: "` +
+          building +
+          `", only: ` +
+          amountOfPoints +
+          ` sort: "timestamp high", ` +
+          queryFilter +
+          `) {
+              ` +
+          'electricity' +
+          `{
+                data {
+                  timestamp
+                  value
+                }
+
+              }
+              energyAvailable
+            }
+          }
+            `
+      }
+
+      /*{
         query:
           `
              { query 
@@ -27,7 +53,7 @@ function getGraphData(amountOfPoints, queryFilter, building) {
                }
              }
                `
-      }
+      }*/
     }).then(result => {
       resolve(result.data)
     })

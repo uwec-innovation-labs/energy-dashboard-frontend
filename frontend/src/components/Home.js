@@ -32,6 +32,7 @@ class Home extends Component {
   }
 
   componentDidMount() {
+    /*
     setTimeout(() => {
       getDaily().then(result => {
         this.setState({
@@ -82,9 +83,11 @@ class Home extends Component {
         }, 900)
       }, 900)
     }, 900)
+    */
   }
 
   renderStats(statCards) {
+    /*
     return (
       <div id="stats-container">
         <div className="card" id="statCard">
@@ -154,6 +157,7 @@ class Home extends Component {
         </div>
       </div>
     )
+    */
   }
 
   render() {
