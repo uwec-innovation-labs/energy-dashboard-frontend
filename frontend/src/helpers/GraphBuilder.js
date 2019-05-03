@@ -94,35 +94,57 @@ export function buildGraph(results, queryFilter, amountOfPoints, filterBy) {
       d3.select(this)
         .transition()
         .duration(200)
-        .attr('r', 10)
-
-      d3.select(this)
-        .append('line')
-        .attr('x1', 20)
-        .attr('x2', 20)
-        .attr('y1', 0)
-        .attr('y2', 400)
-        .attr('stroke-width', 2)
-        .attr('stroke', 'black')
-        .attr('fill', 'black')
 
       // VALUE FORMATTER
       var formatValue = d3.format('.2f')
+      var splitDate = new Date(+d.timestamp) + ''
+      splitDate = splitDate.split(' ')
+      splitDate = splitDate[1] + ' ' + splitDate[2] + ' (' + splitDate[4] + ')'
+
+      var txt = '' + formatValue(d.value) + 'kw'
 
       // HOVER TEXT
       svg
         .append('text')
         .attr('id', 't' + d.x + '-' + d.y + '-' + i)
-        .attr('x', width)
-        .attr('y', 0)
-        .attr('font-size', 20)
-        .style('text-anchor', 'end')
-        .text(
-          '[DATE] ' +
-            new Date(+d.timestamp) +
-            ' [VALUE]: ' +
-            formatValue(d.value)
-        )
+        .attr('x', x(new Date(+d.timestamp)))
+        .attr('y', 8)
+        .attr('font-size', 10)
+        .style('text-anchor', 'middle')
+        .text(splitDate)
+
+      svg
+        .append('text')
+        .attr('id', 'tv' + d.x + '-' + d.y + '-' + i)
+        .attr('x', x(new Date(+d.timestamp)))
+        .attr('y', 20)
+        .attr('font-size', 10)
+        .style('text-anchor', 'middle')
+        .text(txt)
+
+      svg
+        .append('line')
+        .attr('id', 'tlv' + d.x + '-' + d.y + '-' + i)
+        .attr('x1', x(new Date(+d.timestamp)))
+        .attr('x2', x(new Date(+d.timestamp)))
+        .attr('y1', 25)
+        .attr('y2', height)
+        .attr('stroke-width', 1)
+        .style('stroke-dasharray', '3, 3')
+        .attr('stroke', 'gray')
+        .attr('fill', 'black')
+
+      svg
+        .append('line')
+        .attr('id', 'tlh' + d.x + '-' + d.y + '-' + i)
+        .attr('x1', 0)
+        .attr('x2', width)
+        .attr('y1', y(new Date(d.value)))
+        .attr('y2', y(new Date(d.value)))
+        .attr('stroke-width', 1)
+        .style('stroke-dasharray', '3, 3')
+        .attr('stroke', 'gray')
+        .attr('fill', 'black')
     })
     .on('mouseout', function(d, i) {
       d3.select(this)
@@ -132,6 +154,9 @@ export function buildGraph(results, queryFilter, amountOfPoints, filterBy) {
         .delay(100)
 
       d3.select('#t' + d.x + '-' + d.y + '-' + i).remove()
+      d3.select('#tv' + d.x + '-' + d.y + '-' + i).remove()
+      d3.select('#tlv' + d.x + '-' + d.y + '-' + i).remove()
+      d3.select('#tlh' + d.x + '-' + d.y + '-' + i).remove()
     })
     .transition()
     .duration(1500)

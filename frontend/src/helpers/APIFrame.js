@@ -60,20 +60,43 @@ function getGraphData(amountOfPoints, queryFilter, building, energyType) {
   })
 }
 
-function getDaily() {
+function getBuildingStats(building) {
   return new Promise((resolve, reject) => {
     console.log('Function called.')
     axios({
       url: 'http://localhost:4000/graphql',
       method: 'post',
       data: {
-        query: `
-             { query 
-               (dataType: "energy", building: "Davies", percentChange: "day") {
-                 value
-               }
-             }
-               `
+        query:
+          `
+           { query(building: "` +
+          building +
+          `") {
+              ` +
+          'electricity' +
+          `{
+              stats {
+                daily {
+                  present
+                  past
+                }
+                weekly {
+                  present
+                  past
+                }
+                monthly {
+                  present
+                  past
+                }
+                yearly {
+                  present
+                  past
+                }
+              }
+            }
+          }
+        }
+            `
       }
     }).then(results => {
       resolve(results)
@@ -81,73 +104,42 @@ function getDaily() {
   })
 }
 
-function getWeekly() {
+function getExportData(building, energyType, start, end) {
   return new Promise((resolve, reject) => {
-    console.log('Function called.')
     axios({
       url: 'http://localhost:4000/graphql',
       method: 'post',
       data: {
-        query: `
-        { query 
-          (dataType: "energy", building: "Davies", percentChange: "week") {
-            value
-          }
-        }
+        query:
           `
-      }
-    }).then(results => {
-      resolve(results)
-    })
-  })
-}
+           { query(building: "` +
+          building +
+          `", start:"` +
+          start +
+          `", end:"` +
+          end +
+          `") {` +
+          'electricity' +
+          `{
+                data {
+                  timestamp
+                  value
+                }
 
-function getMonthly() {
-  return new Promise((resolve, reject) => {
-    console.log('Function called.')
-    axios({
-      url: 'http://localhost:4000/graphql',
-      method: 'post',
-      data: {
-        query: `
-        { query 
-          (dataType: "energy", building: "Davies", percentChange: "month") {
-            value
+              }
+              energyAvailable
+            }
           }
-        }
-          `
+            `
       }
-    }).then(results => {
-      resolve(results)
-    })
-  })
-}
-
-function getYearly() {
-  return new Promise((resolve, reject) => {
-    console.log('Function called.')
-    axios({
-      url: 'http://localhost:4000/graphql',
-      method: 'post',
-      data: {
-        query: `
-        { query 
-          (dataType: "energy", building: "Davies", percentChange: "year") {
-            value
-          }
-        }
-          `
-      }
-    }).then(results => {
-      resolve(results)
+    }).then(result => {
+      resolve(result.data)
     })
   })
 }
 
 module.exports = {
   getGraphData: getGraphData,
-  getDaily: getDaily,
-  getWeekly: getWeekly,
-  getMonthly: getMonthly,
-  getYearly: getYearly
+  getBuildingStats: getBuildingStats,
+  getExportData: getExportData
 }
