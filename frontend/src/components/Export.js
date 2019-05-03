@@ -4,20 +4,6 @@ import { CSVLink } from 'react-csv'
 import { Form, Col, FormGroup, Label, Input, Button } from 'reactstrap'
 import { getExportData } from '../helpers/APIFrame'
 
-const csvData = [
-  ['Timestamp', 'Value (BTU)'],
-  ['31-Aug-16 1:00:00 PM CDT', '512849984.00 BTU'],
-  ['31-Aug-16 1:15:04 PM CDT', '512849984.00 BTU'],
-  ['31-Aug-16 1:30:04 PM CDT', '512849984.00 BTU'],
-  ['31-Aug-16 1:45:04 PM CDT', '512849984.00 BTU'],
-  ['31-Aug-16 2:00:04 PM CDT', '512889984.00 BTU'],
-  ['31-Aug-16 2:15:04 PM CDT', '512889984.00 BTU'],
-  ['31-Aug-16 2:30:04 PM CDT', '512889984.00 BTU'],
-  ['31-Aug-16 2:45:04 PM CDT', '512900000.00 BTU'],
-  ['31-Aug-16 3:00:04 PM CDT', '512960000.00 BTU'],
-  ['31-Aug-16 3:15:04 PM CDT', '512990016.00 BTU']
-]
-
 class Export extends Component {
   constructor(props) {
     super(props)
@@ -46,7 +32,16 @@ class Export extends Component {
   }
 
   componentDidUpdate() {
-    console.log(this.state.data)
+    var csvData = []
+    //console.log(this.state.data.data.query.electricity.data[0])
+    var data = this.state.data.data.query.electricity.data
+    csvData[0] = ['timestamp', 'value']
+    var c = 1
+    data.forEach(d => {
+      csvData[c] = [d.timestamp, d.value]
+      c++
+    })
+    console.log(csvData)
   }
 
   render() {
