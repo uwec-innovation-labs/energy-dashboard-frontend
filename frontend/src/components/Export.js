@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import '../styles/App.scss'
-import { CSVLink } from 'react-csv'
 import { Form, Col, FormGroup, Label, Input, Button } from 'reactstrap'
 import { getExportData } from '../helpers/APIFrame'
 
@@ -9,7 +8,8 @@ class Export extends Component {
     super(props)
 
     this.state = {
-      data: ''
+      data: '',
+      filename: ''
     }
 
     this.getData = this.getData.bind(this)
@@ -27,21 +27,40 @@ class Export extends Component {
 
   getData(building, startDate, endDate) {
     getExportData(building, 'electricity', startDate, endDate).then(res => {
-      this.setState({ data: res })
+      this.setState({
+        filename: building + '(' + startDate + '_' + endDate + ').csv',
+        data: res
+      })
     })
   }
 
   componentDidUpdate() {
     var csvData = []
-    //console.log(this.state.data.data.query.electricity.data[0])
     var data = this.state.data.data.query.electricity.data
-    csvData[0] = ['timestamp', 'value']
+    csvData[0] = ['electricity', 'timestamp', 'value', '\n']
     var c = 1
     data.forEach(d => {
-      csvData[c] = [d.timestamp, d.value]
+      csvData[c] = [new Date(+d.timestamp), d.value, '\n']
       c++
     })
-    console.log(csvData)
+    csvData[c] = '\n'
+
+    var filename = this.state.filename
+    var blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' })
+    if (navigator.msSaveBlob) {
+      navigator.msSaveBlob(blob, filename)
+    } else {
+      var link = document.createElement('a')
+      if (link.download !== undefined) {
+        var url = URL.createObjectURL(blob)
+        link.setAttribute('href', url)
+        link.setAttribute('download', filename)
+        link.style.visibility = 'hidden'
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+      }
+    }
   }
 
   render() {
@@ -72,6 +91,32 @@ class Export extends Component {
               >
                 <option value="Davies">Davies Student Center</option>
                 <option value="Library">McIntyre Library</option>
+                <option value="Bridgman">Bridgman</option>
+                <option value="Centennial">Centennial</option>
+                <option value="Chancellors">Chancellors</option>
+                <option value="Crest">Crest</option>
+                <option value="Governors">Governors</option>
+                <option value="HeatingPlant">Heating Plant</option>
+                <option value="HFANorth">HFANorth</option>
+                <option value="HFASouth">HFASouth</option>
+                <option value="Hibbard">Hibbard</option>
+                <option value="Hilltop">Hilltop</option>
+                <option value="Horan">Horan</option>
+                <option value="HSS">HSS</option>
+                <option value="Hursing">Hursing</option>
+                <option value="KV">KV</option>
+                <option value="Maintenance">Maintenance</option>
+                <option value="Murray">Murray</option>
+                <option value="OakRidge">OakRidge</option>
+                <option value="PhillipsNorth">PhillipsNorth</option>
+                <option value="PhillipsSouth">PhillipsSouth</option>
+                <option value="Putnam">Putnam</option>
+                <option value="Schneider">Schneider</option>
+                <option value="Schofield">Schofield</option>
+                <option value="Sutherland">Sutherland</option>
+                <option value="Thomas">Thomas</option>
+                <option value="TowersSouth">TowersSouth</option>
+                <option value="Zorn">Zorn</option>
               </Input>
             </FormGroup>
             <FormGroup>
@@ -107,7 +152,7 @@ class Export extends Component {
               </Label>
               <Input type="date" name="endDate" placeholder="01/01/2019" />
             </FormGroup>
-            <Button className="btn btn-outline-primary">Download</Button>
+            <Button>Download</Button>
           </Col>
         </Form>
       </div>

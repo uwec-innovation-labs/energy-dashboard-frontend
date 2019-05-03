@@ -63,16 +63,32 @@ class ScatterPlot extends Component {
   }
 
   downloadData() {
-    //const fields = ['field1', 'field2']
-    //const opts = { fields }
-    //const parseJSON = new json2csv(opts)
-    //const csv = parseJSON.parse(this.state.data)
-    /*
-    var hiddenElement = document.createElement('a')
-    hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv)
-    hiddenElement.target = '_blank'
-    hiddenElement.download = 'building.csv'
-    hiddenElement.click()*/
+    var csvData = []
+    var data = this.state.data.data.query.electricity.data
+    csvData[0] = ['electricity', 'timestamp', 'value', '\n']
+    var c = 1
+    data.forEach(d => {
+      csvData[c] = [new Date(+d.timestamp), d.value, '\n']
+      c++
+    })
+    csvData[c] = '\n'
+
+    var filename = this.state.building + '(' + this.state.filterBy + ').csv'
+    var blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' })
+    if (navigator.msSaveBlob) {
+      navigator.msSaveBlob(blob, filename)
+    } else {
+      var link = document.createElement('a')
+      if (link.download !== undefined) {
+        var url = URL.createObjectURL(blob)
+        link.setAttribute('href', url)
+        link.setAttribute('download', filename)
+        link.style.visibility = 'hidden'
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+      }
+    }
   }
 
   getSettings() {
@@ -97,7 +113,7 @@ class ScatterPlot extends Component {
       }
     })
   }
-  ////
+
   componentDidMount() {
     this.updateGraph()
   }
