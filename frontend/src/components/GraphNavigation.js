@@ -18,6 +18,7 @@ class GraphNavigation extends Component {
     this.state = {
       sendFilter: this.props.functionFilter,
       sendBuilding: this.props.functionBuilding,
+      sendEnergyType: this.props.functionEnergyType,
       dropdownOpen: false,
       dropdownOpenTwo: false,
       building: 'Davies',
@@ -35,6 +36,11 @@ class GraphNavigation extends Component {
   handleDownloadDataButtons(event) {
     event.preventDefault()
     this.state.sendDownloadData()
+  }
+
+  handleEnergyTypeButtons(event) {
+    event.preventDefault()
+    this.state.sendEnergyType(event.target.value)
   }
 
   handleGraphButtons(event) {
@@ -119,28 +125,28 @@ class GraphNavigation extends Component {
                 <Button
                   color="success"
                   onClick={this.handleGraphButtons}
-                  value="week"
+                  value="electricity"
                 >
                   Electricity
                 </Button>
                 <Button
                   color="success"
                   onClick={this.handleGraphButtons}
-                  value="week"
+                  value="heat"
                 >
                   Heat
                 </Button>
                 <Button
                   color="success"
                   onClick={this.handleGraphButtons}
-                  value="week"
+                  value="solar"
                 >
                   Solar
                 </Button>
                 <Button
                   color="success"
                   onClick={this.handleGraphButtons}
-                  value="week"
+                  value="chiller"
                 >
                   Chiller
                 </Button>

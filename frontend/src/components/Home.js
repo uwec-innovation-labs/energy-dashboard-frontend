@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import '../styles/App.scss'
 import ScatterPlot from './ScatterPlot'
-import { getDaily, getWeekly, getMonthly, getYearly } from '../helpers/APIFrame'
+import { getBuildingStats } from '../helpers/APIFrame'
 import update from 'react-addons-update' // ES6
 import CountUp from 'react-countup'
 
@@ -10,78 +10,82 @@ class Home extends Component {
     super(props)
     this.renderStats = this.renderStats.bind(this)
     this.state = {
+      functionGetBuilding: this.props.functionGetBuilding,
+      loading: true,
       stats: [
         {
-          interval: 'Daily',
+          interval: '24 Hrs',
           dailyLabel: ''
         },
         {
-          interval: 'Weekly',
+          interval: '7 Days',
           weeklyLabel: ''
         },
         {
-          interval: 'Monthly',
+          interval: '30 Days',
           monthlyLabel: ''
         },
         {
-          interval: 'Yearly',
+          interval: '1 Year',
           yearlyLabel: ''
         }
       ]
     }
+
+    this.updateGraphStatsData = this.updateGraphStatsData.bind(this)
+    this.updateGraphStats = this.updateGraphStats.bind(this)
+  }
+
+  updateGraphStats(daily, weekly, monthly, yearly) {
+    this.setState({
+      stats: update(this.state.stats, {
+        0: {
+          dailyLabel: { $set: daily.toFixed(2) }
+        },
+        1: {
+          weeklyLabel: { $set: weekly.toFixed(2) }
+        },
+        2: {
+          monthlyLabel: { $set: monthly.toFixed(2) }
+        },
+        3: {
+          yearlyLabel: { $set: yearly.toFixed(2) }
+        }
+      })
+    })
+  }
+
+  updateGraphStatsData(building) {
+    setTimeout(() => {
+      getBuildingStats(building).then(result => {
+        console.log(result.data.data.query.electricity.stats)
+        var daily =
+          ((result.data.data.query.electricity.stats.daily.present -
+            result.data.data.query.electricity.stats.daily.past) /
+            result.data.data.query.electricity.stats.daily.past) *
+          100
+        var weekly =
+          ((result.data.data.query.electricity.stats.weekly.present -
+            result.data.data.query.electricity.stats.weekly.past) /
+            result.data.data.query.electricity.stats.weekly.past) *
+          100
+        var monthly =
+          ((result.data.data.query.electricity.stats.monthly.present -
+            result.data.data.query.electricity.stats.monthly.past) /
+            result.data.data.query.electricity.stats.monthly.past) *
+          100
+        var yearly =
+          ((result.data.data.query.electricity.stats.yearly.present -
+            result.data.data.query.electricity.stats.yearly.past) /
+            result.data.data.query.electricity.stats.yearly.past) *
+          100
+        this.updateGraphStats(daily, weekly, monthly, yearly)
+      })
+    }, 1000)
   }
 
   componentDidMount() {
-    setTimeout(() => {
-      getDaily().then(result => {
-        this.setState({
-          stats: update(this.state.stats, {
-            0: {
-              dailyLabel: { $set: result.data.data.query[0].value.toFixed(2) }
-            }
-          })
-        })
-      })
-      setTimeout(() => {
-        getWeekly().then(result => {
-          this.setState({
-            stats: update(this.state.stats, {
-              1: {
-                weeklyLabel: {
-                  $set: result.data.data.query[0].value.toFixed(2)
-                }
-              }
-            })
-          })
-        })
-        setTimeout(() => {
-          getMonthly().then(result => {
-            this.setState({
-              stats: update(this.state.stats, {
-                2: {
-                  monthlyLabel: {
-                    $set: result.data.data.query[0].value.toFixed(2)
-                  }
-                }
-              })
-            })
-          })
-          setTimeout(() => {
-            getYearly().then(result => {
-              this.setState({
-                stats: update(this.state.stats, {
-                  3: {
-                    yearlyLabel: {
-                      $set: result.data.data.query[0].value.toFixed(2)
-                    }
-                  }
-                })
-              })
-            })
-          }, 900)
-        }, 900)
-      }, 900)
-    }, 900)
+    this.updateGraphStatsData('Davies')
   }
 
   renderStats(statCards) {
@@ -100,6 +104,7 @@ class Home extends Component {
                 duration="1.5"
                 decimals="2"
               />
+              %
             </h3>
           </div>
         </div>
@@ -116,6 +121,7 @@ class Home extends Component {
                 duration="1.5"
                 decimals="2"
               />
+              %
             </h3>
           </div>
         </div>
@@ -132,6 +138,7 @@ class Home extends Component {
                 duration="1.5"
                 decimals="2"
               />
+              %
             </h3>
           </div>
         </div>
@@ -149,6 +156,7 @@ class Home extends Component {
                 duration="1.5"
                 decimals="2"
               />
+              %
             </h3>
           </div>
         </div>
@@ -160,7 +168,11 @@ class Home extends Component {
     return (
       <div>
         <div className="centered">
-          <ScatterPlot graphName="graph1" />
+          <ScatterPlot
+            functionUpdateStatsData={this.updateGraphStatsData}
+            functionStats={this.updateGraphStats}
+            graphName="graph1"
+          />
         </div>
         <div className="cards" id="statCards">
           {this.renderStats(this.state.stats)}
