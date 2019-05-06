@@ -209,6 +209,7 @@ async function average(parent, building) {
       }
     }
     data.timestamp = fullDate.getTime();
+    console.log(fullDate.getMonth());
   });
   return returnData;
 }
