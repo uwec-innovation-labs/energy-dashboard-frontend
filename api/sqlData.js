@@ -208,28 +208,21 @@ async function average(parent, building) {
       if (data.month != undefined) {
         if (data.day != undefined) {
           if (data.hour != undefined) {
-            fullDate = new Date(
-              data.year,
-              data.month,
-              data.date,
-              data.hour,
-              0,
-              0,
-              0
-            )
+            fullDate = new Date(data.year, data.month - 1, data.date, data.hour, 0, 0, 0)
           } else {
-            fullDate = new Date(data.year, data.month, data.date)
+            fullDate = new Date(data.year, data.month - 1, data.date);
           }
         } else {
-          fullDate = new Date(data.year, data.month, 1)
+          fullDate = new Date(data.year, data.month - 1, 1);
         }
       } else {
         fullDate = new Date(data.year, 0, 1)
       }
     }
-    data.timestamp = fullDate.getTime()
-  })
-  return returnData
+    data.timestamp = fullDate.getTime();
+    console.log(fullDate.getMonth());
+  });
+  return returnData;
 }
 
 async function select(parent, building) {
