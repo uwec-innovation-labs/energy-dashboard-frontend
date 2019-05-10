@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import '../styles/App.scss'
-import { Spinner } from 'reactstrap'
-import { getGraphData } from '../helpers/APIFrame'
+import { Spinner, Button, ButtonGroup } from 'reactstrap'
+import { getGraphData, getBuildingEnergyTypes } from '../helpers/APIFrame'
 import GraphNavigation from './GraphNavigation'
 import { buildGraph } from '../helpers/GraphBuilder'
 
@@ -22,9 +22,15 @@ class ScatterPlot extends Component {
       buttonUpdate: false,
       queryFilter: '',
       building: 'Davies',
-      updateStatCardsData: this.props.functionUpdateStatsData
+      updateStatCardsData: this.props.functionUpdateStatsData,
+      energyTypes: '',
+      populateEnergyButtons: false,
+      electricityButton: false,
+      heatButton: false,
+      chillerButton: false
     }
 
+    this.handleEnergyButtons = this.handleEnergyButtons.bind(this)
     this.updateForBuilding = this.updateForBuilding.bind(this)
     this.getSettings = this.getSettings.bind(this)
     this.updateGraph = this.updateGraph.bind(this)
@@ -32,6 +38,11 @@ class ScatterPlot extends Component {
     this.updateFromButton = this.updateFromButton.bind(this)
     this.downloadData = this.downloadData.bind(this)
     this.updateForEnergyType = this.updateForEnergyType.bind(this)
+  }
+
+  handleEnergyButtons(event) {
+    console.log(event.target.value)
+    this.setState({ energyType: event.target.value, buttonUpdate: true })
   }
 
   updateForBuilding(value) {
@@ -44,9 +55,8 @@ class ScatterPlot extends Component {
     this.setState({ filterBy: value, buttonUpdate: true })
   }
 
-  updateForEnergyType(value) {
-    console.log(value)
-    this.setState({ energyType: value, buttonUpdate: true })
+  updateForEnergyType() {
+    this.setState({ buttonUpdate: true, populateEnergyButtons: true })
   }
 
   updateGraph() {
@@ -119,9 +129,35 @@ class ScatterPlot extends Component {
   }
 
   componentDidUpdate() {
+    if (this.state.populateEnergyButtons) {
+      for (
+        let i = 0;
+        i < this.state.energyTypes.data.query.energyAvailable.length;
+        i++
+      ) {
+        var energy = this.state.energyTypes.data.query.energyAvailable[i]
+        if (energy === 'electricity') {
+          this.setState({ electricityButton: true })
+        } else if (energy === 'heat') {
+          this.setState({ heatButton: true })
+        } else if (energy === 'chiller') {
+          this.setState({ chillerButton: true })
+        }
+      }
+
+      this.setState({ populateEnergyButtons: false })
+    }
+
     if (this.state.updatingGraph) {
-      this.setState({ updatingGraph: false })
-      this.drawGraph(this.state.data)
+      getBuildingEnergyTypes(this.state.building).then(res => {
+        this.setState({
+          updatingGraph: false,
+          populateEnergyButtons: true,
+          energyTypes: res
+        })
+
+        this.drawGraph(this.state.data)
+      })
     } else if (this.state.buttonUpdate) {
       this.setState({ buttonUpdate: false })
       this.getSettings().then(message => {
@@ -139,12 +175,29 @@ class ScatterPlot extends Component {
 
   drawGraph(results) {
     // Calls the Graph Builder Helper Method
-    buildGraph(
-      results.data.query.electricity.data,
-      this.state.queryFilter,
-      this.state.amountOfPoints,
-      this.state.filterBy
-    )
+    if (this.state.energyType === 'electricity') {
+      buildGraph(
+        results.data.query.electricity.data,
+        this.state.queryFilter,
+        this.state.amountOfPoints,
+        this.state.filterBy
+      )
+    } else if (this.state.energyType === 'heat') {
+      console.log(results)
+      buildGraph(
+        results.data.query.heat.data,
+        this.state.queryFilter,
+        this.state.amountOfPoints,
+        this.state.filterBy
+      )
+    } else if (this.state.energyType === 'chiller') {
+      buildGraph(
+        results.data.query.chiller.data,
+        this.state.queryFilter,
+        this.state.amountOfPoints,
+        this.state.filterBy
+      )
+    }
 
     // Removes the Spinner
     this.setState({ loading: false })
@@ -163,6 +216,57 @@ class ScatterPlot extends Component {
       spinner = null
     }
 
+    let electricity
+    if (this.state.electricityButton) {
+      electricity = (
+        <div>
+          <Button
+            color="success"
+            onClick={this.handleEnergyButtons}
+            value="electricity"
+          >
+            Electricity
+          </Button>
+        </div>
+      )
+    } else {
+      electricity = null
+    }
+
+    let heat
+    if (this.state.heatButton) {
+      heat = (
+        <div>
+          <Button
+            color="success"
+            onClick={this.handleEnergyButtons}
+            value="heat"
+          >
+            Heat
+          </Button>
+        </div>
+      )
+    } else {
+      heat = null
+    }
+
+    let chiller
+    if (this.state.chillerButton) {
+      chiller = (
+        <div>
+          <Button
+            color="success"
+            onClick={this.handleEnergyButtons}
+            value="chiller"
+          >
+            Chiller
+          </Button>
+        </div>
+      )
+    } else {
+      chiller = null
+    }
+
     return (
       <div>
         <GraphNavigation
@@ -171,8 +275,14 @@ class ScatterPlot extends Component {
           functionDownloadData={this.downloadData}
           functionEnergyType={this.updateForEnergyType}
         />
+
         <div className="graphRow">
           <div className="card-graph">
+            <ButtonGroup>
+              {electricity}
+              {heat}
+              {chiller}
+            </ButtonGroup>{' '}
             <div id="graphCard">
               <div className="scatterCard">
                 <center>{spinner}</center>

@@ -149,7 +149,6 @@ class Home extends Component {
               id="dailyValue"
               style={{ color: parseFloat(Text) >= 0 ? 'red' : 'green' }}
             >
-              {console.log(parseFloat(Text)) >= 0}
               <CountUp
                 start="0.00"
                 end={this.state.stats[3].yearlyLabel}

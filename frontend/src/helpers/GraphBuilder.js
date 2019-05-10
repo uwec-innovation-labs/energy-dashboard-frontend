@@ -6,9 +6,6 @@ export function buildGraph(results, queryFilter, amountOfPoints, filterBy) {
   var width = 1000 - margin.left - margin.right
   var height = 275 - margin.top - margin.bottom
 
-  console.log(results)
-  console.log(amountOfPoints)
-
   // MIN AND MAX DATES
   var mindate = new Date(+results[amountOfPoints - 1].timestamp)
   var maxdate = new Date(+results[0].timestamp)

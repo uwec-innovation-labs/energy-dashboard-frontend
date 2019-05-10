@@ -1,7 +1,30 @@
 const axios = require('axios')
 
+function getBuildingEnergyTypes(building) {
+  return new Promise((resolve, reject) => {
+    axios({
+      url: 'http://localhost:4000/graphql',
+      method: 'post',
+      data: {
+        query:
+          `
+           { query(building: "` +
+          building +
+          `") {
+             
+              energyAvailable
+          }
+          }
+            `
+      }
+    }).then(result => {
+      console.log(result)
+      resolve(result.data)
+    })
+  })
+}
+
 function getGraphData(amountOfPoints, queryFilter, building, energyType) {
-  console.log(energyType)
   return new Promise((resolve, reject) => {
     axios({
       url: 'http://localhost:4000/graphql',
@@ -17,7 +40,7 @@ function getGraphData(amountOfPoints, queryFilter, building, energyType) {
           queryFilter +
           `) {
               ` +
-          'electricity' +
+          energyType +
           `{
                 data {
                   timestamp
@@ -30,30 +53,6 @@ function getGraphData(amountOfPoints, queryFilter, building, energyType) {
           }
             `
       }
-
-      /*{
-        query:
-          `
-             { query 
-               (dataType: "energy", building: "` +
-          building +
-          `", only:  ` +
-          amountOfPoints +
-          ` , sort: "timestamp high"  ` +
-          queryFilter +
-          ` ) {
-                 timestamp {
-                   date
-                   time
-                   year
-                   month
-                   day
-                 }
-                 value
-               }
-             }
-               `
-      }*/
     }).then(result => {
       resolve(result.data)
     })
@@ -62,7 +61,6 @@ function getGraphData(amountOfPoints, queryFilter, building, energyType) {
 
 function getBuildingStats(building) {
   return new Promise((resolve, reject) => {
-    console.log('Function called.')
     axios({
       url: 'http://localhost:4000/graphql',
       method: 'post',
@@ -127,7 +125,6 @@ function getExportData(building, energyType, start, end) {
                 }
 
               }
-              energyAvailable
             }
           }
             `
@@ -141,5 +138,6 @@ function getExportData(building, energyType, start, end) {
 module.exports = {
   getGraphData: getGraphData,
   getBuildingStats: getBuildingStats,
-  getExportData: getExportData
+  getExportData: getExportData,
+  getBuildingEnergyTypes: getBuildingEnergyTypes
 }

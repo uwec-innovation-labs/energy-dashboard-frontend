@@ -56,6 +56,7 @@ class GraphNavigation extends Component {
   handleBuildingButtons(event) {
     event.preventDefault()
     this.state.sendBuilding(event.target.value)
+    this.state.sendEnergyType()
     this.setState({ building: event.target.value })
   }
 
@@ -119,36 +120,6 @@ class GraphNavigation extends Component {
                   value="year"
                 >
                   Year
-                </Button>
-              </ButtonGroup>{' '}
-              <ButtonGroup>
-                <Button
-                  color="success"
-                  onClick={this.handleGraphButtons}
-                  value="electricity"
-                >
-                  Electricity
-                </Button>
-                <Button
-                  color="success"
-                  onClick={this.handleGraphButtons}
-                  value="heat"
-                >
-                  Heat
-                </Button>
-                <Button
-                  color="success"
-                  onClick={this.handleGraphButtons}
-                  value="solar"
-                >
-                  Solar
-                </Button>
-                <Button
-                  color="success"
-                  onClick={this.handleGraphButtons}
-                  value="chiller"
-                >
-                  Chiller
                 </Button>
               </ButtonGroup>{' '}
               <ButtonDropdown
@@ -231,9 +202,9 @@ class GraphNavigation extends Component {
                   </DropdownItem>
                   <DropdownItem
                     onClick={this.handleBuildingButtons}
-                    value="HeatingPlant"
+                    value="Horan"
                   >
-                    HeatingPlant
+                    Horan
                   </DropdownItem>
                   <DropdownItem
                     onClick={this.handleBuildingButtons}
