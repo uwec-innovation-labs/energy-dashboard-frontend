@@ -219,10 +219,9 @@ async function average(parent, building) {
         fullDate = new Date(data.year, 0, 1)
       }
     }
-    data.timestamp = fullDate.getTime();
-    console.log(fullDate.getMonth());
-  });
-  return returnData;
+    data.timestamp = fullDate.getTime()
+  })
+  return returnData
 }
 
 async function select(parent, building) {
