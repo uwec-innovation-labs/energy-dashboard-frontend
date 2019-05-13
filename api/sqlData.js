@@ -237,7 +237,7 @@ function getBuilding(parent, building) {
       }
     } else if (building == 'Schneider') {
       if (parent.dataType == 'solar') {
-        return 'dbo.SCHNEIDER_HALL_LIBSOLTOTALYIELD'
+        return 'dbo.SCHNEIDER_HALL_LIBSOLPOWER_KW'
       } else if (parent.dataType == 'electricity') {
         return 'dbo.SCHNEIDER_HALL_SCHNEIDERKW_TOT_VALUE'
       }
