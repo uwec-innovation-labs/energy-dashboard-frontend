@@ -11,6 +11,7 @@ class ScatterPlot extends Component {
   constructor(props) {
     super(props)
     this.state = {
+      energyType: 'electricity',
       data: '',
       mindate: '',
       maxdate: '',
@@ -20,7 +21,8 @@ class ScatterPlot extends Component {
       updatingGraph: false,
       buttonUpdate: false,
       queryFilter: '',
-      building: 'Davies'
+      building: 'Davies',
+      updateStatCardsData: this.props.functionUpdateStatsData
     }
 
     this.updateForBuilding = this.updateForBuilding.bind(this)
@@ -29,10 +31,12 @@ class ScatterPlot extends Component {
     this.drawGraph = this.drawGraph.bind(this)
     this.updateFromButton = this.updateFromButton.bind(this)
     this.downloadData = this.downloadData.bind(this)
+    this.updateForEnergyType = this.updateForEnergyType.bind(this)
   }
 
   updateForBuilding(value) {
     this.setState({ building: value, buttonUpdate: true })
+    this.state.updateStatCardsData(value)
   }
 
   updateFromButton(value) {
@@ -40,12 +44,18 @@ class ScatterPlot extends Component {
     this.setState({ filterBy: value, buttonUpdate: true })
   }
 
+  updateForEnergyType(value) {
+    console.log(value)
+    this.setState({ energyType: value, buttonUpdate: true })
+  }
+
   updateGraph() {
     this.getSettings().then(message => {
       getGraphData(
         this.state.amountOfPoints,
         this.state.queryFilter,
-        this.state.building
+        this.state.building,
+        this.state.energyType
       ).then(res => {
         this.setState({ data: res, updatingGraph: true })
       })
@@ -74,7 +84,10 @@ class ScatterPlot extends Component {
         this.setState({ amountOfPoints: 672, queryFilter: '' })
         resolve('Successfully set the correct amount of points and filter')
       } else if (this.state.filterBy === 'month') {
-        this.setState({ amountOfPoints: 2688, queryFilter: '' })
+        this.setState({
+          amountOfPoints: 2688 / 4,
+          queryFilter: 'average: "hour"'
+        })
         resolve('Successfully set the correct amount of points and filter')
       } else if (this.state.filterBy === 'year') {
         this.setState({ amountOfPoints: 365, queryFilter: 'average: "day"' })
@@ -99,7 +112,8 @@ class ScatterPlot extends Component {
         getGraphData(
           this.state.amountOfPoints,
           this.state.queryFilter,
-          this.state.building
+          this.state.building,
+          this.state.energyType
         ).then(res => {
           this.setState({ data: res, updatingGraph: true })
         })
@@ -110,7 +124,7 @@ class ScatterPlot extends Component {
   drawGraph(results) {
     // Calls the Graph Builder Helper Method
     buildGraph(
-      results.data.query,
+      results.data.query.electricity.data,
       this.state.queryFilter,
       this.state.amountOfPoints,
       this.state.filterBy
@@ -139,6 +153,7 @@ class ScatterPlot extends Component {
           functionFilter={this.updateFromButton}
           functionBuilding={this.updateForBuilding}
           functionDownloadData={this.downloadData}
+          functionEnergyType={this.updateForEnergyType}
         />
         <div className="graphRow">
           <div className="card-graph">
