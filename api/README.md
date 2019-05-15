@@ -4,7 +4,7 @@ LAUNCHING THE API:
   
 CREATING A QUERY
   the data is currently organized by building name. you must also supply the type of data you want to retrieve
-  for example, if you want to retrieve the electricity and heat data from Hilltop, you query wouild be as follows:
+  below is a working example query displaying all the features at once. you can get raw sql data (in this case, the last 10 records of Hilltop's electricity and heat data). you can also get daily, weekly, monthly, and yearly stats for each building/energy type pair (in this case, just hilltop electricity). finally, you can see which types of energy data are available for which buildings (energyAvailable)
 
       {
         query(building: "Hilltop", only: 10) {
@@ -69,10 +69,16 @@ QUERY PARAMETERS
  
  *Note: multiple parameters must be separated with commas. String parameters need to be in quotes
  
- VALID QUERIES
-   our database is constantly getting new tables, or in other words, new building/datatype combinations.
-   currently, not all buildings have all dataTypes, and it's pretty arbitrary which have which.
-   as of March 13 2019, the current building/dataType pairings can be found in 'current_tables.ods'
+VALID QUERIES
+  our database is constantly getting new tables, or in other words, new building/datatype combinations.
+  currently, not all buildings have all dataTypes, and it's pretty arbitrary which have which.
+  as of March 13 2019, the current building/dataType pairings can be found in 'current_tables.ods'
+
+STAT CARDS
+  stat cards are not affected by the query parameters--it will return the same data for the same building/energyType combo.
+  note that each 'stat' requires its own SQL query to run, for a maximum of 8 if you're grabbing every stat. so please don't include the 'stat' field unless you actually need them to save on time and efficiency.
+  as of 5-13-2019, the stat card algorithm was updated. to calculate the 'daily' stat, for example, it grabs the last 96 records using SQL's 'id' field (since there are appx. 96 records generated each day) and averages them to produce the 'present' field. the same is done for the 96 records before that to produce the 
+  past' field. it is then up to the front end to divide these and present it in percent or decimal format. for weekly, monthly, and yearly, it just grabs 96*7, 96*30, or 96*365 records at a time instead.
 
 FUTURE WORK
   We could allow the user to input an array of buildings instead of a single building, in order to get data from multiple buildings at once,

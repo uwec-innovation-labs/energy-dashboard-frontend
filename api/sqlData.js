@@ -16,12 +16,20 @@ async function master(parent, args, context, info) {
     if (dataTypeName === 'energyAvailable') {
       fullData['energyAvailable'] = getEnergyAvailable(building)
     } else {
-      if (parent.average != null) {
-        let returnData = await average(parent, building)
-        fullData[dataTypeName].data = returnData
-      } else {
-        let returnData = await select(parent, building)
-        fullData[dataTypeName].data = returnData
+      var findData = undefined
+      dataType.selectionSet.selections.forEach(selection => {
+        if (selection.name.value === 'data') {
+          findData = selection
+        }
+      });
+      if (findData != undefined) {
+        if (parent.average != null) {
+          let returnData = await average(parent, building)
+          fullData[dataTypeName].data = returnData
+        } else {
+          let returnData = await select(parent, building)
+          fullData[dataTypeName].data = returnData
+        }
       }
 
       var findStats = undefined
@@ -84,37 +92,18 @@ async function computeStats(building, parent, findStats) {
     } else if (statName === 'yearly') {
       grab *= 365
     }
-    presentParent = {
-      only: grab,
-      sort: 'timestamp high',
-      average: null,
-      dataType: parent.dataType
-    }
-    pastParent = {
-      baseIndex: grab * 2,
-      only: grab,
-      sort: 'timestamp low',
-      average: null,
-      dataType: parent.dataType
-    }
-    var presentData = await select(presentParent, building)
-    var pastData = await select(pastParent, building)
 
-    var presentAvg = 0
-    presentData.forEach(function(data) {
-      presentAvg += data.value
-    })
-    presentAvg /= grab
-
-    var pastAvg = 0
-    pastData.forEach(function(data) {
-      pastAvg += data.value
-    })
-    pastAvg /= grab
+    var table = getBuilding(parent, building);
+    var presentQuery = "SELECT AVG(VALUE) as value FROM " + table + " WHERE id > ((SELECT max(id) FROM " + table + ") - " + grab + ")";
+    var presentData = await sqlserver.getSQLData(presentQuery, []);
+    var pastQuery = "SELECT AVG(VALUE) as value FROM " + table + " WHERE id < ((SELECT max(id) FROM " + table + ") - " + grab + ")" +
+      " AND id > ((SELECT max(id) FROM " + table + ") - " + (2*grab) + ")";
+    console.log(pastQuery);
+    var pastData = await sqlserver.getSQLData(pastQuery, []);
 
     allStats[statName] = {
-      present: presentAvg,
-      past: pastAvg
+      present: presentData[0].value,
+      past: pastData[0].value
     }
   }, Promise.resolve())
   return allStats
@@ -236,159 +225,163 @@ async function select(parent, building) {
   return returnData
 }
 
+function getBuilding(parent, building) {
+    //get building you want data from
+    if (building == 'Davies') {
+      if (parent.dataType == 'energyRate') {
+        return 'dbo.WRDAVIES_NC1_ENERGYRATE'
+      } else if (parent.dataType == 'heat') {
+        return 'dbo.WRDAVIES_NC1_CONDENSATE_CONDYESTERDAY'
+      } else if (parent.dataType == 'electricity') {
+        return 'dbo.SCHNEIDER_HALL_DAVIESKW_TOT_VALUE'
+      }
+    } else if (building == 'Schneider') {
+      if (parent.dataType == 'solar') {
+        return 'dbo.SCHNEIDER_HALL_LIBSOLPOWER_KW'
+      } else if (parent.dataType == 'electricity') {
+        return 'dbo.SCHNEIDER_HALL_SCHNEIDERKW_TOT_VALUE'
+      }
+    } else if (building == 'Governors') {
+      if (parent.dataType == 'heat') {
+        return 'dbo.UWEC_GOVERNORS_CONDYESTERDAY'
+      } else if (parent.dataType == 'electricity') {
+        return 'dbo.SCHNEIDER_HALL_GOVERNORSKW_TOT_VALUE'
+      }
+    } else if (building == 'Chancellors') {
+      if (parent.dataType == 'heat') {
+        return 'dbo.CHANCELLORS_CHANCELLORS_CONDMTR_CONDYESTERDAY'
+      } else if (parent.dataType == 'electricity') {
+        return 'dbo.SCHNEIDER_HALL_CHANCELLORSKW_TOT_VALUE'
+      } else if (parent.dataType == 'chillers') {
+        return 'dbo.SCHNEIDER_HALL_CHANCELLORS_CHILLERKW_TOT_VALUE'
+      }
+    } else if (building == 'Horan') {
+      if (parent.dataType == 'heat') {
+        return 'dbo.UWEC_HORAN_CONDYESTERDAY'
+      } else if (parent.dataType == 'chiller') {
+        return 'dbo.SCHNEIDER_HALL_HORANKW_TOT_VALUE'
+      }
+    } else if (building == 'Crest') {
+      if (parent.dataType == 'heat') {
+        return 'dbo.CREST_CWC_CONDENSATE_CONDYESTERDAY'
+      } else if (parent.dataType == 'electricity') {
+        return 'dbo.SCHNEIDER_HALL_CREST_COMMONSKWH_TOT_VALUE'
+      }
+    } else if (building == 'Hibbard') {
+      if (parent.dataType == 'heat') {
+        return 'dbo.HIBBARD_CONDENSATE_CONDYESTERDAY'
+      } else if (parent.dataType == 'electricity') {
+        return 'dbo.SCHNEIDER_HALL_HIBBARDKW_TOT_VALUE'
+      }
+    } else if (building == 'Hilltop') {
+      if (parent.dataType == 'heat') {
+        return 'dbo.HILLTOP_LL_MISC_CONDYESTERDAY'
+      } else if (parent.dataType == 'electricity') {
+        return 'dbo.SCHNEIDER_HALL_HILLTOPKW_TOT_VALUE'
+      } else if (parent.dataType == 'chiller') {
+        return 'dbo.SCHNEIDER_HALL_HILLTOP_CHILLERKW_TOT_VALUE'
+      }
+    } else if (building == 'HSS') {
+      if (parent.dataType == 'heat') {
+        return 'dbo.UWEC_HSS_CONDMTR_CONDYESTERDAY'
+      } else if (parent.dataType == 'electricity') {
+        return 'dbo.SCHNEIDER_HALL_HSSKW_TOT_VALUE'
+      }
+    } else if (building == 'McPhee') {
+      if (parent.dataType == 'heat') {
+        return 'dbo.MCPHEE_NATATORIUM_CONDENSATE_CONDYESTERDAY'
+      } else if (parent.dataType == 'electricity') {
+        return 'dbo.SCHNEIDER_HALL_MCPHEEKW_TOT_VALUE'
+      }
+    } else if (building == 'TowersSouth') {
+      if (parent.dataType == 'heat') {
+        return 'dbo.UWEC_TOWERSSOUTH3RD_HWCONV_CONDYESTERDAY'
+      } else if (parent.dataType == 'electricity') {
+        return 'dbo.SCHNEIDER_HALL_TOWERS_SOUTHKW_TOT_VALUE'
+      }
+    } else if (building == 'Bridgman') {
+      if (parent.dataType == 'electricity') {
+        return 'dbo.SCHNEIDER_HALL_BRIDGEMANKW_TOT_VALUE'
+      }
+    } else if (building == 'Centennial') {
+      if (parent.dataType == 'electricity') {
+        return 'dbo.SCHNEIDER_HALL_CENTENNIAL_HALLKW_TOT_VALUE'
+      } else if (parent.dataType == 'heat') {
+        return 'dbo.ED_BLDG_2ND_FL_JENE_CONDENSATEMETER_CONDYESTERDAY'
+      }
+    } else if (building == 'KV') {
+      if (parent.dataType == 'electricity') {
+        return 'dbo.SCHNEIDER_HALL_5KV_MAINKW_TOT_VALUE'
+      }
+    } else if (building == 'HFANorth') {
+      if (parent.dataType == 'electricity') {
+        return 'dbo.SCHNEIDER_HALL_HFA_NORTHKW_TOT_VALUE'
+      }
+    } else if (building == 'HFASouth') {
+      if (parent.dataType == 'electricity') {
+        return 'dbo.SCHNEIDER_HALL_HFA_SOUTHKW_TOT_VALUE'
+      }
+    } else if (building == 'HeatingPlant') {
+      if (parent.dataType == 'electricity') {
+        return 'dbo.SCHNEIDER_HALL_HEATING_PLANTKW_TOT_VALUE'
+      }
+    } else if (building == 'Library') {
+      if (parent.dataType == 'chiller') {
+        return 'dbo.SCHNEIDER_HALL_LIBRARY_CHILLERKW_TOT_VALUE'
+      } else if (parent.dataType == 'electricity') {
+        return 'dbo.SCHNEIDER_HALL_LIBRARY_BLDG_ONLYKW_TOT_VALUE'
+      }
+    } else if (building == 'Maintenance') {
+      if (parent.dataType == 'electricity') {
+        return 'dbo.SCHNEIDER_HALL_MAINT_BLDGKW_TOT_VALUE'
+      }
+    } else if (building == 'PhillipsNorth') {
+      if (parent.dataType == 'electricity') {
+        return 'dbo.SCHNEIDER_HALL_PHILLIPS_NORTHKW_TOT_VALUE'
+      }
+    } else if (building == 'PhillipsSouth') {
+      if (parent.dataType == 'electricity') {
+        return 'dbo.SCHNEIDER_HALL_PHILLIPS_SOUTHKW_TOT_VALUE'
+      }
+    } else if (building == 'Nursing') {
+      if (parent.dataType == 'electricity') {
+        return 'dbo.SCHNEIDER_HALL_NURSINGKW_TOT_VALUE'
+      }
+    } else if (building == 'Murray') {
+      if (parent.dataType == 'electricity') {
+        return 'dbo.SCHNEIDER_HALL_MURRAYKW_TOT_VALUE'
+      }
+    } else if (building == 'Schofield') {
+      if (parent.dataType == 'electricity') {
+        return 'dbo.SCHNEIDER_HALL_SCHOFIELDKW_TOT_VALUE'
+      }
+    } else if (building == 'Putnam') {
+      if (parent.dataType == 'electricity') {
+        return 'dbo.SCHNEIDER_HALL_PUTNAMKW_TOT_VALUE'
+      }
+    } else if (building == 'OakRidge') {
+      if (parent.dataType == 'electricity') {
+        return 'dbo.SCHNEIDER_HALL_OAK_RIDGEKW_TOT_VALUE'
+      }
+    } else if (building == 'Sutherland') {
+      if (parent.dataType == 'electricity') {
+        return 'dbo.SCHNEIDER_HALL_SUTHERLANDKW_TOT_VALUE'
+      }
+    } else if (building == 'Thomas') {
+      if (parent.dataType == 'electricity') {
+        return 'dbo.SCHNEIDER_HALL_THOMASKW_TOT_VALUE'
+      }
+    } else if (building == 'Zorn') {
+      if (parent.dataType == 'electricity') {
+        return 'dbo.SCHNEIDER_HALL_ZORNKW_TOT_VALUE'
+      }
+    }
+}
+
 function queryBuilder(query, parent, building) {
   whereClauses = []
   parameters = []
-  //get building you want data from
-  if (building == 'Davies') {
-    if (parent.dataType == 'energyRate') {
-      query += 'dbo.WRDAVIES_NC1_ENERGYRATE'
-    } else if (parent.dataType == 'heat') {
-      query += 'dbo.WRDAVIES_NC1_CONDENSATE_CONDYESTERDAY'
-    } else if (parent.dataType == 'electricity') {
-      query += 'dbo.SCHNEIDER_HALL_DAVIESKW_TOT_VALUE'
-    }
-  } else if (building == 'Schneider') {
-    if (parent.dataType == 'solar') {
-      query += 'dbo.SCHNEIDER_HALL_LIBSOLTOTALYIELD'
-    } else if (parent.dataType == 'electricity') {
-      query += 'dbo.SCHNEIDER_HALL_SCHNEIDERKW_TOT_VALUE'
-    }
-  } else if (building == 'Governors') {
-    if (parent.dataType == 'heat') {
-      query += 'dbo.UWEC_GOVERNORS_CONDYESTERDAY'
-    } else if (parent.dataType == 'electricity') {
-      query += 'dbo.SCHNEIDER_HALL_GOVERNORSKW_TOT_VALUE'
-    }
-  } else if (building == 'Chancellors') {
-    if (parent.dataType == 'heat') {
-      query += 'dbo.CHANCELLORS_CHANCELLORS_CONDMTR_CONDYESTERDAY'
-    } else if (parent.dataType == 'electricity') {
-      query += 'dbo.SCHNEIDER_HALL_CHANCELLORSKW_TOT_VALUE'
-    } else if (parent.dataType == 'chillers') {
-      query += 'dbo.SCHNEIDER_HALL_CHANCELLORS_CHILLERKW_TOT_VALUE'
-    }
-  } else if (building == 'Horan') {
-    if (parent.dataType == 'heat') {
-      query += 'dbo.UWEC_HORAN_CONDYESTERDAY'
-    } else if (parent.dataType == 'chiller') {
-      query += 'dbo.SCHNEIDER_HALL_HORANKW_TOT_VALUE'
-    }
-  } else if (building == 'Crest') {
-    if (parent.dataType == 'heat') {
-      query += 'dbo.CREST_CWC_CONDENSATE_CONDYESTERDAY'
-    } else if (parent.dataType == 'electricity') {
-      query += 'dbo.SCHNEIDER_HALL_CREST_COMMONSKWH_TOT_VALUE'
-    }
-  } else if (building == 'Hibbard') {
-    if (parent.dataType == 'heat') {
-      query += 'dbo.HIBBARD_CONDENSATE_CONDYESTERDAY'
-    } else if (parent.dataType == 'electricity') {
-      query += 'dbo.SCHNEIDER_HALL_HIBBARDKW_TOT_VALUE'
-    }
-  } else if (building == 'Hilltop') {
-    if (parent.dataType == 'heat') {
-      query += 'dbo.HILLTOP_LL_MISC_CONDYESTERDAY'
-    } else if (parent.dataType == 'electricity') {
-      query += 'dbo.SCHNEIDER_HALL_HILLTOPKW_TOT_VALUE'
-    } else if (parent.dataType == 'chiller') {
-      query += 'dbo.SCHNEIDER_HALL_HILLTOP_CHILLERKW_TOT_VALUE'
-    }
-  } else if (building == 'HSS') {
-    if (parent.dataType == 'heat') {
-      query += 'dbo.UWEC_HSS_CONDMTR_CONDYESTERDAY'
-    } else if (parent.dataType == 'electricity') {
-      query += 'dbo.SCHNEIDER_HALL_HSSKW_TOT_VALUE'
-    }
-  } else if (building == 'McPhee') {
-    if (parent.dataType == 'heat') {
-      query += 'dbo.MCPHEE_NATATORIUM_CONDENSATE_CONDYESTERDAY'
-    } else if (parent.dataType == 'electricity') {
-      query += 'dbo.SCHNEIDER_HALL_MCPHEEKW_TOT_VALUE'
-    }
-  } else if (building == 'TowersSouth') {
-    if (parent.dataType == 'heat') {
-      query += 'dbo.UWEC_TOWERSSOUTH3RD_HWCONV_CONDYESTERDAY'
-    } else if (parent.dataType == 'electricity') {
-      query += 'dbo.SCHNEIDER_HALL_TOWERS_SOUTHKW_TOT_VALUE'
-    }
-  } else if (building == 'Bridgman') {
-    if (parent.dataType == 'electricity') {
-      query += 'dbo.SCHNEIDER_HALL_BRIDGEMANKW_TOT_VALUE'
-    }
-  } else if (building == 'Centennial') {
-    if (parent.dataType == 'electricity') {
-      query += 'dbo.SCHNEIDER_HALL_CENTENNIAL_HALLKW_TOT_VALUE'
-    } else if (parent.dataType == 'heat') {
-      query += 'dbo.ED_BLDG_2ND_FL_JENE_CONDENSATEMETER_CONDYESTERDAY'
-    }
-  } else if (building == 'KV') {
-    if (parent.dataType == 'electricity') {
-      query += 'dbo.SCHNEIDER_HALL_5KV_MAINKW_TOT_VALUE'
-    }
-  } else if (building == 'HFANorth') {
-    if (parent.dataType == 'electricity') {
-      query += 'dbo.SCHNEIDER_HALL_HFA_NORTHKW_TOT_VALUE'
-    }
-  } else if (building == 'HFASouth') {
-    if (parent.dataType == 'electricity') {
-      query += 'dbo.SCHNEIDER_HALL_HFA_SOUTHKW_TOT_VALUE'
-    }
-  } else if (building == 'HeatingPlant') {
-    if (parent.dataType == 'electricity') {
-      query += 'dbo.SCHNEIDER_HALL_HEATING_PLANTKW_TOT_VALUE'
-    }
-  } else if (building == 'Library') {
-    if (parent.dataType == 'chiller') {
-      query += 'dbo.SCHNEIDER_HALL_LIBRARY_CHILLERKW_TOT_VALUE'
-    } else if (parent.dataType == 'electricity') {
-      query += 'dbo.SCHNEIDER_HALL_LIBRARY_BLDG_ONLYKW_TOT_VALUE'
-    }
-  } else if (building == 'Maintenance') {
-    if (parent.dataType == 'electricity') {
-      query += 'dbo.SCHNEIDER_HALL_MAINT_BLDGKW_TOT_VALUE'
-    }
-  } else if (building == 'PhillipsNorth') {
-    if (parent.dataType == 'electricity') {
-      query += 'dbo.SCHNEIDER_HALL_PHILLIPS_NORTHKW_TOT_VALUE'
-    }
-  } else if (building == 'PhillipsSouth') {
-    if (parent.dataType == 'electricity') {
-      query += 'dbo.SCHNEIDER_HALL_PHILLIPS_SOUTHKW_TOT_VALUE'
-    }
-  } else if (building == 'Nursing') {
-    if (parent.dataType == 'electricity') {
-      query += 'dbo.SCHNEIDER_HALL_NURSINGKW_TOT_VALUE'
-    }
-  } else if (building == 'Murray') {
-    if (parent.dataType == 'electricity') {
-      query += 'dbo.SCHNEIDER_HALL_MURRAYKW_TOT_VALUE'
-    }
-  } else if (building == 'Schofield') {
-    if (parent.dataType == 'electricity') {
-      query += 'dbo.SCHNEIDER_HALL_SCHOFIELDKW_TOT_VALUE'
-    }
-  } else if (building == 'Putnam') {
-    if (parent.dataType == 'electricity') {
-      query += 'dbo.SCHNEIDER_HALL_PUTNAMKW_TOT_VALUE'
-    }
-  } else if (building == 'OakRidge') {
-    if (parent.dataType == 'electricity') {
-      query += 'dbo.SCHNEIDER_HALL_OAK_RIDGEKW_TOT_VALUE'
-    }
-  } else if (building == 'Sutherland') {
-    if (parent.dataType == 'electricity') {
-      query += 'dbo.SCHNEIDER_HALL_SUTHERLANDKW_TOT_VALUE'
-    }
-  } else if (building == 'Thomas') {
-    if (parent.dataType == 'electricity') {
-      query += 'dbo.SCHNEIDER_HALL_THOMASKW_TOT_VALUE'
-    }
-  } else if (building == 'Zorn') {
-    if (parent.dataType == 'electricity') {
-      query += 'dbo.SCHNEIDER_HALL_ZORNKW_TOT_VALUE'
-    }
-  }
+  query += getBuilding(parent, building);
 
   //'only': selects first n records
   if (parent.only != null) {
