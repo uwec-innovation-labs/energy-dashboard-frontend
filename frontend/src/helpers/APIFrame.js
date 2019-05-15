@@ -18,13 +18,12 @@ function getBuildingEnergyTypes(building) {
             `
       }
     }).then(result => {
-      console.log(result)
       resolve(result.data)
     })
   })
 }
 
-function getGraphData(amountOfPoints, queryFilter, building, energyType) {
+function getGraphData(queryFilter, building, energyType, startDate, endDate) {
   return new Promise((resolve, reject) => {
     axios({
       url: 'http://localhost:4000/graphql',
@@ -34,9 +33,11 @@ function getGraphData(amountOfPoints, queryFilter, building, energyType) {
           `
            { query(building: "` +
           building +
-          `", only: ` +
-          amountOfPoints +
-          ` sort: "timestamp high", ` +
+          `", start: "` +
+          startDate +
+          `", end: "` +
+          endDate +
+          `" sort: "timestamp high", ` +
           queryFilter +
           `) {
               ` +
@@ -117,7 +118,7 @@ function getExportData(building, energyType, start, end) {
           `", end:"` +
           end +
           `") {` +
-          'electricity' +
+          energyType +
           `{
                 data {
                   timestamp

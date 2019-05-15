@@ -9,7 +9,8 @@ class Export extends Component {
 
     this.state = {
       data: '',
-      filename: ''
+      filename: '',
+      energyType: ''
     }
 
     this.getData = this.getData.bind(this)
@@ -20,24 +21,45 @@ class Export extends Component {
     var building = event.target.building.value
     var startDate = event.target.startDate.value
     var endDate = event.target.endDate.value
+    var energyType = event.target.energyType.value
 
-    this.getData(building, startDate, endDate)
+    this.getData(building, energyType, startDate, endDate)
     event.preventDefault()
   }
 
-  getData(building, startDate, endDate) {
-    getExportData(building, 'electricity', startDate, endDate).then(res => {
+  getData(building, energyTyper, startDate, endDate) {
+    getExportData(building, energyTyper, startDate, endDate).then(res => {
       this.setState({
-        filename: building + '(' + startDate + '_' + endDate + ').csv',
-        data: res
+        filename:
+          building +
+          ' ' +
+          energyTyper +
+          '(' +
+          startDate +
+          '_' +
+          endDate +
+          ').csv',
+        data: res,
+        energyType: energyTyper
       })
     })
   }
 
   componentDidUpdate() {
     var csvData = []
-    var data = this.state.data.data.query.electricity.data
-    csvData[0] = ['electricity', 'timestamp', 'value', '\n']
+    var data
+
+    if (this.state.energyType === 'electricity') {
+      data = this.state.data.data.query.electricity.data
+      csvData[0] = ['electricity', 'timestamp', 'value', '\n']
+    } else if (this.state.energyType === 'heat') {
+      data = this.state.data.data.query.heat.data
+      csvData[0] = ['heat', 'timestamp', 'value', '\n']
+    } else if (this.state.energyType === 'chiller') {
+      data = this.state.data.data.query.chiller.data
+      csvData[0] = ['chiller', 'timestamp', 'value', '\n']
+    }
+
     var c = 1
     data.forEach(d => {
       csvData[c] = [new Date(+d.timestamp), d.value, '\n']
@@ -136,6 +158,8 @@ class Export extends Component {
               >
                 <option value="electricity">Electricity</option>
                 <option value="heat">Heat</option>
+                <option value="chiller">Chiller</option>
+                <option value="solar">Solar</option>
               </Input>
             </FormGroup>
             <FormGroup>
