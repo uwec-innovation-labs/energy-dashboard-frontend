@@ -186,13 +186,11 @@ class ScatterPlot extends Component {
 
   componentDidUpdate() {
     if (this.state.populateEnergyButtons) {
-      console.log(this.state.energyTypes)
       for (
         let i = 0;
         i < this.state.energyTypes.data.query.energyAvailable.length;
         i++
       ) {
-        console.log('TEST')
         var energy = this.state.energyTypes.data.query.energyAvailable[i]
         if (energy === 'electricity') {
           this.setState({
@@ -233,7 +231,6 @@ class ScatterPlot extends Component {
       if (this.state.buildingUpdate) {
         getBuildingEnergyTypes(this.state.building)
           .then(res => {
-            console.log('DLFJLSDJ')
             this.setState({
               populateEnergyButtons: true,
               energyTypes: res,
@@ -263,7 +260,6 @@ class ScatterPlot extends Component {
             this.state.startDate,
             this.state.endDate
           ).then(res => {
-            console.log(res)
             this.setState({ data: res, updatingGraph: true })
           })
         })

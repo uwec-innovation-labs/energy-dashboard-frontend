@@ -58,6 +58,9 @@ class Export extends Component {
     } else if (this.state.energyType === 'chiller') {
       data = this.state.data.data.query.chiller.data
       csvData[0] = ['chiller', 'timestamp', 'value', '\n']
+    } else if (this.state.energyType === 'solar') {
+      data = this.state.data.data.query.solar.data
+      csvData[0] = ['solar', 'timestamp', 'value', '\n']
     }
 
     var c = 1
