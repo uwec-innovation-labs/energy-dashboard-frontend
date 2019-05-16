@@ -1,50 +1,43 @@
 const sqlserver = require('./sqlConnect.js')
-const sql = require('mssql')
 
 var whereClauses
 var parameters
 
-async function master(parent, args, context, info) {
-  var building = parent.building
-  var dataTypes = context.fieldNodes[0].selectionSet.selections
-  var fullData = {}
-  await dataTypes.reduce(async (promise, dataType) => {
-    await promise
-    var dataTypeName = dataType.name.value
-    parent.dataType = dataTypeName
-    fullData[dataTypeName] = {}
-    if (dataTypeName === 'energyAvailable') {
-      fullData['energyAvailable'] = getEnergyAvailable(building)
-    } else {
-      var findData = undefined
-      dataType.selectionSet.selections.forEach(selection => {
-        if (selection.name.value === 'data') {
-          findData = selection
-        }
-      });
-      if (findData != undefined) {
-        if (parent.average != null) {
-          let returnData = await average(parent, building)
-          fullData[dataTypeName].data = returnData
-        } else {
-          let returnData = await select(parent, building)
-          fullData[dataTypeName].data = returnData
-        }
+async function master(building, dataType, parent) {
+  var dataTypeName = dataType.name.value
+  parent.dataType = dataTypeName
+  if (dataTypeName === 'energyAvailable') {
+    return getEnergyAvailable(building)
+  } else {
+    var fullData = {};
+    var findData = undefined
+    dataType.selectionSet.selections.forEach(selection => {
+      if (selection.name.value === 'data') {
+        findData = selection
       }
-
-      var findStats = undefined
-      dataType.selectionSet.selections.forEach(selection => {
-        if (selection.name.value === 'stats') {
-          findStats = selection
-        }
-      })
-      if (findStats != undefined) {
-        let stats = await computeStats(building, parent, findStats)
-        fullData[dataTypeName].stats = stats
+    });
+    if (findData != undefined) {
+      if (parent.average != null) {
+        let returnData = await average(parent, building)
+        fullData.data = returnData;
+      } else {
+        let returnData = await select(parent, building)
+        fullData.data = returnData;
       }
     }
-  }, Promise.resolve())
-  return fullData
+
+    var findStats = undefined
+    dataType.selectionSet.selections.forEach(selection => {
+      if (selection.name.value === 'stats') {
+        findStats = selection
+      }
+    })
+    if (findStats != undefined) {
+      let stats = await computeStats(building, parent, findStats)
+      fullData.stats = stats
+    }
+    return fullData;
+  }
 }
 
 function getEnergyAvailable(building) {

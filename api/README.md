@@ -2,6 +2,13 @@ LAUNCHING THE API:
   run 'npm' start in the directory
   navigate to http://localhost:4000/graphql
   
+CACHING
+  this is the version i'm implementing caching on. it works, sorta.
+  to clear the redis cache, type redis-cli FLUSHALL in the command line. you'll want to do that after every run if you're developing/testing
+  currently the redis cache keys data by building and dataType. what this means is that if you use new parameters with the same building and data type,
+    the data returned will be based on the old parameters. since the key would be horrendous if i were to include every possible iteration of parameters,
+    i'm going to talk to frontend and see if they can narrow the scope to make this feasible.
+
 CREATING A QUERY
   the data is currently organized by building name. you must also supply the type of data you want to retrieve
   below is a working example query displaying all the features at once. you can get raw sql data (in this case, the last 10 records of Hilltop's electricity and heat data). you can also get daily, weekly, monthly, and yearly stats for each building/energy type pair (in this case, just hilltop electricity). finally, you can see which types of energy data are available for which buildings (energyAvailable)
