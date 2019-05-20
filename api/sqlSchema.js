@@ -12,6 +12,16 @@ var energySchema = buildSchema(`
         chiller: DataValue
         energyRate: DataValue
         energyAvailable: [String]
+        buildingData: BuildingData
+    }
+
+    type BuildingData {
+        yearBuilt: Int
+        size: Int
+        buildingDesc: String
+        buildingType: String
+        buildingLongitude: String
+        buildingLatitude: String
     }
 
     type DataValue {
