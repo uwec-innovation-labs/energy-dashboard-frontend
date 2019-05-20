@@ -71,7 +71,7 @@ function getEnergyAvailable(building) {
     building === 'Governors' ||
     building === 'Hibbard' ||
     building === 'Hilltop' ||
-    building === 'TowersSouth' ||
+    building === 'Towers South' ||
     building === 'Horan' ||
     building === 'HSS'
   ) {
