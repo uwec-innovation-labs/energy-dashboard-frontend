@@ -41,20 +41,19 @@ async function master(parent, args, context, info) {
           fullData[dataTypeName].data = returnData
         }
       }
-    }
-
-    var findStats = undefined
-    dataType.selectionSet.selections.forEach(selection => {
-      if (selection.name.value === 'stats') {
-        findStats = selection
+      var findStats = undefined
+      dataType.selectionSet.selections.forEach(selection => {
+        if (selection.name.value === 'stats') {
+          findStats = selection
+        }
+      })
+      if (findStats != undefined) {
+        let stats = await computeStats(building, parent, findStats)
+        fullData.stats = stats
       }
-    })
-    if (findStats != undefined) {
-      let stats = await computeStats(building, parent, findStats)
-      fullData.stats = stats
     }
-    return fullData;
   }, Promise.resolve());
+  return fullData;
 }
 
 function getEnergyAvailable(building) {
