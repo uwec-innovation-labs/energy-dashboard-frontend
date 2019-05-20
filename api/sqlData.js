@@ -54,7 +54,7 @@ async function master(parent, args, context, info) {
       fullData.stats = stats
     }
     return fullData;
-  }
+  }, Promise.resolve());
 }
 
 function getEnergyAvailable(building) {
