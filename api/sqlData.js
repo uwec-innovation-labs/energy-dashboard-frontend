@@ -3,7 +3,7 @@ const sqlserver = require('./sqlConnect.js')
 var whereClauses
 var parameters
 
-async function master(building, dataType, parent) {
+async function master(building, dataType, parent) {z
   var dataTypeName = dataType.name.value
   parent.dataType = dataTypeName
   if (dataTypeName === 'energyAvailable') {
@@ -89,6 +89,7 @@ async function computeStats(building, parent, findStats) {
     var table = getBuilding(parent, building);
     var presentQuery = "SELECT AVG(VALUE) as value FROM " + table + " WHERE id > ((SELECT max(id) FROM " + table + ") - " + grab + ")";
     var presentData = await sqlserver.getSQLData(presentQuery, []);
+    console.log(presentQuery);
     var pastQuery = "SELECT AVG(VALUE) as value FROM " + table + " WHERE id < ((SELECT max(id) FROM " + table + ") - " + grab + ")" +
       " AND id > ((SELECT max(id) FROM " + table + ") - " + (2*grab) + ")";
     console.log(pastQuery);
@@ -98,6 +99,7 @@ async function computeStats(building, parent, findStats) {
       present: presentData[0].value,
       past: pastData[0].value
     }
+    console.log(allStats);
   }, Promise.resolve())
   return allStats
 }
