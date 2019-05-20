@@ -3,26 +3,43 @@ const sqlserver = require('./sqlConnect.js')
 var whereClauses
 var parameters
 
-async function master(building, dataType, parent) {z
-  var dataTypeName = dataType.name.value
-  parent.dataType = dataTypeName
-  if (dataTypeName === 'energyAvailable') {
-    return getEnergyAvailable(building)
-  } else {
-    var fullData = {};
-    var findData = undefined
-    dataType.selectionSet.selections.forEach(selection => {
-      if (selection.name.value === 'data') {
-        findData = selection
-      }
-    });
-    if (findData != undefined) {
-      if (parent.average != null) {
-        let returnData = await average(parent, building)
-        fullData.data = returnData;
-      } else {
-        let returnData = await select(parent, building)
-        fullData.data = returnData;
+async function getBuildingData(building) {
+  var query = "SELECT * FROM buildingData WHERE buildingName = '" + building + "'";
+  console.log(query);
+  let data = await sqlserver.getSQLData(query, []);
+  console.log(data);
+  return data;
+}
+
+async function master(parent, args, context, info) {
+  var building = parent.building
+  var dataTypes = context.fieldNodes[0].selectionSet.selections
+  var fullData = {}
+  await dataTypes.reduce(async (promise, dataType) => {
+    await promise
+    var dataTypeName = dataType.name.value
+    parent.dataType = dataTypeName
+    fullData[dataTypeName] = {}
+    if (dataTypeName === 'energyAvailable') {
+      fullData['energyAvailable'] = getEnergyAvailable(building)
+    } else if (dataTypeName === 'buildingData') {
+      var buildingData = await getBuildingData(building);
+      fullData['buildingData'] = buildingData[0];
+    } else {
+      var findData = undefined
+      dataType.selectionSet.selections.forEach(selection => {
+        if (selection.name.value === 'data') {
+          findData = selection
+        }
+      });
+      if (findData != undefined) {
+        if (parent.average != null) {
+          let returnData = await average(parent, building)
+          fullData[dataTypeName].data = returnData
+        } else {
+          let returnData = await select(parent, building)
+          fullData[dataTypeName].data = returnData
+        }
       }
     }
 
@@ -288,7 +305,7 @@ function getBuilding(parent, building) {
       } else if (parent.dataType == 'electricity') {
         return 'dbo.SCHNEIDER_HALL_MCPHEEKW_TOT_VALUE'
       }
-    } else if (building == 'TowersSouth') {
+    } else if (building == 'Towers South') {
       if (parent.dataType == 'heat') {
         return 'dbo.UWEC_TOWERSSOUTH3RD_HWCONV_CONDYESTERDAY'
       } else if (parent.dataType == 'electricity') {
@@ -308,15 +325,15 @@ function getBuilding(parent, building) {
       if (parent.dataType == 'electricity') {
         return 'dbo.SCHNEIDER_HALL_5KV_MAINKW_TOT_VALUE'
       }
-    } else if (building == 'HFANorth') {
+    } else if (building == 'HFA North') {
       if (parent.dataType == 'electricity') {
         return 'dbo.SCHNEIDER_HALL_HFA_NORTHKW_TOT_VALUE'
       }
-    } else if (building == 'HFASouth') {
+    } else if (building == 'HFA South') {
       if (parent.dataType == 'electricity') {
         return 'dbo.SCHNEIDER_HALL_HFA_SOUTHKW_TOT_VALUE'
       }
-    } else if (building == 'HeatingPlant') {
+    } else if (building == 'Heating Plant') {
       if (parent.dataType == 'electricity') {
         return 'dbo.SCHNEIDER_HALL_HEATING_PLANTKW_TOT_VALUE'
       }
@@ -330,11 +347,11 @@ function getBuilding(parent, building) {
       if (parent.dataType == 'electricity') {
         return 'dbo.SCHNEIDER_HALL_MAINT_BLDGKW_TOT_VALUE'
       }
-    } else if (building == 'PhillipsNorth') {
+    } else if (building == 'Phillips North') {
       if (parent.dataType == 'electricity') {
         return 'dbo.SCHNEIDER_HALL_PHILLIPS_NORTHKW_TOT_VALUE'
       }
-    } else if (building == 'PhillipsSouth') {
+    } else if (building == 'Phillips South') {
       if (parent.dataType == 'electricity') {
         return 'dbo.SCHNEIDER_HALL_PHILLIPS_SOUTHKW_TOT_VALUE'
       }
@@ -354,7 +371,7 @@ function getBuilding(parent, building) {
       if (parent.dataType == 'electricity') {
         return 'dbo.SCHNEIDER_HALL_PUTNAMKW_TOT_VALUE'
       }
-    } else if (building == 'OakRidge') {
+    } else if (building == 'Oak Ridge') {
       if (parent.dataType == 'electricity') {
         return 'dbo.SCHNEIDER_HALL_OAK_RIDGEKW_TOT_VALUE'
       }
