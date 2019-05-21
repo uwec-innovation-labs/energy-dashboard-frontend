@@ -96,7 +96,7 @@ app.get('/redis', async (req, res) => {
       //console.log("making data request");
       parent.dataType = dataTypeName;
       let newData = await sqlData.computeStats(building, parent, findStats)
-      client.setex(`query:${key}`, 3600, JSON.stringify(newData));
+      client.setex(`query:${key}`, 86400, JSON.stringify(newData));
       return res.status(200).json(newData);
     }
   });
