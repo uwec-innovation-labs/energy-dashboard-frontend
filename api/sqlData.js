@@ -5,18 +5,18 @@ var parameters
 
 async function getBuildingData(building) {
   var query = "SELECT * FROM buildingData WHERE buildingName = '" + building + "'";
-  console.log(query);
+  //console.log(query);
   let data = await sqlserver.getSQLData(query, []);
-  console.log(data);
   return data;
 }
 
-async function master(parent, args, context, info) {
-  var building = parent.building
-  var dataTypes = context.fieldNodes[0].selectionSet.selections
+async function master(rawParent, building, dataTypes) {
+ // var dataTypes = JSON.parse(rawDataTypes);
+  var parent = JSON.parse(rawParent);
   var fullData = {}
-  await dataTypes.reduce(async (promise, dataType) => {
+  await dataTypes.reduce(async (promise, rawDataType) => {
     await promise
+    var dataType = JSON.parse(rawDataType)
     var dataTypeName = dataType.name.value
     parent.dataType = dataTypeName
     fullData[dataTypeName] = {}
@@ -40,16 +40,6 @@ async function master(parent, args, context, info) {
           let returnData = await select(parent, building)
           fullData[dataTypeName].data = returnData
         }
-      }
-      var findStats = undefined
-      dataType.selectionSet.selections.forEach(selection => {
-        if (selection.name.value === 'stats') {
-          findStats = selection
-        }
-      })
-      if (findStats != undefined) {
-        let stats = await computeStats(building, parent, findStats)
-        fullData.stats = stats
       }
     }
   }, Promise.resolve());
@@ -102,20 +92,20 @@ async function computeStats(building, parent, findStats) {
       grab *= 365
     }
 
+    
     var table = getBuilding(parent, building);
     var presentQuery = "SELECT AVG(VALUE) as value FROM " + table + " WHERE id > ((SELECT max(id) FROM " + table + ") - " + grab + ")";
+    //console.log(presentQuery);
     var presentData = await sqlserver.getSQLData(presentQuery, []);
-    console.log(presentQuery);
+    //console.log(pastQuery);
     var pastQuery = "SELECT AVG(VALUE) as value FROM " + table + " WHERE id < ((SELECT max(id) FROM " + table + ") - " + grab + ")" +
       " AND id > ((SELECT max(id) FROM " + table + ") - " + (2*grab) + ")";
-    console.log(pastQuery);
     var pastData = await sqlserver.getSQLData(pastQuery, []);
 
     allStats[statName] = {
       present: presentData[0].value,
       past: pastData[0].value
     }
-    console.log(allStats);
   }, Promise.resolve())
   return allStats
 }
@@ -196,7 +186,7 @@ async function average(parent, building) {
     }
   }
 
-  console.log(avgQuery)
+  //console.log(avgQuery)
   let returnData = await sqlserver.getSQLData(avgQuery, parameters)
   returnData.forEach(function(data) {
     var fullDate
@@ -227,7 +217,7 @@ async function average(parent, building) {
 async function select(parent, building) {
   var solarQuery = 'SELECT TIMESTAMP AS timestamp, VALUE as value FROM '
   solarQuery = queryBuilder(solarQuery, parent, building)
-  console.log(solarQuery)
+  //console.log(solarQuery)
   let returnData = await sqlserver.getSQLData(solarQuery, parameters)
   returnData.forEach(function(data) {
     var fullDate = new Date(data.timestamp)
@@ -458,5 +448,6 @@ function queryBuilder(query, parent, building) {
 }
 
 module.exports = {
-  master: master
+  master: master,
+  computeStats: computeStats
 }

@@ -5,9 +5,7 @@ LAUNCHING THE API:
 CACHING
   this is the version i'm implementing caching on. it works, sorta.
   to clear the redis cache, type redis-cli FLUSHALL in the command line. you'll want to do that after every run if you're developing/testing
-  currently the redis cache keys data by building and dataType. what this means is that if you use new parameters with the same building and data type,
-    the data returned will be based on the old parameters. since the key would be horrendous if i were to include every possible iteration of parameters,
-    i'm going to talk to frontend and see if they can narrow the scope to make this feasible.
+  the cache stores the stat cards only, not query data. loading will be virtually instant compared to taking several seconds to load
 
 CREATING A QUERY
   the data is currently organized by building name. you must also supply the type of data you want to retrieve
