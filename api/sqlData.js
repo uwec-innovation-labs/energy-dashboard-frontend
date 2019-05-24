@@ -5,13 +5,21 @@ var parameters
 
 async function getBuildingData(building) {
   var query = "SELECT * FROM buildingData WHERE buildingName = '" + building + "'";
-  //console.log(query);
-  let data = await sqlserver.getSQLData(query, []);
-  return data;
+  let buildingData = await sqlserver.getSQLData(query, []);
+
+  var query = "SELECT * FROM invoiceData";
+  let rateData = await sqlserver.getSQLData(query, []);
+  rateData.forEach((rate) => {
+    var dateString = rate.invoiceDate;
+    var date = new Date(dateString);
+    rate.month = date.getMonth() + 1;
+    rate.year = date.getFullYear();
+  });
+  buildingData[0].cost = rateData;
+  return buildingData;
 }
 
 async function master(rawParent, building, dataTypes) {
- // var dataTypes = JSON.parse(rawDataTypes);
   var parent = JSON.parse(rawParent);
   var fullData = {}
   await dataTypes.reduce(async (promise, rawDataType) => {
