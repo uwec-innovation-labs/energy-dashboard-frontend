@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import '../styles/App.scss'
-import { CSVLink } from 'react-csv'
 import { Form, Col, FormGroup, Label, Input, Button } from 'reactstrap'
 import { getExportData } from '../helpers/APIFrame'
 
