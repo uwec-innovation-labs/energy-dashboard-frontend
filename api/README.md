@@ -61,12 +61,9 @@ the buildingData field returns:
   buildingType
   buildingLongitude
   buildingLatitude
-  cost {
-    month
-    year
-    onPeakRate
-    offPeakRate
-  }
+  onPeakRate
+  offPeakRate
+*note: on/offPeakRate are the same for every building, and only the most recent rates are retrieved
 
 QUERY PARAMETERS
   to limit or arrange the data retrieved, here are some parameters you can use:

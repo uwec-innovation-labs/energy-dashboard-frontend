@@ -22,12 +22,6 @@ var energySchema = buildSchema(`
         buildingType: String
         buildingLongitude: String
         buildingLatitude: String
-        cost: [MonthlyCost]
-    }
-
-    type MonthlyCost {
-        month: Int
-        year: Int
         onPeakRate: String
         offPeakRate: String
     }
