@@ -7,15 +7,10 @@ async function getBuildingData(building) {
   var query = "SELECT * FROM buildingData WHERE buildingName = '" + building + "'";
   let buildingData = await sqlserver.getSQLData(query, []);
 
-  var query = "SELECT * FROM invoiceData";
+  var query = "SELECT TOP 1 * FROM invoiceData ORDER BY invoiceDate";
   let rateData = await sqlserver.getSQLData(query, []);
-  rateData.forEach((rate) => {
-    var dateString = rate.invoiceDate;
-    var date = new Date(dateString);
-    rate.month = date.getMonth() + 1;
-    rate.year = date.getFullYear();
-  });
-  buildingData[0].cost = rateData;
+  buildingData[0].onPeakRate = rateData[0].onPeakRate;
+  buildingData[0].offPeakRate = rateData[0].offPeakRate;
   return buildingData;
 }
 
