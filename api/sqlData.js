@@ -5,13 +5,16 @@ var parameters
 
 async function getBuildingData(building) {
   var query = "SELECT * FROM buildingData WHERE buildingName = '" + building + "'";
-  //console.log(query);
-  let data = await sqlserver.getSQLData(query, []);
-  return data;
+  let buildingData = await sqlserver.getSQLData(query, []);
+
+  var query = "SELECT TOP 1 * FROM invoiceData ORDER BY invoiceDate";
+  let rateData = await sqlserver.getSQLData(query, []);
+  buildingData[0].onPeakRate = rateData[0].onPeakRate;
+  buildingData[0].offPeakRate = rateData[0].offPeakRate;
+  return buildingData;
 }
 
 async function master(rawParent, building, dataTypes) {
- // var dataTypes = JSON.parse(rawDataTypes);
   var parent = JSON.parse(rawParent);
   var fullData = {}
   await dataTypes.reduce(async (promise, rawDataType) => {

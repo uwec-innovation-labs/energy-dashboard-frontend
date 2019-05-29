@@ -44,6 +44,7 @@ CREATING A QUERY
             }
           }
           energyAvailable
+          buildingData
         }
       }
 
@@ -53,6 +54,16 @@ CREATING A QUERY
    
 the energyAvailable field returns a list of energy types available for that building 
   ex. for Hilltop, it returns ["electricity", "heat", "chiller"]
+the buildingData field returns:
+  yearBuilt
+  size
+  buildingDesc
+  buildingType
+  buildingLongitude
+  buildingLatitude
+  onPeakRate
+  offPeakRate
+*note: on/offPeakRate are the same for every building, and only the most recent rates are retrieved
 
 QUERY PARAMETERS
   to limit or arrange the data retrieved, here are some parameters you can use:

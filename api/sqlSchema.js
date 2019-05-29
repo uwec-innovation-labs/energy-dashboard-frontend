@@ -22,6 +22,8 @@ var energySchema = buildSchema(`
         buildingType: String
         buildingLongitude: String
         buildingLatitude: String
+        onPeakRate: String
+        offPeakRate: String
     }
 
     type DataValue {
