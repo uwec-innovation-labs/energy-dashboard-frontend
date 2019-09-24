@@ -1,17 +1,14 @@
 import * as d3 from 'd3'
 
-export function buildGraph(results, queryFilter, amountOfPoints, filterBy) {
+export function buildGraph(results, filterBy, startDate, endDate) {
   // SIZING VARIABLES
   var margin = { top: 20, right: 40, bottom: 50, left: 150 }
   var width = 1000 - margin.left - margin.right
   var height = 275 - margin.top - margin.bottom
 
-  console.log(results)
-  console.log(amountOfPoints)
-
   // MIN AND MAX DATES
-  var mindate = new Date(+results[amountOfPoints - 1].timestamp)
-  var maxdate = new Date(+results[0].timestamp)
+  var mindate = startDate
+  var maxdate = endDate
 
   // DATA GAP
   let percentGap = 0.2
@@ -22,29 +19,45 @@ export function buildGraph(results, queryFilter, amountOfPoints, filterBy) {
     .domain([mindate, maxdate])
     .range([0, width])
 
-  // Y-SCALE
-  var y = d3
-    .scaleLinear()
-    .domain([
-      d3.min(results, function(d) {
-        return d.value - d.value * percentGap
-      }),
-      d3.max(results, function(d) {
-        return d.value + d.value * percentGap
-      })
-    ])
-    .range([height, 0])
+  var y
+  if (results != null) {
+    // Y-SCALE
+    y = d3
+      .scaleLinear()
+      .domain([
+        d3.min(results, function(d) {
+          return d.value - d.value * percentGap
+        }),
+        d3.max(results, function(d) {
+          return d.value + d.value * percentGap
+        })
+      ])
+      .range([height, 0])
 
-  // CREATES VALUELINE
-  var valueline = d3
-    .line()
-    .x(function(d) {
-      return x(new Date(+d.timestamp))
-    })
-    .y(function(d) {
-      return y(d.value)
-    })
-    .curve(d3.curveLinear)
+    // CREATES VALUELINE
+    var valueline = d3
+      .line()
+      .x(function(d) {
+        return x(new Date(+d.timestamp))
+      })
+      .y(function(d) {
+        return y(d.value)
+      })
+      .curve(d3.curveLinear)
+  } else {
+    // Y-SCALE
+    y = d3
+      .scaleLinear()
+      .domain([
+        d3.min(0, function(d) {
+          return 0
+        }),
+        d3.max(0, function(d) {
+          return 0
+        })
+      ])
+      .range([height, 0])
+  }
 
   // SVG CANVAS
   d3.select('svg').remove()
@@ -58,110 +71,113 @@ export function buildGraph(results, queryFilter, amountOfPoints, filterBy) {
     .append('g')
     .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
 
-  // ADDS VALUELINE
-  svg
-    .append('path')
-    .data([results])
-    .attr('class', 'line')
-    .attr('d', valueline)
-    .attr('opacity', 0)
-    .transition()
-    .delay(500)
-    .duration(500)
-    .attr('opacity', 1)
+  if (results != null) {
+    // ADDS VALUELINE
+    svg
+      .append('path')
+      .data([results])
+      .attr('class', 'line')
+      .attr('d', valueline)
+      .attr('opacity', 0)
+      .transition()
+      .delay(500)
+      .duration(500)
+      .attr('opacity', 1)
 
-  // BINDS DATA TO POINTS
-  var points = svg
-    .selectAll('circles')
-    .attr('class', 'plotPoint')
-    .data(results)
+    // BINDS DATA TO POINTS
+    var points = svg
+      .selectAll('circles')
+      .attr('class', 'plotPoint')
+      .data(results)
 
-  // Append Lines
+    // Append Lines
 
-  // APPENDS CIRCLES TO POINTS
-  points
-    .enter()
-    .append('circle')
-    .attr('class', 'plotPoint')
-    .attr('cy', function(d) {
-      return y(d.value)
-    })
-    .attr('cx', function(d) {
-      return x(new Date(+d.timestamp))
-    })
-    .attr('opacity', 0)
-    .on('mouseover', function(d, i) {
-      d3.select(this)
-        .transition()
-        .duration(200)
+    // APPENDS CIRCLES TO POINTS
+    points
+      .enter()
+      .append('circle')
+      .attr('class', 'plotPoint')
+      .attr('cy', function(d) {
+        return y(d.value)
+      })
+      .attr('cx', function(d) {
+        return x(new Date(+d.timestamp))
+      })
+      .attr('opacity', 0)
+      .on('mouseover', function(d, i) {
+        d3.select(this)
+          .transition()
+          .duration(200)
 
-      // VALUE FORMATTER
-      var formatValue = d3.format('.2f')
-      var splitDate = new Date(+d.timestamp) + ''
-      splitDate = splitDate.split(' ')
-      splitDate = splitDate[1] + ' ' + splitDate[2] + ' (' + splitDate[4] + ')'
+        // VALUE FORMATTER
+        var formatValue = d3.format('.2f')
+        var splitDate = new Date(+d.timestamp) + ''
+        splitDate = splitDate.split(' ')
+        splitDate =
+          splitDate[1] + ' ' + splitDate[2] + ' (' + splitDate[4] + ')'
 
-      var txt = '' + formatValue(d.value) + 'kw'
+        var txt = '' + formatValue(d.value) + 'kw'
 
-      // HOVER TEXT
-      svg
-        .append('text')
-        .attr('id', 't' + d.x + '-' + d.y + '-' + i)
-        .attr('x', x(new Date(+d.timestamp)))
-        .attr('y', 8)
-        .attr('font-size', 10)
-        .style('text-anchor', 'middle')
-        .text(splitDate)
+        // HOVER TEXT
+        svg
+          .append('text')
+          .attr('id', 't' + d.x + '-' + d.y + '-' + i)
+          .attr('x', x(new Date(+d.timestamp)))
+          .attr('y', 8)
+          .attr('font-size', 10)
+          .style('text-anchor', 'middle')
+          .text(splitDate)
 
-      svg
-        .append('text')
-        .attr('id', 'tv' + d.x + '-' + d.y + '-' + i)
-        .attr('x', x(new Date(+d.timestamp)))
-        .attr('y', 20)
-        .attr('font-size', 10)
-        .style('text-anchor', 'middle')
-        .text(txt)
+        svg
+          .append('text')
+          .attr('id', 'tv' + d.x + '-' + d.y + '-' + i)
+          .attr('x', x(new Date(+d.timestamp)))
+          .attr('y', 20)
+          .attr('font-size', 10)
+          .style('text-anchor', 'middle')
+          .text(txt)
 
-      svg
-        .append('line')
-        .attr('id', 'tlv' + d.x + '-' + d.y + '-' + i)
-        .attr('x1', x(new Date(+d.timestamp)))
-        .attr('x2', x(new Date(+d.timestamp)))
-        .attr('y1', 25)
-        .attr('y2', height)
-        .attr('stroke-width', 1)
-        .style('stroke-dasharray', '3, 3')
-        .attr('stroke', 'gray')
-        .attr('fill', 'black')
+        svg
+          .append('line')
+          .attr('id', 'tlv' + d.x + '-' + d.y + '-' + i)
+          .attr('x1', x(new Date(+d.timestamp)))
+          .attr('x2', x(new Date(+d.timestamp)))
+          .attr('y1', 25)
+          .attr('y2', height)
+          .attr('stroke-width', 1)
+          .style('stroke-dasharray', '3, 3')
+          .attr('stroke', 'gray')
+          .attr('fill', 'black')
 
-      svg
-        .append('line')
-        .attr('id', 'tlh' + d.x + '-' + d.y + '-' + i)
-        .attr('x1', 0)
-        .attr('x2', width)
-        .attr('y1', y(new Date(d.value)))
-        .attr('y2', y(new Date(d.value)))
-        .attr('stroke-width', 1)
-        .style('stroke-dasharray', '3, 3')
-        .attr('stroke', 'gray')
-        .attr('fill', 'black')
-    })
-    .on('mouseout', function(d, i) {
-      d3.select(this)
-        .transition()
-        .duration(200)
-        .attr('r', 5)
-        .delay(100)
+        svg
+          .append('line')
+          .attr('id', 'tlh' + d.x + '-' + d.y + '-' + i)
+          .attr('x1', 0)
+          .attr('x2', width)
+          .attr('y1', y(new Date(d.value)))
+          .attr('y2', y(new Date(d.value)))
+          .attr('stroke-width', 1)
+          .style('stroke-dasharray', '3, 3')
+          .attr('stroke', 'gray')
+          .attr('fill', 'black')
+      })
+      .on('mouseout', function(d, i) {
+        d3.select(this)
+          .transition()
+          .duration(200)
+          .attr('r', 5)
+          .delay(100)
 
-      d3.select('#t' + d.x + '-' + d.y + '-' + i).remove()
-      d3.select('#tv' + d.x + '-' + d.y + '-' + i).remove()
-      d3.select('#tlv' + d.x + '-' + d.y + '-' + i).remove()
-      d3.select('#tlh' + d.x + '-' + d.y + '-' + i).remove()
-    })
-    .transition()
-    .duration(1500)
-    .attr('opacity', 1)
-    .attr('r', 5)
+        d3.select('#t' + d.x + '-' + d.y + '-' + i).remove()
+        d3.select('#tv' + d.x + '-' + d.y + '-' + i).remove()
+        d3.select('#tlv' + d.x + '-' + d.y + '-' + i).remove()
+        d3.select('#tlh' + d.x + '-' + d.y + '-' + i).remove()
+      })
+      .transition()
+      .duration(1500)
+      .attr('opacity', 1)
+      .attr('r', 5)
+  }
 
   // X-AXIS
   var tickFormat

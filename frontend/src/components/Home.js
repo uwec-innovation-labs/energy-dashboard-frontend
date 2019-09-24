@@ -58,28 +58,29 @@ class Home extends Component {
   updateGraphStatsData(building) {
     setTimeout(() => {
       getBuildingStats(building).then(result => {
-        console.log(result.data.data.query.electricity.stats)
-        var daily =
-          ((result.data.data.query.electricity.stats.daily.present -
-            result.data.data.query.electricity.stats.daily.past) /
-            result.data.data.query.electricity.stats.daily.past) *
-          100
-        var weekly =
-          ((result.data.data.query.electricity.stats.weekly.present -
-            result.data.data.query.electricity.stats.weekly.past) /
-            result.data.data.query.electricity.stats.weekly.past) *
-          100
-        var monthly =
-          ((result.data.data.query.electricity.stats.monthly.present -
-            result.data.data.query.electricity.stats.monthly.past) /
-            result.data.data.query.electricity.stats.monthly.past) *
-          100
-        var yearly =
-          ((result.data.data.query.electricity.stats.yearly.present -
-            result.data.data.query.electricity.stats.yearly.past) /
-            result.data.data.query.electricity.stats.yearly.past) *
-          100
-        this.updateGraphStats(daily, weekly, monthly, yearly)
+        if (result.data.data.query != null) {
+          var daily =
+            ((result.data.data.query.electricity.stats.daily.present -
+              result.data.data.query.electricity.stats.daily.past) /
+              result.data.data.query.electricity.stats.daily.past) *
+            100
+          var weekly =
+            ((result.data.data.query.electricity.stats.weekly.present -
+              result.data.data.query.electricity.stats.weekly.past) /
+              result.data.data.query.electricity.stats.weekly.past) *
+            100
+          var monthly =
+            ((result.data.data.query.electricity.stats.monthly.present -
+              result.data.data.query.electricity.stats.monthly.past) /
+              result.data.data.query.electricity.stats.monthly.past) *
+            100
+          var yearly =
+            ((result.data.data.query.electricity.stats.yearly.present -
+              result.data.data.query.electricity.stats.yearly.past) /
+              result.data.data.query.electricity.stats.yearly.past) *
+            100
+          this.updateGraphStats(daily, weekly, monthly, yearly)
+        }
       })
     }, 1000)
   }
@@ -149,7 +150,6 @@ class Home extends Component {
               id="dailyValue"
               style={{ color: parseFloat(Text) >= 0 ? 'red' : 'green' }}
             >
-              {console.log(parseFloat(Text)) >= 0}
               <CountUp
                 start="0.00"
                 end={this.state.stats[3].yearlyLabel}
