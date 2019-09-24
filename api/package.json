@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.19.0",
     "body-parser": "^1.18.3",
     "browserify-fs": "^1.0.0",
     "canvas": "^2.4.0",
@@ -32,7 +33,10 @@
     "papaparse": "^4.6.3",
     "path": "^0.12.7",
     "rebuild": "^0.1.2",
+    "redis": "^2.8.0",
+    "redis-server": "^1.2.2",
     "regression": "^2.0.1",
+    "response-time": "^2.3.2",
     "tedious": "^5.0.3",
     "xhr2": "^0.1.4"
   },
