@@ -1,13 +1,10 @@
 import React, { Component } from 'react'
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import './styles/App.scss'
-import Home from './components/Home'
+import Home from './components/Charts/Scatterplot'
 import Export from './components/Export'
 import PrivacyPolicy from './components/PrivacyPolicy'
 import Layout from './components/Layout'
-
-
-
 
 class Routes extends Component {
   render() {
