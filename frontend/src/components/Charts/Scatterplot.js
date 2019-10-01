@@ -4,11 +4,12 @@ import { getGraphData } from '../../helpers/APIFrame'
 
 export default function Scatterplot() {
   const [data, setData] = useState('')
+  const [data2, setData2] = useState('')
 
   var chartRef = React.createRef()
 
   useEffect(() => {
-    if (data === '') {
+    if (data === '' || data2 === '') {
       fetchData()
     } else {
       mountGraph()
@@ -34,6 +35,31 @@ export default function Scatterplot() {
         }
 
         setData(arr)
+        const queryFilter = ''
+        const building = 'Centennial'
+        const energyType = 'electricity'
+        const startDate = new Date(Date.now() - 604800000)
+        const endDate = new Date(Date.now())
+
+        getGraphData(
+          queryFilter,
+          building,
+          energyType,
+          startDate,
+          endDate
+        ).then(response => {
+          var arr = []
+          response = response.data.query.electricity.data
+
+          for (let i = 0; i < response.length; i++) {
+            arr[i] = {
+              x: new Date(parseInt(response[i].timestamp)),
+              y: response[i].value
+            }
+          }
+
+          setData2(arr)
+        })
       }
     )
   }
@@ -45,11 +71,14 @@ export default function Scatterplot() {
     new Chart(myChartRef, {
       type: 'line',
       data: {
-        //Bring in data
         datasets: [
           {
-            label: 'Electricity',
+            label: 'Davies',
             data: data
+          },
+          {
+            label: 'Library',
+            data: data2
           }
         ]
       },
@@ -70,7 +99,12 @@ export default function Scatterplot() {
 
   return (
     <div>
-      <canvas id="myChart" ref={chartRef} />
+      <h1 style={{ textAlign: 'center' }}>Electricity</h1>
+      <div
+        style={{ margin: '36px', paddingLeft: '100px', paddingRight: '100px' }}
+      >
+        <canvas id="myChart" ref={chartRef} />
+      </div>
     </div>
   )
 }

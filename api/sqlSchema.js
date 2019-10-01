@@ -51,5 +51,5 @@ var energySchema = buildSchema(`
 `)
 
 module.exports = {
-    "energySchema": energySchema
+  energySchema: energySchema
 }
