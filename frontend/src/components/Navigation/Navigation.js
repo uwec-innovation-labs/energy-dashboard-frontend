@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
 import Drawer from '@material-ui/core/Drawer'
@@ -25,7 +25,9 @@ const useStyles = makeStyles(theme => ({
     display: 'flex'
   },
   appBar: {
-    zIndex: theme.zIndex.drawer + 1
+    zIndex: theme.zIndex.drawer + 1,
+    backgroundColor: 'white',
+    color: 'black'
   },
   drawer: {
     width: drawerWidth,
@@ -38,19 +40,37 @@ const useStyles = makeStyles(theme => ({
     flexGrow: 1,
     padding: theme.spacing(3)
   },
+  title: {
+    flexGrow: 1
+  },
   toolbar: theme.mixins.toolbar
 }))
 
 export default function PermanentDrawerLeft() {
   const classes = useStyles()
+  const [time, setTime] = useState('')
+
+  setInterval(function() {
+    var options = {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    }
+    var today = new Date()
+    setTime(today.toLocaleDateString('en-US', options))
+  }, 1000)
 
   return (
     <div className={classes.root}>
       <CssBaseline />
       <AppBar position="fixed" className={classes.appBar}>
         <Toolbar>
-          <Typography variant="h6" noWrap>
+          <Typography variant="h6" noWrap className={classes.title}>
             Energy Dashboard
+          </Typography>
+          <Typography variant="h6" noWrap style={{ color: 'grey' }}>
+            {time}
           </Typography>
         </Toolbar>
       </AppBar>
@@ -78,6 +98,7 @@ export default function PermanentDrawerLeft() {
             </ListItemIcon>
             <ListItemText>Download Reports</ListItemText>
           </ListItem>
+          <Divider />
           <ListItem button>
             <ListItemIcon>
               <InfoIcon />

@@ -4,6 +4,7 @@ import Paper from '@material-ui/core/Paper'
 import Grid from '@material-ui/core/Grid'
 
 import Chart from '../Charts/Scatterplot'
+import PercentChange from './Modules/PercentChange/PercentChange'
 
 import './Dashboard.css'
 
@@ -36,16 +37,28 @@ export default function Dashboard() {
           <Paper className={classes.paper}>xs=6</Paper>
         </Grid>
         <Grid item xs={3}>
-          <Paper className={classes.paper}>xs=3</Paper>
+          <Paper className={classes.paper}>
+            Daily Change
+            <PercentChange value={10} />
+          </Paper>
         </Grid>
         <Grid item xs={3}>
-          <Paper className={classes.paper}>xs=3</Paper>
+          <Paper className={classes.paper}>
+            Weekly Change
+            <PercentChange value={-10} />
+          </Paper>
         </Grid>
         <Grid item xs={3}>
-          <Paper className={classes.paper}>xs=3</Paper>
+          <Paper className={classes.paper}>
+            Monthly Change
+            <PercentChange value={0} />
+          </Paper>
         </Grid>
         <Grid item xs={3}>
-          <Paper className={classes.paper}>xs=3</Paper>
+          <Paper className={classes.paper}>
+            Yearly Change
+            <PercentChange value={1} />
+          </Paper>
         </Grid>
       </Grid>
     </div>

@@ -74,10 +74,14 @@ export default function Scatterplot() {
         datasets: [
           {
             label: 'Davies',
+            backgroundColor: 'rgba(45,53,138,0)',
+            borderColor: 'rgba(45,53,138,1)',
             data: data
           },
           {
             label: 'Library',
+            backgroundColor: 'rgba(213,173,0,0)',
+            borderColor: 'rgba(213,173,0,1)',
             data: data2
           }
         ]
@@ -101,7 +105,7 @@ export default function Scatterplot() {
     <div>
       <h1 style={{ textAlign: 'center' }}>Electricity</h1>
       <div
-        style={{ margin: '36px', paddingLeft: '100px', paddingRight: '100px' }}
+        style={{ margin: '36px', paddingLeft: '10px', paddingRight: '10px' }}
       >
         <canvas id="myChart" ref={chartRef} />
       </div>
