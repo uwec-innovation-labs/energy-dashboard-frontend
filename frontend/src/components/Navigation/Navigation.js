@@ -15,8 +15,11 @@ import DashboardIcon from '@material-ui/icons/Dashboard'
 import ExportIcon from '@material-ui/icons/GetApp'
 import InfoIcon from '@material-ui/icons/Info'
 import BugReportIcon from '@material-ui/icons/BugReport'
+import DataAvailableIcon from '@material-ui/icons/BarChart'
 
 import Home from '../Dashboard/Dashboard'
+import BuildingSelect from './BuildingSelect'
+import DateSelect from './DateSelect'
 
 const drawerWidth = 240
 
@@ -26,7 +29,7 @@ const useStyles = makeStyles(theme => ({
   },
   appBar: {
     zIndex: theme.zIndex.drawer + 1,
-    backgroundColor: 'white',
+    backgroundColor: 'rgb(245,245,245)',
     color: 'black'
   },
   drawer: {
@@ -69,9 +72,11 @@ export default function PermanentDrawerLeft() {
           <Typography variant="h6" noWrap className={classes.title}>
             Energy Dashboard
           </Typography>
-          <Typography variant="h6" noWrap style={{ color: 'grey' }}>
+          <DateSelect />
+          <BuildingSelect />
+          {/* <Typography variant="h6" noWrap style={{ color: 'grey' }}>
             {time}
-          </Typography>
+          </Typography> */}
         </Toolbar>
       </AppBar>
       <Drawer
@@ -94,10 +99,17 @@ export default function PermanentDrawerLeft() {
           </ListItem>
           <ListItem button>
             <ListItemIcon>
+              <DataAvailableIcon />
+            </ListItemIcon>
+            <ListItemText>Data Available</ListItemText>
+          </ListItem>
+          <ListItem button>
+            <ListItemIcon>
               <ExportIcon />
             </ListItemIcon>
             <ListItemText>Download Reports</ListItemText>
           </ListItem>
+
           <Divider />
           <ListItem button>
             <ListItemIcon>
