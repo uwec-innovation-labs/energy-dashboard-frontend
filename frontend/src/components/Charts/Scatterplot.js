@@ -16,11 +16,15 @@ export default function Scatterplot() {
     }
   }, [data])
 
+  const buildingA = 'Schneider'
+  const buildingB = 'Davies'
+  const weeks = 1
+
   const fetchData = () => {
     const queryFilter = ''
-    const building = 'Davies'
+    const building = buildingA
     const energyType = 'electricity'
-    const startDate = new Date(Date.now() - 604800000)
+    const startDate = new Date(Date.now() - 604800000 * weeks)
     const endDate = new Date(Date.now())
     getGraphData(queryFilter, building, energyType, startDate, endDate).then(
       response => {
@@ -36,9 +40,9 @@ export default function Scatterplot() {
 
         setData(arr)
         const queryFilter = ''
-        const building = 'Centennial'
+        const building = buildingB
         const energyType = 'electricity'
-        const startDate = new Date(Date.now() - 604800000)
+        const startDate = new Date(Date.now() - 604800000 * weeks)
         const endDate = new Date(Date.now())
 
         getGraphData(
@@ -73,13 +77,13 @@ export default function Scatterplot() {
       data: {
         datasets: [
           {
-            label: 'Davies',
+            label: buildingA,
             backgroundColor: 'rgba(45,53,138,0)',
             borderColor: 'rgba(45,53,138,1)',
             data: data
           },
           {
-            label: 'Library',
+            label: buildingB,
             backgroundColor: 'rgba(213,173,0,0)',
             borderColor: 'rgba(213,173,0,1)',
             data: data2
