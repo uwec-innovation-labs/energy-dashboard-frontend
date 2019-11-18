@@ -1,16 +1,14 @@
-import React, { Component } from 'react'
+import React from 'react'
+import './App.css'
 
-import './styles/App.scss'
-import Navigation from './components/Navigation/Navigation'
+import Dashboard from './components/pages/Dashboard'
 
-class App extends Component {
-  render() {
-    return (
-      <div>
-        <Navigation />
-      </div>
-    )
-  }
+function App () {
+  return (
+    <div>
+      <Dashboard />
+    </div>
+  )
 }
 
 export default App
