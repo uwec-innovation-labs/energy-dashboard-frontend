@@ -17,9 +17,10 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemText from '@material-ui/core/ListItemText'
-import ImportExportIcon from '@material-ui/icons/ImportExport'
-import MailIcon from '@material-ui/icons/Mail'
-import DashboardIcon from '@material-ui/icons/Dashboard'
+
+import HomeWorkSharpIcon from '@material-ui/icons/HomeWorkSharp'
+import SettingsIcon from '@material-ui/icons/SettingsSharp'
+import TableChartSharpIcon from '@material-ui/icons/TableChartSharp'
 
 import Dashboard from '../pages/Dashboard'
 
@@ -150,26 +151,23 @@ export default function MiniDrawer () {
         </div>
         <Divider />
         <List>
-          <ListItem button key='dashboard'>
+          <ListItem button key='Dashboard'>
             <ListItemIcon>
-              <DashboardIcon />
+              <TableChartSharpIcon />
             </ListItemIcon>
             <ListItemText primary='Dashboard' />
           </ListItem>
-          <ListItem button key='export'>
+          <ListItem button key='buildings'>
             <ListItemIcon>
-              <ImportExportIcon />
+              <HomeWorkSharpIcon />
             </ListItemIcon>
-            <ListItemText primary='Data Exporting' />
+            <ListItemText primary='Buildings' />
           </ListItem>
-        </List>
-        <Divider />
-        <List>
-          <ListItem button key='feedback'>
+          <ListItem button key='Settings'>
             <ListItemIcon>
-              <MailIcon />
+              <SettingsIcon />
             </ListItemIcon>
-            <ListItemText primary='Feedback' />
+            <ListItemText primary='Settings' />
           </ListItem>
         </List>
       </Drawer>
