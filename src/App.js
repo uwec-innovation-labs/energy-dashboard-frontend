@@ -1,12 +1,12 @@
 import React from 'react'
 import './App.css'
 
-import Dashboard from './components/pages/Dashboard'
+import Navigation from './components/organisms/Navigation'
 
 function App () {
   return (
     <div>
-      <Dashboard />
+      <Navigation />
     </div>
   )
 }
