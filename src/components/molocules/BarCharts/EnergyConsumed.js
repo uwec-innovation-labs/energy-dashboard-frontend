@@ -3,6 +3,12 @@ import Chart from 'chart.js'
 
 export default class BarChart extends React.Component {
   componentDidMount () {
+    var chrt = document.getElementById('energyconsumedbarchart')
+    var ctx = chrt.getContext('2d')
+    var gradient = ctx.createLinearGradient(0, 0, 0, 300)
+    gradient.addColorStop(0, 'rgba(50,255,50,1)')
+    gradient.addColorStop(0.5, 'rgba(50,255,50,.5)')
+    gradient.addColorStop(1, 'rgba(50,255,50,0)')
     new Chart(document.getElementById('energyconsumedbarchart'), {
       type: 'bar',
       data: {
@@ -22,9 +28,9 @@ export default class BarChart extends React.Component {
         datasets: [
           {
             label: 'Electricty Consumption',
-            backgroundColor: 'rgba(0, 0, 255, 0.1)',
-            borderColor: 'rgba(0, 0, 255, 1)',
-            borderWidth: 1,
+            backgroundColor: gradient,
+            borderColor: 'rgba(0, 255, 0, .8)',
+            borderWidth: 3,
             data: [478, 1267, 734, 784, 433, 245, 523, 145, 523, 632, 146, 724]
           }
         ]
