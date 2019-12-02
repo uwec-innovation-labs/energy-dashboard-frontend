@@ -1,5 +1,5 @@
 import React from 'react'
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
 
 import clsx from 'clsx'
 import {
@@ -23,11 +23,12 @@ import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemText from '@material-ui/core/ListItemText'
 import Switches from '@material-ui/core/Switch'
 
-import HomeWorkSharpIcon from '@material-ui/icons/HomeWorkSharp'
 import SettingsIcon from '@material-ui/icons/SettingsSharp'
-import SearchIcon from '@material-ui/icons/Search'
+import TrendingUpIcon from '@material-ui/icons/TrendingUp'
+import DashboardIcon from '@material-ui/icons/Dashboard'
 
 import Dashboard from '../pages/Dashboard'
+import Buildings from '../pages/Buildings'
 import GraphStepper from '../pages/GraphSelector'
 
 const drawerWidth = 240
@@ -133,99 +134,108 @@ export default function MiniDrawer () {
 
   return (
     <div className={classes.root}>
-      <ThemeProvider theme={darkmode ? darkTheme : lightTheme}>
-        <CssBaseline />
-        <AppBar
-          position='fixed'
-          className={clsx(classes.appBar, {
-            [classes.appBarShift]: open
-          })}
-        >
-          <Toolbar>
-            <IconButton
-              color='inherit'
-              aria-label='open drawer'
-              onClick={handleDrawerOpen}
-              edge='start'
-              className={clsx(classes.menuButton, {
-                [classes.hide]: open
-              })}
-            >
-              <MenuIcon />
-            </IconButton>
-            <Typography variant='h6' noWrap style={{ flexGrow: '1' }}>
-              UW - Eau Claire Energy Dashboard
-            </Typography>
-            <IconButton>
+      <Router>
+        <ThemeProvider theme={darkmode ? darkTheme : lightTheme}>
+          <CssBaseline />
+          <AppBar
+            position='fixed'
+            className={clsx(classes.appBar, {
+              [classes.appBarShift]: open
+            })}
+          >
+            <Toolbar>
+              <IconButton
+                color='inherit'
+                aria-label='open drawer'
+                onClick={handleDrawerOpen}
+                edge='start'
+                className={clsx(classes.menuButton, {
+                  [classes.hide]: open
+                })}
+              >
+                <MenuIcon />
+              </IconButton>
+              <Typography variant='h6' noWrap style={{ flexGrow: '1' }}>
+                <Link to='/'>UW - Eau Claire Energy Dashboard</Link>
+              </Typography>
               <Switches onChange={handleThemeChange} color='default' />
-            </IconButton>
-          </Toolbar>
-        </AppBar>
-        <Drawer
-          variant='permanent'
-          className={clsx(classes.drawer, {
-            [classes.drawerOpen]: open,
-            [classes.drawerClose]: !open
-          })}
-          classes={{
-            paper: clsx({
+            </Toolbar>
+          </AppBar>
+          <Drawer
+            variant='permanent'
+            className={clsx(classes.drawer, {
               [classes.drawerOpen]: open,
               [classes.drawerClose]: !open
-            })
-          }}
-          open={open}
-        >
-          <div className={classes.toolbar}>
-            <IconButton onClick={handleDrawerClose}>
-              {lightTheme.direction === 'rtl' ? (
-                <ChevronRightIcon />
-              ) : (
-                <ChevronLeftIcon />
-              )}
-            </IconButton>
-          </div>
-          <Divider />
-          <List>
-            {/* <ListItem button key='Dashboard'>
+            })}
+            classes={{
+              paper: clsx({
+                [classes.drawerOpen]: open,
+                [classes.drawerClose]: !open
+              })
+            }}
+            open={open}
+          >
+            <div className={classes.toolbar}>
+              <IconButton onClick={handleDrawerClose}>
+                {lightTheme.direction === 'rtl' ? (
+                  <ChevronRightIcon />
+                ) : (
+                  <ChevronLeftIcon />
+                )}
+              </IconButton>
+            </div>
+            <Divider />
+            <List>
+              {/* <ListItem button key='Dashboard'>
             <ListItemIcon>
               <TableChartSharpIcon />
             </ListItemIcon>
             <ListItemText primary='Dashboard' />
           </ListItem> */}
-            <ListItem button key='buildings'>
-              <ListItemIcon>
-                <HomeWorkSharpIcon />
-              </ListItemIcon>
-              <ListItemText primary='Buildings' />
-            </ListItem>
-            <ListItem button key='search'>
-              <ListItemIcon>
-                <SearchIcon href='/' />
-              </ListItemIcon>
-              <ListItemText primary='Query' />
-            </ListItem>
-            <ListItem button key='Settings'>
-              <ListItemIcon>
-                <SettingsIcon />
-              </ListItemIcon>
-              <ListItemText primary='Settings' />
-            </ListItem>
-          </List>
-        </Drawer>
-        <main className={classes.content}>
-          <div className={classes.toolbar} />
-          <Router>
+              <Link to='/'>
+                <ListItem button key='home'>
+                  <ListItemIcon>
+                    <DashboardIcon />
+                  </ListItemIcon>
+                  <ListItemText primary='Dashboard' />
+                </ListItem>
+              </Link>
+              <Link to='/trends'>
+                <ListItem button key='trend'>
+                  <ListItemIcon>
+                    <TrendingUpIcon />
+                  </ListItemIcon>
+                  <ListItemText primary='Trends' />
+                </ListItem>
+              </Link>
+              <Divider />
+              <Link to='/settings'>
+                <ListItem button key='Settings'>
+                  <ListItemIcon>
+                    <SettingsIcon />
+                  </ListItemIcon>
+                  <ListItemText primary='Settings' />
+                </ListItem>
+              </Link>
+            </List>
+          </Drawer>
+          <main className={classes.content}>
+            <div className={classes.toolbar} />
+
             <Switch>
-              <Route path='/dashboard'>
+              <Route exact path='/building/'>
+                <GraphStepper />
+              </Route>
+              <Route path='/building/:building'>
                 <Dashboard />
               </Route>
               <Route path='/'>
-                <GraphStepper />
+                <Buildings />
               </Route>
             </Switch>
-          </Router>
-        </main>
-      </ThemeProvider>
+          </main>
+        </ThemeProvider>
+      </Router>
     </div>
   )
 }
