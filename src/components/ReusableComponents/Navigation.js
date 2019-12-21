@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
 
 import clsx from 'clsx'
@@ -23,13 +23,14 @@ import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemText from '@material-ui/core/ListItemText'
 import Switches from '@material-ui/core/Switch'
 
+import { useCookies } from 'react-cookie'
+
 import SettingsIcon from '@material-ui/icons/SettingsSharp'
 import TrendingUpIcon from '@material-ui/icons/TrendingUp'
 import DashboardIcon from '@material-ui/icons/Dashboard'
 
-import Dashboard from '../pages/Dashboard'
-import Buildings from '../pages/Buildings'
-import GraphStepper from '../pages/GraphSelector'
+import Dashboard from '../Pages/Dashboard/Dashboard'
+import GalleryOfBuildings from '../Pages/GalleryOfBuildings/GalleryOfBuildings'
 
 const drawerWidth = 240
 
@@ -110,11 +111,18 @@ const light = {
   }
 }
 
-export default function MiniDrawer () {
+export default function Navigation () {
   const classes = useStyles()
 
   const [open, setOpen] = React.useState(false)
   const [darkmode, setDarkmode] = React.useState(false)
+  const [cookies, setCookie] = useCookies(['darkmode'])
+
+  useEffect(() => {
+    if (cookies.darkmode != null) {
+      setDarkmode(cookies.darkmode === 'true' ? true : false)
+    }
+  }, [cookies.darkmode])
 
   const handleDrawerOpen = () => {
     setOpen(true)
@@ -125,6 +133,9 @@ export default function MiniDrawer () {
   }
 
   const handleThemeChange = () => {
+    setCookie('darkmode', darkmode ? false : true, {
+      path: '/'
+    })
     setDarkmode(!darkmode)
   }
 
@@ -135,7 +146,9 @@ export default function MiniDrawer () {
   return (
     <div className={classes.root}>
       <Router>
-        <ThemeProvider theme={darkmode ? darkTheme : lightTheme}>
+        <ThemeProvider
+          theme={cookies.darkmode === 'true' ? darkTheme : lightTheme}
+        >
           <CssBaseline />
           <AppBar
             position='fixed'
@@ -158,7 +171,11 @@ export default function MiniDrawer () {
               <Typography variant='h6' noWrap style={{ flexGrow: '1' }}>
                 <Link to='/'>UW - Eau Claire Energy Dashboard</Link>
               </Typography>
-              <Switches onChange={handleThemeChange} color='default' />
+              <Switches
+                checked={darkmode}
+                onChange={handleThemeChange}
+                color='default'
+              />
             </Toolbar>
           </AppBar>
           <Drawer
@@ -223,14 +240,11 @@ export default function MiniDrawer () {
             <div className={classes.toolbar} />
 
             <Switch>
-              <Route exact path='/building/'>
-                <GraphStepper />
-              </Route>
               <Route path='/building/:building'>
                 <Dashboard />
               </Route>
               <Route path='/'>
-                <Buildings />
+                <GalleryOfBuildings />
               </Route>
             </Switch>
           </main>
