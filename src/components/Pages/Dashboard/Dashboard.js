@@ -4,6 +4,7 @@ import Paper from '@material-ui/core/Paper'
 import Grid from '@material-ui/core/Grid'
 
 import EnergyConsumed from './components/EnergyConsumed'
+import Speedometer from './components/Speedometer'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -21,16 +22,46 @@ export default function CenteredGrid () {
 
   return (
     <div className={classes.root}>
-      <Grid container spacing={3}>
-        <Grid item xs={12}>
+      <Grid
+        container
+        spacing={1}
+        style={{ justifyContent: 'center', margin: 'auto' }}
+      >
+        <Grid
+          item
+          style={{ width: '84%', maxWidth: '1182px', marginLeft: '14px' }}
+        >
           <Paper className={classes.paper} style={{ height: '300px' }}>
             <EnergyConsumed />
           </Paper>
         </Grid>
-        {/* <Grid item xs={6}>
-          <Paper className={classes.paper}>xs=6</Paper>
+      </Grid>
+
+      <Grid
+        container
+        spacing={3}
+        style={{ justifyContent: 'center', margin: 'auto' }}
+      >
+        <Grid item style={{ width: '400px' }}>
+          <Paper className={classes.paper}>
+            <p>Electricity Snapshot</p>
+            <Speedometer />
+          </Paper>
         </Grid>
-        <Grid item xs={6}>
+        <Grid item style={{ width: '400px' }}>
+          <Paper className={classes.paper}>
+            <p>Electricity Snapshot</p>
+            <Speedometer />
+          </Paper>
+        </Grid>
+        <Grid item style={{ width: '400px' }}>
+          <Paper className={classes.paper}>
+            <p>Electricity Snapshot</p>
+            <Speedometer />
+          </Paper>
+        </Grid>
+
+        {/* <Grid item xs={6}>
           <Paper className={classes.paper}>xs=6</Paper>
         </Grid>
         <Grid item xs={4}>
