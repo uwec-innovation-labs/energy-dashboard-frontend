@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
 
 import clsx from 'clsx'
@@ -22,6 +22,8 @@ import ListItem from '@material-ui/core/ListItem'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemText from '@material-ui/core/ListItemText'
 import Switches from '@material-ui/core/Switch'
+
+import { useCookies } from 'react-cookie'
 
 import SettingsIcon from '@material-ui/icons/SettingsSharp'
 import TrendingUpIcon from '@material-ui/icons/TrendingUp'
@@ -109,11 +111,18 @@ const light = {
   }
 }
 
-export default function MiniDrawer () {
+export default function Navigation () {
   const classes = useStyles()
 
   const [open, setOpen] = React.useState(false)
   const [darkmode, setDarkmode] = React.useState(false)
+  const [cookies, setCookie] = useCookies(['darkmode'])
+
+  useEffect(() => {
+    if (cookies.darkmode != null) {
+      setDarkmode(cookies.darkmode === 'true' ? true : false)
+    }
+  }, [cookies.darkmode])
 
   const handleDrawerOpen = () => {
     setOpen(true)
@@ -124,6 +133,9 @@ export default function MiniDrawer () {
   }
 
   const handleThemeChange = () => {
+    setCookie('darkmode', darkmode ? false : true, {
+      path: '/'
+    })
     setDarkmode(!darkmode)
   }
 
@@ -134,7 +146,9 @@ export default function MiniDrawer () {
   return (
     <div className={classes.root}>
       <Router>
-        <ThemeProvider theme={darkmode ? darkTheme : lightTheme}>
+        <ThemeProvider
+          theme={cookies.darkmode === 'true' ? darkTheme : lightTheme}
+        >
           <CssBaseline />
           <AppBar
             position='fixed'
@@ -157,7 +171,11 @@ export default function MiniDrawer () {
               <Typography variant='h6' noWrap style={{ flexGrow: '1' }}>
                 <Link to='/'>UW - Eau Claire Energy Dashboard</Link>
               </Typography>
-              <Switches onChange={handleThemeChange} color='default' />
+              <Switches
+                checked={darkmode}
+                onChange={handleThemeChange}
+                color='default'
+              />
             </Toolbar>
           </AppBar>
           <Drawer
