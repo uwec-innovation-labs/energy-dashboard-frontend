@@ -5,7 +5,8 @@ import Grid from '@material-ui/core/Grid'
 import { Link } from 'react-router-dom'
 import './GalleryOfBuildings.css'
 
-import Davies from './images/davies.jpg'
+import Button from '@material-ui/core/Button'
+import ButtonGroup from '@material-ui/core/ButtonGroup'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -20,47 +21,158 @@ const useStyles = makeStyles(theme => ({
 const buildingData = [
   {
     building: 'Davies',
-    picture: { Davies },
+    picture:
+      'https://cdn.uwec.edu/athena/images/9134/20160621_Campus_Buildings_009-full-image.jpg',
     link: 'none'
   },
   {
-    building: 'Davies1',
-    picture: '1',
+    building: 'Schneider',
+    picture:
+      'https://cdn.uwec.edu/athena/images/4947/20141025_Northwoods_328-homepage.jpg',
     link: 'none'
   },
   {
-    building: 'Davies2',
-    picture: '1',
+    building: 'Governors',
+    picture: 'https://i.ytimg.com/vi/XpMkDYnillo/maxresdefault.jpg',
     link: 'none'
   },
   {
-    building: 'Davies8',
-    picture: '1',
+    building: 'Chancellors',
+    picture:
+      'https://cdn.uwec.edu/athena/images/8080/20160621_Campus_Buildings_074-small.jpg',
     link: 'none'
   },
   {
-    building: 'Davies3',
-    picture: '1',
+    building: 'Horan',
+    picture:
+      'https://cdn.uwec.edu/athena/images/8082/20170921_DormBuildings_0636-homepage.jpg',
     link: 'none'
   },
   {
-    building: 'Davies4',
-    picture: '1',
+    building: 'Crest',
+    picture:
+      'https://cdn.uwec.edu/athena/images/9897/20160621_Campus_Buildings_036-small.jpg',
     link: 'none'
   },
   {
-    building: 'Davies5',
-    picture: '1',
+    building: 'Hibbard',
+    picture:
+      'https://cdn.uwec.edu/athena/images/7012/IMG_7638-three-four-portrait.JPG',
     link: 'none'
   },
   {
-    building: 'Davies6',
-    picture: '1',
+    building: 'Hilltop',
+    picture:
+      'https://cdn.uwec.edu/athena/images/10321/20160622_Campus_Buildings_002-three-four-portrait.jpg',
     link: 'none'
   },
   {
-    building: 'Davies7',
-    picture: '1',
+    building: 'HSS',
+    picture:
+      'https://cdn.uwec.edu/athena/images/7248/20160706_Campus_buildings_012-homepage.jpg',
+    link: 'none'
+  },
+  {
+    building: 'Towers South',
+    picture:
+      'https://cdn.uwec.edu/athena/images/2638/Towers--default-homepage.jpg',
+    link: 'none'
+  },
+  {
+    building: 'Bridgman',
+    picture:
+      'https://cdn.uwec.edu/athena/images/7998/20160621_Campus_Buildings_048-homepage.jpg',
+    link: 'none'
+  },
+  {
+    building: 'Centennial',
+    picture:
+      'https://www.bdcnetwork.com/sites/bdc/files/styles/content_display_image/public/centennialhall_0.jpg?itok=_w7skfJ1',
+    link: 'none'
+  },
+  {
+    building: 'KV',
+    picture: 'https://zenit.org/wp-content/uploads/2018/05/no-image-icon.png',
+    link: 'none'
+  },
+  {
+    building: 'HFA North',
+    picture: 'https://zenit.org/wp-content/uploads/2018/05/no-image-icon.png',
+    link: 'none'
+  },
+  {
+    building: 'HFA South',
+    picture: 'https://zenit.org/wp-content/uploads/2018/05/no-image-icon.png',
+    link: 'none'
+  },
+  {
+    building: 'Heating Plant',
+    picture:
+      'http://kbkservices.com/wp-content/uploads/2014/09/UW-Stout-Chiller-plant.jpg',
+    link: 'none'
+  },
+  {
+    building: 'Library',
+    picture:
+      'https://cdn.uwec.edu/athena/images/8059/20160621_Campus_Buildings_013-small.jpg',
+    link: 'none'
+  },
+  {
+    building: 'Maintenance',
+    picture: 'https://zenit.org/wp-content/uploads/2018/05/no-image-icon.png',
+    link: 'none'
+  },
+  {
+    building: 'Phillips North',
+    picture:
+      'https://cdn.uwec.edu/athena/images/11042/20160630_Campus_Buildings_004-small.jpg',
+    link: 'none'
+  },
+  {
+    building: 'Phillips South',
+    picture:
+      'https://cdn.uwec.edu/athena/images/11042/20160630_Campus_Buildings_004-small.jpg',
+    link: 'none'
+  },
+  {
+    building: 'Murray',
+    picture:
+      'https://cdn.uwec.edu/athena/images/7827/20160414_campus_beauty_025-homepage.jpg',
+    link: 'none'
+  },
+  {
+    building: 'Schofield',
+    picture:
+      'https://www.spectatornews.com/wp-content/uploads/2014/04/ONLINEIMG_9936.gif',
+    link: 'none'
+  },
+  {
+    building: 'Putnam',
+    picture:
+      'https://cdn.uwec.edu/athena/images/8085/20171005_DormBuildings_0001-homepage.jpg',
+    link: 'none'
+  },
+  {
+    building: 'Oak Ridge',
+    picture:
+      'https://cdn.uwec.edu/athena/images/8083/20160621_Campus_Buildings_056-homepage.jpg',
+    link: 'none'
+  },
+  {
+    building: 'Sutherland',
+    picture: 'https://i.ytimg.com/vi/CS7ZICtO8pk/maxresdefault.jpg',
+    link: 'none'
+  },
+  {
+    building: 'Thomas',
+    picture:
+      'https://cdn.uwec.edu/athena/images/8079/20160620_Campus_Buildings_025-homepage.jpg',
+    link: 'none'
+  },
+  {
+    building: 'Zorn',
+    picture:
+      'https://assets.simpleviewinc.com/simpleview/image/fetch/c_fill,h_500,q_75,w_748/https://assets.simpleviewinc.com/simpleview/image/upload/crm/eauclaire/Screen-Shot-2014-08-11-at-3.26.02-PM_a4e13585-5056-a36a-0662fcf2665d5d23.png',
     link: 'none'
   }
 ]
@@ -70,6 +182,29 @@ export default function FlexWrap () {
 
   return (
     <div className={classes.root}>
+      <Grid container spacing={3}>
+        <Grid item xs={12} md={6}>
+          <Grid container spacing={1} direction='column'>
+            <Grid item>
+              <span
+                style={{
+                  fontSize: '24px',
+                  marginRight: '10px'
+                }}
+              >
+                View:
+              </span>
+              <ButtonGroup
+                size='small'
+                aria-label='small outlined button group'
+              >
+                <Button>Gallery</Button>
+                <Button>List</Button>
+              </ButtonGroup>
+            </Grid>
+          </Grid>
+        </Grid>
+      </Grid>
       <Grid container spacing={3} style={{ justifyContent: 'center' }}>
         {buildingData.map(building => (
           <Grid item key={building.building}>
@@ -88,13 +223,15 @@ export default function FlexWrap () {
                 </Link>
               </h1>
               <img
-                src={Davies}
+                src={building.picture}
                 alt='A UWEC Building'
                 style={{
                   borderRadius: '4px',
                   boxShadow:
                     '0px 2px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12)',
-                  height: '200px'
+                  height: '200px',
+                  objectFit: 'cover',
+                  overflow: 'hidden'
                 }}
               />
             </Paper>
