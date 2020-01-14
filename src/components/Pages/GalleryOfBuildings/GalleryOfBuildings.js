@@ -1,7 +1,12 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import Paper from '@material-ui/core/Paper'
 import Grid from '@material-ui/core/Grid'
+import Table from '@material-ui/core/Table'
+import TableBody from '@material-ui/core/TableBody'
+import TableCell from '@material-ui/core/TableCell'
+import TableHead from '@material-ui/core/TableHead'
+import TableRow from '@material-ui/core/TableRow'
 import { Link } from 'react-router-dom'
 import './GalleryOfBuildings.css'
 
@@ -16,6 +21,9 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(2),
     textAlign: 'center',
     color: theme.palette.text.secondary
+  },
+  table: {
+    minWidth: 650
   }
 }))
 const buildingData = [
@@ -177,66 +185,100 @@ const buildingData = [
   }
 ]
 
-export default function FlexWrap () {
+function createData (name, calories, fat, carbs, protein) {
+  return { name, calories, fat, carbs, protein }
+}
+
+const rows = [
+  createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
+  createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
+  createData('Eclair', 262, 16.0, 24, 6.0),
+  createData('Cupcake', 305, 3.7, 67, 4.3),
+  createData('Gingerbread', 356, 16.0, 49, 3.9)
+]
+
+export default function GalleryOfBuildings () {
+  const [isGallery, setGallery] = useState(false)
   const classes = useStyles()
+
+  useEffect(() => {})
 
   return (
     <div className={classes.root}>
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={6}>
-          <Grid container spacing={1} direction='column'>
-            <Grid item>
-              <span
-                style={{
-                  fontSize: '24px',
-                  marginRight: '10px'
-                }}
-              >
-                View:
-              </span>
-              <ButtonGroup
-                size='small'
-                aria-label='small outlined button group'
-              >
-                <Button>Gallery</Button>
-                <Button>List</Button>
-              </ButtonGroup>
+      <Grid container spacing={3} style={{ justifyContent: 'center' }}>
+        <Grid container spacing={3}>
+          <Grid item xs={12} md={6}>
+            <Grid container spacing={1} direction='column'>
+              <Grid item>
+                <ButtonGroup
+                  size='small'
+                  aria-label='small outlined button group'
+                >
+                  <Button onClick={() => setGallery(true)}>Gallery</Button>
+                  <Button onClick={() => setGallery(false)}>List</Button>
+                </ButtonGroup>
+              </Grid>
             </Grid>
           </Grid>
         </Grid>
-      </Grid>
-      <Grid container spacing={3} style={{ justifyContent: 'center' }}>
-        {buildingData.map(building => (
-          <Grid item key={building.building}>
-            <Paper
-              className={classes.paper}
-              style={{
-                margin: '10px'
-              }}
-            >
-              <h1>
-                <Link
-                  className='buildingCardLink'
-                  to={'/building/' + building.building}
-                >
-                  {building.building}
-                </Link>
-              </h1>
-              <img
-                src={building.picture}
-                alt='A UWEC Building'
+        {isGallery ? (
+          buildingData.map(building => (
+            <Grid item key={building.building}>
+              <Paper
+                className={classes.paper}
                 style={{
-                  borderRadius: '4px',
-                  boxShadow:
-                    '0px 2px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12)',
-                  height: '200px',
-                  objectFit: 'cover',
-                  overflow: 'hidden'
+                  margin: '10px'
                 }}
-              />
-            </Paper>
-          </Grid>
-        ))}
+              >
+                <h1>
+                  <Link
+                    className='buildingCardLink'
+                    to={'/building/' + building.building}
+                  >
+                    {building.building}
+                  </Link>
+                </h1>
+                <img
+                  src={building.picture}
+                  alt='A UWEC Building'
+                  style={{
+                    borderRadius: '4px',
+                    boxShadow:
+                      '0px 2px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12)',
+                    height: '200px',
+                    objectFit: 'cover',
+                    overflow: 'hidden'
+                  }}
+                />
+              </Paper>
+            </Grid>
+          ))
+        ) : (
+          <Table className={classes.table} aria-label='simple table'>
+            <TableHead>
+              <TableRow>
+                <TableCell>Dessert (100g serving)</TableCell>
+                <TableCell align='right'>Calories</TableCell>
+                <TableCell align='right'>Fat&nbsp;(g)</TableCell>
+                <TableCell align='right'>Carbs&nbsp;(g)</TableCell>
+                <TableCell align='right'>Protein&nbsp;(g)</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {rows.map(row => (
+                <TableRow key={row.name}>
+                  <TableCell component='th' scope='row'>
+                    {row.name}
+                  </TableCell>
+                  <TableCell align='right'>{row.calories}</TableCell>
+                  <TableCell align='right'>{row.fat}</TableCell>
+                  <TableCell align='right'>{row.carbs}</TableCell>
+                  <TableCell align='right'>{row.protein}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
       </Grid>
     </div>
   )
