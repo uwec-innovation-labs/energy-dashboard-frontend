@@ -185,20 +185,23 @@ const buildingData = [
   }
 ]
 
-function createData (name, calories, fat, carbs, protein) {
-  return { name, calories, fat, carbs, protein }
+function createData (building, type, age, size, location, energyTypes) {
+  return { building, type, age, size, location, energyTypes }
 }
 
 const rows = [
-  createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-  createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-  createData('Eclair', 262, 16.0, 24, 6.0),
-  createData('Cupcake', 305, 3.7, 67, 4.3),
-  createData('Gingerbread', 356, 16.0, 49, 3.9)
+  createData(
+    'Davies',
+    'Academic',
+    2010,
+    1084,
+    'Lower Campus',
+    'Solar, Electric'
+  )
 ]
 
 export default function GalleryOfBuildings () {
-  const [isGallery, setGallery] = useState(false)
+  const [isGallery, setGallery] = useState(true)
   const classes = useStyles()
 
   useEffect(() => {})
@@ -245,7 +248,7 @@ export default function GalleryOfBuildings () {
                     borderRadius: '4px',
                     boxShadow:
                       '0px 2px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12)',
-                    height: '200px',
+                    width: '400px',
                     objectFit: 'cover',
                     overflow: 'hidden'
                   }}
@@ -257,23 +260,25 @@ export default function GalleryOfBuildings () {
           <Table className={classes.table} aria-label='simple table'>
             <TableHead>
               <TableRow>
-                <TableCell>Dessert (100g serving)</TableCell>
-                <TableCell align='right'>Calories</TableCell>
-                <TableCell align='right'>Fat&nbsp;(g)</TableCell>
-                <TableCell align='right'>Carbs&nbsp;(g)</TableCell>
-                <TableCell align='right'>Protein&nbsp;(g)</TableCell>
+                <TableCell>Building</TableCell>
+                <TableCell align='right'>Type</TableCell>
+                <TableCell align='right'>Built In (Year)</TableCell>
+                <TableCell align='right'>Size (SqFt)</TableCell>
+                <TableCell align='right'>Location</TableCell>
+                <TableCell align='right'>Energy Types</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {rows.map(row => (
-                <TableRow key={row.name}>
+                <TableRow key={row.building}>
                   <TableCell component='th' scope='row'>
-                    {row.name}
+                    {row.building}
                   </TableCell>
-                  <TableCell align='right'>{row.calories}</TableCell>
-                  <TableCell align='right'>{row.fat}</TableCell>
-                  <TableCell align='right'>{row.carbs}</TableCell>
-                  <TableCell align='right'>{row.protein}</TableCell>
+                  <TableCell align='right'>{row.type}</TableCell>
+                  <TableCell align='right'>{row.age}</TableCell>
+                  <TableCell align='right'>{row.size}</TableCell>
+                  <TableCell align='right'>{row.location}</TableCell>
+                  <TableCell align='right'>{row.energyTypes}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

@@ -1,16 +1,10 @@
 .buildingCardLink {
-    color: inherit !important;
-    text-decoration: none !important;
-    transition: .7s;
-}
-  
-.buildingCardLink:hover {
-    font-size: 36px;
-    transition: .7s;
+  color: inherit !important;
+  text-decoration: none !important;
 }
 
 a {
-    color: inherit !important;
-    text-decoration: none !important;
-    transition: .7s;
+  color: inherit !important;
+  text-decoration: none !important;
+  transition: 0.7s;
 }
