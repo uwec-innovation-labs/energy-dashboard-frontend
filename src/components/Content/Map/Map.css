@@ -1,0 +1,46 @@
+.img-overlay-wrap {
+  position: relative;
+  display: inline-block; /* <= shrinks container to image size */
+  transition: transform 150ms ease-in-out;
+}
+
+.img-overlay-wrap img {
+  /* <= optional, for responsiveness */
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.img-overlay-wrap svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+circle {
+  fill: #f3b298;
+  stroke: rgba(0, 0, 0, 0.5);
+}
+
+circle:hover {
+  cursor: pointer;
+}
+
+.popup {
+  fill: rgba(46, 46, 46, 0.8);
+}
+
+.popup-text {
+  fill: white;
+  font-size: 5px;
+  text-anchor: middle;
+}
+
+.selectedBuilding {
+  fill: rgb(233, 100, 38);
+}
+
+svg {
+  height: 530px;
+  width: 100%;
+}

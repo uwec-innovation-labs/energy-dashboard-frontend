@@ -1,0 +1,50 @@
+#navigation-container {
+  height: 70px;
+  margin: 0;
+}
+
+.navigation-bar {
+  height: 70px;
+  width: 100%;
+  text-align: center;
+}
+.navigation-bar img {
+  width: 70px;
+  float: left;
+}
+.navigation-bar ul {
+  padding: 0px;
+  margin: 0px;
+  text-align: center;
+  display: inline-block;
+  vertical-align: top;
+}
+
+.navigation-bar li {
+  list-style-type: none;
+  padding: 0px;
+  display: inline;
+}
+
+.navigation-bar li a {
+  color: black;
+  font-size: 16px;
+  font-family: 'Trebuchet MS', Arial, Helvetica, sans-serif;
+  text-decoration: none;
+  line-height: 70px;
+  padding: 5px 15px;
+  opacity: 0.7;
+}
+
+a {
+  border-bottom: 2px solid white;
+}
+
+a:hover {
+  border-bottom: 2px solid #2b3e85;
+  transition: 0.5s;
+}
+
+#menu {
+  float: right;
+}

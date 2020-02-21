@@ -1,14 +1,18 @@
 import React from 'react'
 import './App.css'
-import { CookiesProvider } from 'react-cookie'
-
-import Navigation from './components/ReusableComponents/Navigation'
+import Navigation from './components/Navigation/Navigation'
+import Map from './components/Content/Map/Map'
 
 function App () {
   return (
-    <CookiesProvider>
+    <div>
       <Navigation />
-    </CookiesProvider>
+      <center>
+        <div className='map'>
+          <Map />
+        </div>
+      </center>
+    </div>
   )
 }
 
