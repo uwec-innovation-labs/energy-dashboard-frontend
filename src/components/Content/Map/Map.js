@@ -171,12 +171,14 @@ export default class Map extends React.Component {
             <button>Solar</button>
             <button>Heat</button>
             <input
+              className='datetime'
               id='start'
               type='datetime-local'
               name='startdate'
               value='2017-06-01T08:30'
             ></input>
             <input
+              className='datetime'
               id='end'
               type='datetime-local'
               name='enddate'
