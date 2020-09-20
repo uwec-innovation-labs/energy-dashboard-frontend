@@ -1,6 +1,6 @@
 import React from 'react'
 import './Map.css'
-import MapImage from '../../../images/UWECMap.png'
+import MapImage from '../../../images/map.svg'
 
 export default class Map extends React.Component {
   constructor (props) {
