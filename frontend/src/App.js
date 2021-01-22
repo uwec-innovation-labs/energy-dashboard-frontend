@@ -19,10 +19,12 @@ import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 
+import LoadingImage from './images/loading.gif'
+
 import axios from 'axios'
 
 function App() {
-  const [building, setBuilding] = useState('Library');
+  const [building, setBuilding] = useState('campus');
   const [energyType, setEnergyType] = useState('Electricity')
   const [buildings, setBuildings] = useState([])
   //const [currentTranslation, setCurrentTranslation] = useState("English")
@@ -34,7 +36,7 @@ function App() {
   useEffect(() => {
     // Make API call to get buildings
     // Make API call to get energy type of all the buildings
-    const arr = ["Library", "Davies", "Phillips", "Haas"]
+    const arr = ["campus", "library", "davies"]
     setBuildings(arr);
     makeApiCall(arr[0], 'kw');
   }, [])
@@ -42,11 +44,13 @@ function App() {
   const handleBuildingChange = (event) => {
     console.log("Changing Building to: " + event.target.value)
     setBuilding(event.target.value)
+    makeApiCall(event.target.value, energySubType)
   }
 
   const handleEnergyChange = (type) => {
     console.log("Changing Energy to: " + type)
     setEnergyType(type)
+    makeApiCall(building, energySubType)
   }
 
   const handleOpenTranslations = () => {
@@ -59,50 +63,44 @@ function App() {
   }
 
   const makeApiCall = (whichBuilding, whichSubType) => {
+    setX([])
+    setY([])
+
     axios.post('http://40.77.105.196:8080/query', {
       query: `
-      query {
-       dashboardHomePage {
-         campusKW {
-           data {
-             value
-             building
-             dateTimeUnix
-             unit
-             type
-           }
-           errors {
-             error
-             errors
-           }
-         }
-         campusKWH {
-           data {
-             value
-             building
-             dateTimeUnix
-             unit
-             type
-           }
-           errors {
-             error
-             errors
-           }
-         }
-       }
-     }
-         `
+        query {
+          energyDataPoints(
+            input: {
+              building: "${whichBuilding}"
+              dateLow: 1554138000
+              dateHigh: 1611333000
+              energyType: "electric"
+              energyUnit: "${whichSubType}"
+            }
+          ) {
+            data {
+              dateTimeUnix
+              id
+              unit
+              building
+              value
+            }
+            errors {
+              error
+              errors
+            }
+          }
+        }
+      `
    }
      ).then((result) => {
         let data;
         console.log(result)
          if (whichSubType === "kw") {
-          data = result.data.data.dashboardHomePage.campusKW.data
+          data = result.data.data.energyDataPoints.data
          } else {
-          data = result.data.data.dashboardHomePage.campusKWH.data
+          data = result.data.data.energyDataPoints.data
          }
-         
-         
 
          let d = data;
          //const d = dnotsorted.sort((a, b) => a.dateTimeUnix - b.dateTimeUnix)
@@ -112,7 +110,10 @@ function App() {
          let y = [];
          let j = 0;
          for (i = 0; i < d.length; i++) {
-            if (d[i].value < 5000 && j  % 15 == 0) {
+            if (whichSubType === "kw" && d[i].value < 5000 && j  % 60 === 0) {
+              x.push(new Date(d[i].dateTimeUnix * 1000));
+              y.push(d[i].value)
+            } else if (j  % 60 === 0 && d[i].value !== 0) {
               x.push(new Date(d[i].dateTimeUnix * 1000));
               y.push(d[i].value)
             }
@@ -131,7 +132,10 @@ function App() {
       <Grid container spacing={8} style={{ height: '400px' }}>
         <Grid item xs={8}>
           <div className="paper">
-            <LineChart building={building} energyType={energyType} x={x} y={y} />
+            {y.length == 0 ? <center><img src={LoadingImage} style={{marginTop: '100px'}} /></center> : 
+              <LineChart building={building} energyType={energyType} x={x} y={y} />
+            }
+            
           </div>
         </Grid>
         <Grid item xs={4}>
@@ -165,7 +169,7 @@ function App() {
                 <FormControl component="fieldset">
                   <RadioGroup aria-label="gender" name="gender1" value={energySubType} onChange={handleRadioChange}>
                     <FormControlLabel value="kw" control={<Radio />} label="kw" />
-                    <FormControlLabel value="kw/hr" control={<Radio />} label="kw/hr" />
+                    <FormControlLabel value="kwh" control={<Radio />} label="kw/hr" />
                   </RadioGroup>
                 </FormControl>
                 <br />

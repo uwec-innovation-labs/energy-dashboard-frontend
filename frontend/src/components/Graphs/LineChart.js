@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react'
 import Chart from "chart.js";
 
-
 function LineChart({building, energyType, x, y}) {
     //const [dataPoints, setDataPoints] = useState([]);
 
